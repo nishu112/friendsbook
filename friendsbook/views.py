@@ -14,7 +14,7 @@ from .forms import CreatePost,SignUpForm,ProfileForm,LoginForm
 from .import views
 import json
 from django.contrib.auth.forms import UserCreationForm
-from django_ajax.decorators import ajax
+
 from django.http import JsonResponse
 from django.db.models import Q
 from django.core import serializers
