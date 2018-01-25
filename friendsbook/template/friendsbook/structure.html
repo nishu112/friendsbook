@@ -9,22 +9,22 @@
 	<link rel="stylesheet" href="{% static 'css/home.css' %}" type = "text/css"/>
 	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type = "text/css"/>
 	<meta name="viewport" content = "width=device-width, initial-scale=1.0">
-	
+
 	<style type="text/css">
-		
+
 	</style>
 </head>
 
 <body  style="background-color:#ECEFF1 ">
 
-	
+
 <nav class="navbar navbar-default navbar-fixed-top" style="background-color:#00897b ">
   <div class="container">
     <div class="navbar-header navbar-hover">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
+        <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand " href="/"><font size="3">Friendsbook</font></a>
     </div>
@@ -47,7 +47,7 @@
 					{%endif%}
 					<li><a href={% url 'user_list'%}><div><span class="glyphicon glyphicon-globe"></span></div>  </a></li>
 					<li><a href={% url 'user_list'%}>Chat Room</a></li>
-					
+
 					<li><a href={% url 'new_post'%}>Create Post</a></li>
 					<li><a href={% url 'logout' %}><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
       </ul>
@@ -74,13 +74,13 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script src="//vjs.zencdn.net/ie8/1.1.1/videojs-ie8.min.js"></script>
 	<script>
-	
+
 	var chat_with="";
-	var socket = new WebSocket('ws://' + window.location.host + '/users/');
-	var socket = new WebSocket('ws://' + window.location.host + '/{{user.username}}/');
+	var socket = new WebSocket('wss://' + window.location.host + '/users/');
+	var socket = new WebSocket('wss://' + window.location.host + '/{{user.username}}/');
 
     socket.onopen = function open() {
-	
+
       console.log('WebSockets connection created.');
     };
 
@@ -89,7 +89,7 @@
 	  var type = data['type'];
 	  var user = data['user'];
 	  //did this logic to satisfy condition
-	  //so that message will recieve only if 
+	  //so that message will recieve only if
 	  //we clicked on the link
 	  if(type=='online'){
 	  var online_user=$('#sidebar ul li a div div').filter(function(){
@@ -107,7 +107,7 @@
 	  }
 	  var text = data['text'];
 	  var fuser = data['fuser'];
-	  
+
 	  if(chat_with!=fuser)	return;
 	  if('{{user.username}}'==user)
       $('#msg-list').append("<p class='text-right list-group-item' >" + text + "</p>");
@@ -125,7 +125,7 @@
 		var text=document.getElementById("text_message").value;
 		var fuser=chat_with;
 		var user='{{user.username}}';
-		
+
 		var message ={
 			text,fuser,user
 		};
@@ -133,7 +133,7 @@
         document.getElementById("text_message").value="";
         return false;
     });
-	
+
 	function comment(obj){
 	sid=obj.parentNode.parentNode.parentNode.parentNode.id;
 	commentid='comment-'+sid;
@@ -146,7 +146,7 @@
 	  'sid':sid
 	},
 	dataType: 'json',
-	success: function (data) {		
+	success: function (data) {
 		if( data!=0){
 			$('#Allcomments'+sid).append("<p> {{user.username}} :"+data +"</p>");
 			document.getElementById(commentid).value="";
@@ -166,7 +166,7 @@
 		{id=obj.parentNode.parentNode.parentNode.parentNode.id;
 		likeid='comment-'+id;
 		}
-	else	
+	else
 		{id=obj.parentNode.parentNode.parentNode.id;
 		likeid='like-'+id;
 		}
@@ -186,7 +186,7 @@
 		}
 	  });
 	}
-	
+
 	function change_post_comment(obj){
 		type=obj.parentNode.parentNode.parentNode.id;
 		alert("are u sure?");
@@ -224,7 +224,7 @@
 		document.getElementById(id).style.display="block";
 		else
 		document.getElementById(id).style.display="none";
-			
+
 		}
 	function showLiveResult(str){
 	console.log('hii');
@@ -251,7 +251,7 @@
 				content+='<tr><td>'+'<a href='+'/users/'+data[val].fields.slug+'>'+data[val].fields.fname+' '+data[val].fields.lname+'</td></tr>';
 			});
 			content+='</table>'
-			document.getElementById("liveSearchResult").innerHTML=content;		
+			document.getElementById("liveSearchResult").innerHTML=content;
 		}
 		});
 		}
