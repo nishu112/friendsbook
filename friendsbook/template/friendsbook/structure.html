@@ -4,7 +4,7 @@
 <head>
 	<title>Friendsbook</title>
 	<meta charset="utf-8" />
-	{% load staticfiles %}
+	{% load static %}
 	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type = "text/css"/>
 	<link rel="stylesheet" href="{% static 'css/home.css' %}" type = "text/css"/>
 	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type = "text/css"/>
@@ -76,8 +76,8 @@
 	<script>
 
 	var chat_with="";
-	var socket = new WebSocket('wss://' + window.location.host + '/users/');
-	var socket = new WebSocket('wss://' + window.location.host + '/{{user.username}}/');
+	var socket = new WebSocket('wss://thefriendsbook.herokuapp.com/' +  '/users/');
+	var socket = new WebSocket('wss://thefriendsbook.herokuapp.com/' + '/{{user.username}}/');
 
     socket.onopen = function open() {
 
