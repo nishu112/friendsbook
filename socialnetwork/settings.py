@@ -14,7 +14,11 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SETTINGS_DIR = os.path.dirname(__file__)
 
+
+PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
+PROJECT_PATH = os.path.abspath(PROJECT_PATH)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -25,7 +29,7 @@ SECRET_KEY = 'xk6s6q(tq(!@li$4_0yu^!k6+d*v&gm0l&yq6^m7+#qv(j)he1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = 'login'
 
@@ -137,11 +141,10 @@ USE_TZ = False #TimeZone
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    '/Friendsbook/socialnetwork/friendsbook/static/',
-]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATIC_ROOT=os.path.join((BASE_DIR),'static')
 STATIC_URL = '/static/'
 
 MEDIA_URL  = '/media/'
