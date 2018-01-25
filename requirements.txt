@@ -1,6 +1,8 @@
 awesome-slugify==1.6.5
 certifi==2018.1.18
 chardet==3.0.4
+decorator==4.2.1
+decorators==0.1.1
 dj-database-url==0.4.2
 dj-static==0.0.6
 Django==2.0.1
