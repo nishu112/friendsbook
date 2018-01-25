@@ -1,0 +1,158 @@
+{% extends "friendsbook/structure.html" %}
+{% block content %}
+		<div class="row"><br>
+			<div class="col-sm-2">
+			 
+			 {% block sidebar %}
+			{%endblock sidebar%}	
+			</div>
+			<div class="col-sm-1"></div>
+			<div class="col-sm-5">
+				<br><br><br><br>
+
+				{% for profile,y in data%}
+				<div class="well">
+					<div class="add_friendbutton">
+						{%if profile.sid%}
+							{%if profile.sid.image%}
+								<img class="img-rounded" src="{{ profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+							{%endif%}
+						{%else%}
+								<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+						{%endif%}
+						<a href={% url 'profile_info' profile.slug %}>{{profile.username.profile.fname}} {%if profile.username.profile.lname%} {{profile.username.profile.lname}} {%endif%}</a>
+						{%if user.username  !=  profile.username.username %}
+							{%if y is 0%} 
+								<button type="button" onclick="sendRequest(this)" id='{{profile.username}}' >
+								Send request
+								</button>
+							{%elif y is 1%} 
+								<button type="button" onclick="cancelRequest(this)" id='{{profile.username}}' >
+								Cancel request
+								</button>								
+							{%elif y is 2%} 								
+								<button type="button" onclick="confirmRequest(this)" id='{{profile.username}}' >
+								Confirm Request
+								</button>	
+							
+							{%else%} 															
+								<button type="button" onclick="unfriend(this)" id='{{profile.username}}' >
+								Unfriend
+								</button>
+							{%endif%}
+							</button>
+						{%endif%}
+					</div>
+					<br>
+					{%if profie.lname%}
+						{{profile.lname}}</br>
+					{%endif%}
+					{{profile.emailid}}</br>
+					{{profile.gender}}
+				</div>	
+					<br>
+					
+					{%endfor%}
+				{%if not data %}
+					<h1>No user Found</h1>
+				{%endif%}
+			</div> 
+			<div class="col-sm-2">
+			</div> 
+			<div class="col-sm-2">
+				{%block chatuser%}
+				{%endblock chatuser%}
+			</div> 
+		
+		</div>
+{% endblock %}
+{% block javascript%}
+<script>
+
+function sendRequest(obj) {
+var fuser=obj.id;
+console.log(fuser);
+console.log(document.getElementById(fuser).onclick);
+console.log(document.getElementById(fuser).onclick);
+	$.ajax({
+        url: '/ajax/AddFriend/',
+        data:{
+		  'fuser':fuser,
+		  'type':'0'
+        },
+        dataType: 'json',
+        success: function (data) {
+		console.log(document.getElementById(fuser).onclick);
+		document.getElementById(fuser).setAttribute("onclick","cancelRequest(this)");
+		console.log(document.getElementById(fuser).onclick);
+		document.getElementById(fuser).innerHTML="Cancel Request";
+        }
+      });
+    }
+	
+function cancelRequest(obj) {
+var fuser=obj.id;
+console.log(document.getElementById(fuser).onclick);
+console.log(document.getElementById(fuser).onclick);
+	$.ajax({
+        url: '/ajax/AddFriend/',
+        data:{
+		  'fuser':fuser,
+		  'type':'1'
+        },
+        dataType: 'json',
+        success: function (data) {
+		console.log(document.getElementById(fuser).onclick);
+		document.getElementById(fuser).setAttribute("onclick","sendRequest(this)");
+		console.log(document.getElementById(fuser).onclick);
+		document.getElementById(fuser).innerHTML="Send Request";
+        }
+      });
+    }
+	
+	
+function confirmRequest(obj) {
+var fuser=obj.id;
+
+	$.ajax({
+        url: '/ajax/AddFriend/',
+        data:{
+		  'fuser':fuser,
+		  'type':'2'
+        },
+        dataType: 'json',
+        success: function (data) {
+		console.log(document.getElementById(fuser).onclick);
+		document.getElementById(fuser).setAttribute("onclick","unfriend(this)");
+		console.log(document.getElementById(fuser).onclick);
+		document.getElementById(fuser).innerHTML="Unfriend";
+        }
+      });
+    }
+	
+function unfriend(obj) {
+var fuser=obj.id;
+console.log(document.getElementById(fuser).onclick);
+console.log(document.getElementById(fuser).onclick);
+	$.ajax({
+        url: '/ajax/AddFriend/',
+        data:{
+		  'fuser':fuser,
+		  'type':'3'
+        },
+        dataType: 'json',
+        success: function (data) {
+		console.log(document.getElementById(fuser).onclick);
+		document.getElementById(fuser).setAttribute("onclick","sendRequest(this)");
+		console.log(document.getElementById(fuser).onclick);
+		document.getElementById(fuser).innerHTML="Send Request";
+        }
+      });
+    }
+
+$( document).ready(function(){
+            //Perform Ajax request.
+            //alert("ok");
+        });
+</script>
+{%endblock %}

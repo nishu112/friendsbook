@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+
+<html lang="en-us" >
+<head>
+{% load staticfiles %}
+<title>Log in | SignUp</title>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/login.css" />
+<link rel="stylesheet" href="{% static 'css/home.css' %}" type = "text/css"/>
+ <link rel="stylesheet" type="text/css" href="/static/admin/css/responsive.css" />
+ <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+
+<body class=" login"
+  data-admin-utc-offset="0" >
+
+<!-- Container -->
+<div id="container">
+
+    
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        
+<h1 id="site-name"><a href="/">Friendsbook</a></h1>
+
+        </div>
+        
+        
+    </div>
+    <!-- END Header -->     
+
+    <!-- Content -->
+    <div id="content" class="colM">
+        
+<div id="content-main">
+
+
+{% block content %}
+
+{% endblock %}
+ 
+</div>
+
+        
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+<script  src="https://code.jquery.com/jquery-2.2.4.js"  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+  crossorigin="anonymous"></script>
+<script src="{% static 'js/bootstrap.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% block javascript %}{% endblock %}
+</body>
+</html>

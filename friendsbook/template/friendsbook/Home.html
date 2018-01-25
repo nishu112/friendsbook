@@ -1,0 +1,12 @@
+{% extends "friendsbook/structure.html" %}
+
+{%block content%}
+{%for x in data%}
+{{x}}</br>
+
+	{{x.text}}
+
+	</br>
+{%endfor%}
+
+{%endblock%}

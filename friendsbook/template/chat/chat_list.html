@@ -1,0 +1,78 @@
+{% extends "friendsbook/structure.html" %}
+{% block content %}
+		<div class="row"><br><br><br><br>
+			<div class="col-sm-2">
+			 <!-- Great, til you resize. -->
+				{%include "chat/online_user_list.html"%}
+			<!--<div class="well bs-sidebar affix" id="sidebar" style="background-color:#fff">-->
+			</div>
+			<div class="col-sm-1"></div>
+			<div class="col-sm-5">
+			<div id="msg_container" class='container-fluid' style="background-color:#fff ">	
+				 <div id ="msg-list" class="msg-list">
+				<p>No messages to display</p>
+				</div>
+				<form id="chatform" method="POST" action="">{%csrf_token%}
+					<div id="chat-bottom" class="input-group">
+						<input type="text" autocomplete="off" id="text_message" name="chat-msg" class="form-control"/>
+						<span class="input-group-btn">
+							<input class="btn btn-default" id="send" type="submit" value="Send"/>
+						</span>
+					</div>
+				</form>
+			</div>	
+			</div> 
+			<div class="col-sm-2">
+			</div> 
+			<div class="col-sm-2">
+				
+			</div> 
+		
+		</div>
+<script>
+
+$(document).ready(function() {
+     $('#send').attr('disabled','disabled');
+     $('#text_message').keyup(function() {
+        if($(this).val() != '') {
+           $('#send').removeAttr('disabled');
+        }
+        else {
+        $('#send').attr('disabled','disabled');
+        }
+     });
+ });
+ 
+
+	
+function showUser(fuser) {
+	chat_with=fuser;
+	console.log(fuser+'selected');
+	$.ajax({
+        url: '/ajax/messages',
+		   
+        data:{'fuser':fuser,
+        },
+        dataType: 'json',
+        success: function (data) {
+		var content="";
+		var data=JSON.parse( data );
+		$.each (data, function (val) {
+		if('{{user.username}}'==data[val].fields.username)
+        content+='<p class="text-right list-group-item">' + data[val].fields.text + '</p>'
+		else
+		content+='<p class="text-left list-group-item">' + data[val].fields.text + '</p>'
+		});
+		$("#msg-list").html(content);
+		//alert(document.getElementById("msg-list").scrollHeight);
+		$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
+        }
+      });
+    }
+
+</script>
+{% endblock content %}
+
+{% block javascript%}
+
+ {%endblock%}

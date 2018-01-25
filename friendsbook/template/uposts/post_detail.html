@@ -1,0 +1,18 @@
+{% extends "friendsbook/structure.html" %}
+{% block content %}
+<div class="row"><br><br><br><br>	
+			<div class="col-sm-2">
+				{%include "groups/group_list.html"%}
+			</div>
+			<div class="col-sm-1"></div>
+			<div class="col-sm-5">
+				{%include "uposts/posts.html" %}<br>
+			</div> 
+			<div class="col-sm-2">
+			</div> 
+			<div class="col-sm-2">
+				{%include "chat/online_user_list.html"%}
+			</div> 
+		
+</div>
+{% endblock %}

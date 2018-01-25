@@ -1,0 +1,25 @@
+<div class="sidebar-nav-fixed affix">
+	<div class="well bs-sidebar" id="sidebar" style="background-color:#fff">			
+	<div style="font-weight:bold ;text-align: center;">Groups</div>
+		<ul class="nav nav-pills nav-stacked" name="chat_with" id="chat_user" size="8" onchange="showUser(this.value)" >
+		{% for group in groups %}
+			<li>
+				<a data-group="{{ group|escape }}" href="javascript:void(0)" id='{{user_obj}}'  onclick="showUser('{{user_obj}}')">
+				<div class="group_detail">
+					<div class="detail">
+						{{group.gname}} 
+					</div>								
+				</div>
+				</a>
+			</li>
+			{% endfor %}
+			<li>
+				<input type="button" onclick="document.getElementById('id01').style.display='block'" value="Create New Group">
+			</li>
+		</ul>
+		<ul class="nav nav-pills nav-stacked" name="chat_with" id="chat_user" size="8" onchange="showUser(this.value)">
+			
+		</ul>
+	
+	</div><!--col-sm-2-->
+</div>

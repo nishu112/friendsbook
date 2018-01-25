@@ -1,0 +1,41 @@
+{% extends "user/base.html" %}
+{% block javascript %}
+  <script>
+    $("#id_username").change(function () {
+	console.log( $(this).val() );
+      var username=$(this).val();
+
+	    $.ajax({
+        url: '{%url "validate_username"%}',
+        data: {
+          'username': username
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.is_taken) {
+            alert("A user with this username already exists.");
+          }
+        }
+      });
+
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+<form action="" method="POST">{%csrf_token%}
+	<p style="padding-left:20px"> <input placeholder="Username" type="text" name="username" maxlength="150" required id="id_username" /></p>
+<p style="padding-left:20px"> <input placeholder="Password"type="text" name="password" maxlength="128" required id="id_password" /></p>
+<p style="padding-left:20px"> <input type="text"  placeholder="First Name" name="fname" maxlength="20" required id="id_fname" /></p>
+<p style="padding-left:20px"><input placeholder="Last Name" type="text" name="lname" maxlength="20" id="id_lname" /></p>
+<p style="padding-left:20px"><input placeholder="Emailid" type="text" name="emailid" maxlength="30" required id="id_emailid" /></p>
+<p style="padding-left:20px"><select name="gender">
+  <option value="Male">Male</option>
+  <option value="Female">Female</option></select></p>
+	<div class="submit-row">
+    <label>&nbsp;</label><input type="submit" value="Sign Up" />
+  </div>
+</form>
+<p>Already have an account? <a href="{% url 'login' %}">Log in!</a></p>
+
+{% endblock %}
