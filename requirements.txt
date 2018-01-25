@@ -28,3 +28,6 @@ urllib3==1.22
 virtualenv==15.1.0
 virtualenv-clone==0.2.6
 whitenoise==3.3.1
+django-dajaxice==0.7
+django-dajax==0.9.2
+django-ajax-search==1.5.1
