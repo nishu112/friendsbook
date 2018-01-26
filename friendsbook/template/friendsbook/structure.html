@@ -76,8 +76,11 @@
 	<script>
 
 	var chat_with="";
-	var socket = new WebSocket('wss://' + window.location.host + '/users/');
-	var socket = new WebSocket('wss://' + window.location.host + '/{{user.username}}/');
+	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/users/');
+	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/{{user.username}}/');
+
+	
 	console.log(window.location.host);
 	console.log("ok");
     socket.onopen = function open() {
