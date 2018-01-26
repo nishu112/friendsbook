@@ -1,6 +1,7 @@
 
  <div class='container-fluid' style="background-color:#fff ;margin-bottom:50px;" id={{status.id}}>
 	<div class="upper_post">
+		{%if status.username.username == user.username%}
 		<div class="edit_delete" id="status">
 			<div class="dropdown">
 			  <button type="submit" class="edit_button_icon" >
@@ -12,6 +13,7 @@
 			  </div>
 			</div>
 		</div>
+		{%endif%}
 		{%if status.username.profile.sid%}
 			{%if status.username.profile.sid.image%}
 				<img class="img-rounded"  src="{{ status.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>

@@ -76,11 +76,11 @@
 	<script>
 
 	var chat_with="";
-	var socket = new WebSocket('wss://thefriendsbook.herokuapp.com/' +  '/users/');
-	var socket = new WebSocket('wss://thefriendsbook.herokuapp.com/' + '/{{user.username}}/');
-
+	var socket = new WebSocket('ws://' + window.location.host + '/users/');
+	var socket = new WebSocket('ws://' + window.location.host + '/{{user.username}}/');
+	console.log(window.location.host);
+	console.log("ok");
     socket.onopen = function open() {
-
       console.log('WebSockets connection created.');
     };
 
