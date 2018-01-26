@@ -9,6 +9,7 @@
 			<div class="col-sm-1"></div>
 			<div class="col-sm-5">
 			<div id="msg_container" class='container-fluid' style="background-color:#fff ">	
+				 
 				 <div id ="msg-list" class="msg-list">
 				<p>No messages to display</p>
 				</div>
@@ -31,19 +32,6 @@
 		</div>
 <script>
 
-$(document).ready(function() {
-     $('#send').attr('disabled','disabled');
-     $('#text_message').keyup(function() {
-        if($(this).val() != '') {
-           $('#send').removeAttr('disabled');
-        }
-        else {
-        $('#send').attr('disabled','disabled');
-        }
-     });
- });
- 
-
 	
 function showUser(fuser) {
 	chat_with=fuser;
@@ -59,13 +47,16 @@ function showUser(fuser) {
 		var data=JSON.parse( data );
 		$.each (data, function (val) {
 		if('{{user.username}}'==data[val].fields.username)
-        content+='<p class="text-right list-group-item">' + data[val].fields.text + '</p>'
+        content+='<span data-placement="right" data-toggle="tooltip" title="'+data[val].fields.time+'"> <p class="msg_style text-right list-group-item">' + data[val].fields.text + '</p></span>'
 		else
-		content+='<p class="text-left list-group-item">' + data[val].fields.text + '</p>'
+		content+='<span data-placement="right" data-toggle="tooltip" title="'+data[val].fields.time+'">  <p class="msg_style text-left list-group-item">' + data[val].fields.text + '</p></span>'
 		});
 		$("#msg-list").html(content);
 		//alert(document.getElementById("msg-list").scrollHeight);
 		$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
+		$(document).ready(function(){
+		$('[data-toggle="tooltip"]').tooltip();   
+		});
         }
       });
     }
