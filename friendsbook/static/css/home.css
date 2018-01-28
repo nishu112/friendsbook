@@ -44,21 +44,13 @@ float: right;
 
 
 
-.navbar li a, .navbar .navbar-brand {
-
-        color: #fff !important;
-    	font-size: 18px;
+.message_time{
+	display: none;
+    
+    height:30px;
+    width:290px;
+    margin-left:10px;
 }
-.navbar-nav li a:hover, .navbar-nav li.active a {
-    color: #f4511e !important;
-    background-color: #ECEFF1 !important;
-}
-.navbar-default .navbar-toggle {
-    border-color: transparent;
-    color:#000000!important;
-}
-
-
 .status_image {
     padding-top: 5px;
     float: left;
@@ -140,6 +132,23 @@ div.myautoscroll:hover {
 	display: inline-block;
 }
 
+.navbar li a, .navbar .navbar-brand {
+	
+    color: #fff !important;
+	font-size: 18px;
+}
+
+.nav li a:link, .nav li a:visited {
+    
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.navbar li a:hover, .navbar li a:active {
+    background-color: red;
+}
+
 .glyphicon.glyphicon-globe {
     font-size: 20px;
 }
@@ -151,14 +160,6 @@ div.myautoscroll:hover {
     background-repeat: no-repeat;
     background-size: cover;
 }
-
-	
-	
-
-
-
-
-
 
 .background_pic_design{
 	position:relative;
@@ -219,75 +220,84 @@ div.myautoscroll:hover {
 		border-bottom: 1px solid #d4cece;
 }
 
-.button1{
-	font-size:15px;
-	top:270px;
-	right:30px;
-	position:absolute;
-	margin-right:456px;
-	
-}
-.button2{
-	font-size:15px;
-	top:270px;
-	right:30px;
-	position:absolute;
-	margin-right:400px;
-}
-.button3{
-	font-size:15px;
-	top:270px;
-	right:30px;
-	position:absolute;
-	margin-right:333px;
-}
-.button4{
-	font-size:15px;
-	top:270px;
-	right:30px;
-	position:absolute;
-	margin-right:270px;	
-}
-.button5{
-	
-	font-size:15px;
-	top:270px;
-	right:30px;
-	position:absolute;
-	margin-right:219px;
-	
-	
-	
-	
-	
-}
-.name{
-	
-left:240px;
-font-size:20px;
-font-family:verdana;
-color:black;
-top:230px;
-height:50px;
-width:200px;
-position:absolute;
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
 }
 
-
-
-.button6 {
-	font-size:15px;
-	top:10px;
-	right:0px;
-	margin-right:10px;
-	position:absolute;
-	
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
 }
 
-
-
-.btn-group{
-	top:255px;
-	right:-210px;
-	margin-right:460px;	
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
 }
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    span.psw {
+       display: block;
+       float: none;
+    }
+    .cancelbtn {
+       width: 100%;
+    }
+}
+
+.liveSearchResult {
+    position: absolute;
+	margin-top:20px;
+	margin-left:-350px;
+    background-color: #fff;
+    font-size: 17px;
+    display: none;
+    margin: 0 auto;
+    max-width: 100%;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -o-border-radius: 4px;
+    border: 1px solid #DDD;
+    z-index: 1001;

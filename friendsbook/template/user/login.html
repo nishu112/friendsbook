@@ -2,7 +2,7 @@
 {% block content %}
 <form action="" method="post"><input type='hidden'  />{%csrf_token %}
 <p style="padding-left:30px"> <input type="text" placeholder="Username" name="username"  size="35" maxlength="50" required id="id_username" /></p>
-<p style="padding-left:30px"> <input type="password" suggested: "current-password" placeholder="Password" name="password"  size="35" maxlength="50" required id="id_password" /></p>
+<p style="padding-left:30px"> <input type="password" autocomplete="off" placeholder="Password" name="password"  size="35" maxlength="50" required id="id_password" /></p>
 
   <div class="submit-row">
     <label>&nbsp;</label><input type="submit" value="Log in" />

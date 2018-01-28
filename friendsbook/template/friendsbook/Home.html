@@ -1,7 +1,6 @@
 {% extends "friendsbook/structure.html" %}
 
 {%block content%}
-
 {%for x in data%}
 {{x}}</br>
 
@@ -9,13 +8,5 @@
 
 	</br>
 {%endfor%}
-					<div style="margin-bottom: 20px;">
-						<button type="button" class="btn btn-primary js-upload-photos">
-						  <span class="glyphicon glyphicon-cloud-upload"></span> Upload photos
-						</button>
-						<input id="fileupload" type="file" name="profileCover" 
-							   style="display: none;"
-							   data-url="{%url 'UpdateCover'%}"
-							   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'/>
-					</div>	
+
 {%endblock%}

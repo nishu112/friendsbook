@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^ajax/messages/$', views.user_messages, name='user_messages'),
     url(r'^ajax/comment/$', views.AddComment, name='comment'),
     url(r'^ajax/deleteCommentPost/$', views.deleteCommentPost, name='deleteCommentPost'),
-    url(r'^ajax/UpdateCover/$',views.UploadCover.as_view(),name='UpdateCover'),
+
     url(r'^chat-room/$', login_required(views.user_list), name='user_list'),
 
     #validate_username

@@ -26,8 +26,3 @@ class LoginForm(ModelForm):
     class Meta:
         model=User
         fields = ["username","password"]
-
-class UpdateCover(ModelForm):
-    class Meta:
-        model=Status
-        fields=["image"]

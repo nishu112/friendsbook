@@ -10,11 +10,11 @@ from django.views.generic.edit import CreateView
 from django.views.generic import View
 from django.views import generic
 from .models import Status,Profile,StatusLikes,FriendsWith,Message,Comment,Groups,CommentLikes
-from .forms import CreatePost,SignUpForm,ProfileForm,LoginForm,UpdateCover
+from .forms import CreatePost,SignUpForm,ProfileForm,LoginForm
 from .import views
 import json
 from django.contrib.auth.forms import UserCreationForm
-from django_ajax.decorators import ajax
+
 from django.http import JsonResponse
 from django.db.models import Q
 from django.core import serializers
@@ -163,27 +163,6 @@ class PostDetailView(generic.DetailView):
 		context['users']=user_list_data(self.request)
 		context['groups']=group_list(self.request)
 		return context
-
-class UploadCover(View):
-	def get(self, request):
-		print("hey")
-		user=self.request.username
-		CoverObj=Profile.objects.get(username=User.objects.get(username=user))
-		return render(self.request,'user/profile.html', {'CoverObj':CoverObj})
-
-	def post(self, request):
-		form = UpdateCover(self.request.POST, self.request.FILES)
-		if form.is_valid():
-			CoverForm=form.save(commit=False)
-			CoverForm.username=User.objects.get(username=self.request.user.username)
-			CoverForm.title="Updated Cover"
-			CoverForm.privacy='fs'
-			CoverForm.save()
-			Profile.objects.filter(username=self.request.user).update(profileCover=Status.objects.get(id=CoverForm.id))
-			data = {'is_valid': True}
-		else:
-			data = {'is_valid': False}
-		return JsonResponse(data)
 
 #Comment this
 def index(request):
