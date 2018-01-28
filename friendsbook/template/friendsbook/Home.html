@@ -1,6 +1,10 @@
 {% extends "friendsbook/structure.html" %}
 
 {%block content%}
+<br><br><br><br>
+<form>{%csrf_token%}
+{{form.as_p}}
+</form>
 {%for x in data%}
 {{x}}</br>
 
@@ -8,5 +12,5 @@
 
 	</br>
 {%endfor%}
-
+					
 {%endblock%}

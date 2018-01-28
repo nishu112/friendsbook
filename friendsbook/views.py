@@ -9,12 +9,12 @@ from django.template.response import TemplateResponse
 from django.views.generic.edit import CreateView
 from django.views.generic import View
 from django.views import generic
-from .models import Status,Profile,StatusLikes,FriendsWith,Message,Comment,Groups,CommentLikes
-from .forms import CreatePost,SignUpForm,ProfileForm,LoginForm
+from .models import *
+from .forms import *
 from .import views
 import json
 from django.contrib.auth.forms import UserCreationForm
-
+from django_ajax.decorators import ajax
 from django.http import JsonResponse
 from django.db.models import Q
 from django.core import serializers
@@ -164,6 +164,40 @@ class PostDetailView(generic.DetailView):
 		context['groups']=group_list(self.request)
 		return context
 
+class UploadCover(View):
+	def get(self, request):
+		print("hey")
+		user=self.request.username
+		CoverObj=Profile.objects.get(username=User.objects.get(username=user))
+		return render(self.request,'user/profile.html', {'CoverObj':CoverObj})
+
+	def post(self, request):
+		form = UpdateCover(self.request.POST, self.request.FILES)
+		if form.is_valid():
+			CoverForm=form.save(commit=False)
+			CoverForm.username=User.objects.get(username=self.request.user.username)
+			CoverForm.title="Updated Cover"
+			CoverForm.privacy='fs'
+			CoverForm.save()
+			Profile.objects.filter(username=self.request.user).update(profileCover=Status.objects.get(id=CoverForm.id))
+			data = {'is_valid': True}
+		else:
+			data = {'is_valid': False}
+		return JsonResponse(data)
+
+def NewGroup(request):
+	if request.is_ajax():
+		gname=request.GET.get('gname',None)
+		print(gname)
+		privacy=request.GET.get('privacy',None)
+		print(privacy)
+		Groups.objects.create(
+		gname=gname,
+		privacy=privacy
+		)
+		data = {'is_valid': True,'gname':gname}
+		return JsonResponse(data)
+
 #Comment this
 def index(request):
 	if request.user.is_authenticated:
@@ -243,7 +277,7 @@ class  FriendView(generic.DetailView):
 	def get_context_data(self,**kwargs):
 		context=super(FriendView,self).get_context_data(**kwargs)
 		searched_by=self.request.user.username
-		context['status_object']=Status.objects.filter(username=User.objects.get(username=context['User'].username))
+		context['status_object']=Status.objects.filter(username=User.objects.get(username=context['User'].username)).order_by('-time')
 		comment_list=list()
 		numberOfComments=list()
 		for x in context['status_object']:
@@ -341,45 +375,24 @@ def user_messages(request):
 #3 unfriends( means already friends)
 
 def AddFriend(request):
-	print("incoming")
 	if request.is_ajax():
 		fuser=request.GET.get('fuser',None)
 		type=request.GET.get('type',None)
 		user=request.user.username
-		print(user)
-		print(fuser)
-		print(type)
 		user_obj=User.objects.get(username=user)
-		print(type)
 		fuser_obj=User.objects.get(username=fuser)
-		print("mytype")
-		print("in")
 		##check again these conditions to make it more secure and reliable
 		#not completed
 		if type=='0':
-			print("created relation")
 			FriendsWith.objects.create(username=user_obj,fusername=fuser_obj)
 		elif type=='1' or type=='3':
-			print("deleted")
 			#write code to update te result
 			abc=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj))
 			FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj)).delete()
-			if abc.exists():
-				print("done13")
-			else:
-				print("not ok13")
 		elif type=='2':
-			print("updation in progress")
-			print(user)
-			print(fuser)
 			FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj)).update(confirm_request=2)
 			abc=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj))
-			if abc.exists():
-				print("done2")
-			else:
-				print("not ok2")
 		result=1
-		print("ok")
 		return JsonResponse(result,safe=False)
 
 def AddComment(request):
