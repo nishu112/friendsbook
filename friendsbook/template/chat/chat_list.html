@@ -47,9 +47,10 @@ function showUser(fuser) {
 		var data=JSON.parse( data );
 		$.each (data, function (val) {
 		if('{{user.username}}'==data[val].fields.username)
-        content+='<span data-placement="right" data-toggle="tooltip" title="'+data[val].fields.time+'"> <p class="msg_style text-right list-group-item">' + data[val].fields.text + '</p></span>'
+        content+='<p class=" text-right list-group-item"> <span data-placement="left" data-toggle="tooltip" title="'+data[val].fields.time+'" >'+data[val].fields.text+'</span></p>'
+																														
 		else
-		content+='<span data-placement="right" data-toggle="tooltip" title="'+data[val].fields.time+'">  <p class="msg_style text-left list-group-item">' + data[val].fields.text + '</p></span>'
+		content+='<p class=" text-left list-group-item"> <span data-placement="right" data-toggle="tooltip" title="'+data[val].fields.time+'" >'+data[val].fields.text+'</span></p>'
 		});
 		$("#msg-list").html(content);
 		//alert(document.getElementById("msg-list").scrollHeight);
