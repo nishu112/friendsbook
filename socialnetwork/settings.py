@@ -20,6 +20,7 @@ SETTINGS_DIR = os.path.dirname(__file__)
 PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
 PROJECT_PATH = os.path.abspath(PROJECT_PATH)
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -45,7 +46,6 @@ INSTALLED_APPS = [
 	'friendsbook',
 	'channels',
 	'django_ajax',
-	
 ]
 
 
