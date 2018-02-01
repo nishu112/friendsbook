@@ -6,10 +6,7 @@ color: white;
 .add_friendbutton button{
 float: right;
 }
-@media (min-width: 768px)
-.container-fluid>.navbar-collapse, .container-fluid>.navbar-header, .container>.navbar-collapse, .container>.navbar-header {
-    margin-right: 0;
-    
+
 
 .group_input_fields{
 	display: block;
