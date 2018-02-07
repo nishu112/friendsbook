@@ -17,7 +17,7 @@
 					<button class="button3">Friends</button>
 					<button class="button4">Photos</button>
 					<button class="button5">More</button>
-					
+					{% ifequal User.username.username user.username  %}
 					<div class="button6" style="margin-bottom: 20px;">
 						<button type="button" class="btn btn-primary js-upload-photos">
 						  <span class="glyphicon glyphicon-cloud-upload"></span> Upload photos
@@ -26,7 +26,8 @@
 							   style="display: none;"
 							   data-url="{%url 'UpdateCover'%}"
 							   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'/>
-					</div>				
+					</div>	
+					{%endifequal%}
 					
 					<p class="name">{{User.username.profile.fname}} {%if User.username.profile.lname%}{{User.username.profile.lname}}{%endif%}</p>
 						<div class="pic">

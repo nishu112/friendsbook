@@ -9,7 +9,7 @@
       <a class="navbar-brand " href="/"><font size="3">Friendsbook</font></a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
-				<form class="navbar-form navbar-left" id="searchform" action="{% url 'profiles' %}" method="GET" >{%csrf_token%}
+				<form class="navbar-form navbar-left" id="searchform" action="{% url 'profiles' %}" method="GET" >
 					<div class="input-group">
 						<input type="text" autocomplete="off" id="livesearch" onkeyup="showLiveResult(this.value)" size="30" class="form-control" placeholder="Search" name="search_user">
 							<div class="input-group-btn">
