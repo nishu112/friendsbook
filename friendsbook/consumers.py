@@ -9,7 +9,6 @@ import getpass
 @channel_session_user_from_http
 def ws_connect(message):
     #print("connected")
-    print(message.user.username)
     LoggedInUser.objects.get_or_create(user=User.objects.get(username=message.user.username))
     data=LoggedInUser.objects.all()
     Group('users').add(message.reply_channel)
@@ -36,13 +35,14 @@ def ws_receive(message):
     text=val['text']
     user_obj=User.objects.get(username=user)
     fuser_obj=User.objects.get(username=fuser)
-    Message.objects.create(username=user_obj,fusername=fuser_obj,text=text)
+    obj=Message.objects.create(username=user_obj,fusername=fuser_obj,text=text)
     Group(user).send({
         'text': json.dumps({
             'type':'message',
             'text':text,
             'user':user,
-            'fuser':fuser
+            'fuser':fuser,
+            'time':str(obj.time)
         })
     })
     Group(fuser).send({
@@ -50,7 +50,8 @@ def ws_receive(message):
             'type':'message',
             'text':text,
             'user':user,
-            'fuser':user
+            'fuser':user,
+            'time':str(obj.time)
         })
     })
 

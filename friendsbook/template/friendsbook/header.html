@@ -17,25 +17,29 @@
 									<i class="glyphicon glyphicon-search"></i>
 								</button>
 							</div>
-					<!--
-							
-							show results are not working 
+							<!--
+
+							show results are not working
 							correct this
 							<div style="display: block; margin-left: -305px; margin-top:35px;border: 0px;width:500px;" id="liveSearchResult" class="liveSearchResult">
 							</div>
 							-->
 					</div>
 				</form>
+
+
 	      <ul class="mynav_content nav navbar-nav navbar-right ">
 	        {% if user.is_authenticated %}
 							<li><a href="/"><div   class="glyphicon glyphicon-user">{{user.username}}</div></a></li>
-						{%endif%}
+					{%endif%}
 						<li><a href={% url 'user_list'%}><div class="glyphicon glyphicon-globe"></div>  </a></li>
 						<li><a href={% url 'user_list'%}>Chat Room</a></li>
-
 						<li><a href={% url 'new_post'%}>Create Post</a></li>
 						<li><a href={% url 'logout' %}><div class="glyphicon glyphicon-log-in"></div> Logout</a></li>
 	      </ul>
     </div>
   </div>
 </nav>
+
+<div style="display: block; margin-left:220px;margin-top:50px;border: 0px;width:270px;background-color:white;" id="liveSearchResult" class="liveSearchResult">
+</div>

@@ -7,7 +7,6 @@ color: white;
 float: right;
 }
 
-
 .group_input_fields{
 	display: block;
     width: 50%;
@@ -273,13 +272,26 @@ div.myautoscroll:hover {
 	top:270px;
 	right:30px;
 	position:absolute;
-	margin-right:219px;
-	
-	
-	
-	
-	
+	margin-right:219px;	
 }
+
+ .friends_list_pic{
+	     float: left;
+    margin-top: -9px;
+ }
+ .friends_list_addFriends{
+	     float: right;
+    margin-top: -21px;
+ }
+	
+.intro{
+	background-color:white;
+	width:80%;
+	height:250px;
+	position:absolute;	
+	padding-left: 5%;
+}
+
 .name{
 	
 left:240px;
@@ -303,10 +315,42 @@ position:absolute;
 	
 }
 
+.button7{
+	
+	margin-top: -39px;
+	position:absolute;
+	margin-right:560px;
+	
+    color: white;
+	width:200px;
+	height:40px;
+}
+
+
 
 
 .btn-group{
 	top:255px;
 	right:-210px;
 	margin-right:460px;	
+}
+
+ul.djng-form-errors {
+        margin-left: 0;
+        display: inline-block;
+        list-style-type: none;
+}
+ul.djng-form-errors li.invalid {
+        color: #e9322d;
+}
+ul.djng-form-errors li.invalid:before {
+        content: "\2716\20";  /* adds a red cross before the error message */
+}
+ul.djng-form-errors li.valid:before {
+        color: #00c900;
+        content: "\2714";  /* adds a green tick */
+}
+
+label.djng-field-required::after {
+    content: "\00a0*";
 }

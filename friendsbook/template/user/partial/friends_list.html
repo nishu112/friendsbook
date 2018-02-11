@@ -1,0 +1,26 @@
+	<div class="well">
+		<div class="row">
+			<h1>  <strong>Friend List: </strong></h1>
+		</div>
+		
+		<div class="row">
+		
+		{%for friend in friends_list%}
+			<div class="col-sm-6">		
+				<div class="well">
+					<div class="friends_list_pic">
+						<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+					</div>
+					<div>
+						<span>{{friend.fname}}</span>
+					</div>
+					<div class="friends_list_addFriends">
+						<button type="button">Add friends</button>
+					</div>
+					
+				</div>
+			</div>
+		{%endfor%}
+			
+		</div>
+	</div>				

@@ -1,0 +1,104 @@
+{% extends "friendsbook/structure.html" %}
+{% block content %}
+
+<div class="container"><br><br><br>
+	<div class="row">
+		<div class="col-sm-9">
+			<div class="row ">
+				<div class="background_pic_design">
+				
+					{%if User.profileCover.image%}
+						<div class="cover_background" style='background-image: url("{{User.profileCover.image.url}}");'>
+					{%else%}
+						<div class="cover_background" style='background-image: url("/static/img/cover.jpg");"'>
+					{%endif%}
+					<button class="button1">Timeline</button>								
+					<button class="button2">About</button>
+					<button class="button3">Friends</button>
+					<button class="button4">Photos</button>
+					<button class="button5">More</button>
+					
+					<div class="button6" style="margin-bottom: 20px;">
+						<button type="button" class="btn btn-primary js-upload-photos">
+						  <span class="glyphicon glyphicon-cloud-upload"></span> Upload photos
+						</button>
+						<input id="fileupload" type="file" name="image" 
+							   style="display: none;"
+							   data-url="{%url 'UpdateCover'%}"
+							   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'/>
+					</div>				
+					
+					<p class="name">{{User.username.profile.fname}} {%if User.username.profile.lname%}{{User.username.profile.lname}}{%endif%}</p>
+						<div class="pic"  onmouseout="notdisplaychangebutton()" onmouseover="displaychangebutton()">
+						{%if User.sid%}
+									{%if User.sid.image%}
+										<img class="img-rounded" src="{{ User.sid.image.url}}" alt="My image" width="200" height="200"/>
+									{%endif%}
+						{%else%}
+							<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="200" height="200"/>
+						{%endif%}
+						<button class="button7" id="mypic" >Update Profile Picture </button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			<!---
+			-->
+			
+			
+			<div class="row">
+				<div class="col-sm-5">				
+					<div class ="intro" >
+						<h4><img src="/static/img/introicon.png" width="25px" height="25px"><strong>&nbsp&nbspIntro</strong></h4>
+						<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudying at</p>
+						<p><img src="/static/img/images.png" width="20px" height="20px">&nbsp&nbspLives in </p>
+						<p><img src="/static/img/color-icons-green-home.png" width="20px" height="20px">&nbsp&nbspFrom</p>
+						<p><img src="/static/img/born.png" width="20px" height="20px">&nbsp&nbsp Born in</p>					
+					</div>
+				</div>
+				<div class="col-sm-7">
+					<div class="well">
+						<br>
+						<h1>Space for create post</h1>
+						<div class="row">
+							<div class="col-sm-12">
+								{%include "uposts/only_post.html" %}<br>	
+							</div>
+						</div>
+						
+					</div>
+				</div> 
+			</div>
+	
+			
+			
+		</div>
+		<div class="col-sm-1">
+		</div>
+		<div class="col-sm-2">
+			{%include "chat/online_user_list.html"%}
+		</div>
+	</div>
+	
+</div>
+  
+
+
+
+<script>
+function displaychangebutton(){
+var prop='display:block;opacity:1;background-color: #008CBA;color: white;'
+console.log(prop)
+console.log(document.getElementById('mypic'));
+document.getElementById('mypic').style.display='block'
+
+}
+
+function notdisplaychangebutton(){
+document.getElementById('mypic').style.display='none'
+console.log("'!!!!!!")
+}
+</script>
+{% endblock %}

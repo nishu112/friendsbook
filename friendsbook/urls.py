@@ -5,6 +5,8 @@ from django.conf.urls import url
 from django.shortcuts import HttpResponse
 from . import views
 
+
+
 urlpatterns = [
     path(r'login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.logout, name='logout'),
@@ -15,9 +17,11 @@ urlpatterns = [
     url(r'^post/$', login_required(views.PostView.as_view()), name='post'),
     url(r'^post/create_post/$',login_required(views.create_post),name='new_post'),
     url(r'^post/(?P<slug>[\w+-]+)/$', login_required(views.PostDetailView.as_view()), name='post'),
-
 	path('findfriends/', login_required(views.FriendsView.as_view()), name='profiles'),
-    url(r'^users/(?P<slug>[\w.@+-]+)/$', login_required(views.FriendView.as_view()), name='profile_info'),
+    url(r'^users/profile/(?P<slug>[\w.@+-]+)/$', login_required(views.FriendView.as_view()), name='profile_info'),
+    url(r'^ajax/users/profile/friend_list/$', login_required(views.Timeline_friend_list), name='timeline_friend_list'),
+    url(r'^ajax/users/profile/photoframe/$', login_required(views.Timeline_photo_frame), name='timeline_photoframe'),
+    url(r'^ajax/users/profile/status/$', login_required(views.Timeline_posts), name='timeline_status'),
     path('ajax/AddFriend/', views.AddFriend, name='add_friend'),
     path('query/', views.query, name='query'),
     url(r'^ajax/validate_username/$', views.validate_username, name='validate_username'),
@@ -26,10 +30,10 @@ urlpatterns = [
     url(r'^ajax/messages/$', views.user_messages, name='user_messages'),
     url(r'^ajax/comment/$', views.AddComment, name='comment'),
     url(r'^ajax/deleteCommentPost/$', views.deleteCommentPost, name='deleteCommentPost'),
+	url(r'^ajax/UpdateProfile/$',views.UploadProfile.as_view(),name='UpdateProfile'),
     url(r'^ajax/UpdateCover/$',views.UploadCover.as_view(),name='UpdateCover'),
     url(r'^ajax/CreateGroup/$', login_required(views.NewGroup), name='NewGroup'),
     url(r'^chat-room/$', login_required(views.user_list), name='user_list'),
-
     #validate_username
 ]
 ## learn redirection so that you don't have to use login_required every time

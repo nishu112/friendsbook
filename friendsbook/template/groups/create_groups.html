@@ -12,7 +12,7 @@
 		<div class="container">
 			<div style="margin-bottom: 20px;">
 			
-			 <form id="create-new-group" >
+			 <form id="create-new-group" enctype="multipart/form-data" >{%csrf_token%}
 				  <div class="form-group">
 					<label for="id_gname">Group Name</label>
 					<input type="text" class="group_input_fields"  type="text" name="gname" maxlength="20" required id="id_gname" placeholder="Group Name">
@@ -52,7 +52,8 @@
             data : { 
 				'gname':gname,
 				'privacy':privacy,
-				csrftokenmiddleware:'{{csrf_token}}'
+				csrfmiddlewaretoken:'{{csrf_token}}',
+				
 				},
 			dataType: 'json',
             success : function(json) {   
