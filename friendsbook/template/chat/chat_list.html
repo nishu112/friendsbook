@@ -1,70 +1,105 @@
 {% extends "friendsbook/structure.html" %}
+{% load static %}
+{% block head %}
+	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
+{% endblock head %}
 {% block content %}
 		<div class="row"><br><br><br><br>
-			<div class="col-sm-2">
+			<large>Messenger</large>
+		</div>
+		<div class="row">
+			<div class="col-sm-3">
 			 <!-- Great, til you resize. -->
 				{%include "chat/online_user_list.html"%}
 			<!--<div class="well bs-sidebar affix" id="sidebar" style="background-color:#fff">-->
 			</div>
-			<div class="col-sm-1"></div>
-			<div class="col-sm-5">
-			<div id="msg_container" class='container-fluid' style="background-color:#fff ">	
-				 
-				 <div id ="msg-list" class="msg-list">
-				<p>No messages to display</p>
-				</div>
-				<form id="chatform" method="POST" action="">{%csrf_token%}
-					<div id="chat-bottom" class="input-group">
-						<input type="text" autocomplete="off" id="text_message" name="chat-msg" class="form-control"/>
-						<span class="input-group-btn">
-							<input class="btn btn-default" id="send" type="submit" value="Send"/>
-						</span>
-					</div>
-				</form>
-			</div>	
-			</div> 
+			<div class="col-sm-6">
+			<div id="msg_container" class='container-fluid msg_container' style="background-color:#fff ">
+					{% block message_content %}
+					{% endblock message_content %}
+
+			</div>
+			</div>
 			<div class="col-sm-2">
-			</div> 
-			<div class="col-sm-2">
-				
-			</div> 
-		
+			</div>
+
+
 		</div>
 <script>
 
-	
-function showUser(fuser) {
+</script>
+{% endblock content %}
+
+
+{% block javascript%}
+<script>
+(function( $ ){
+	$('[data-toggle="tooltip"]').tooltip();
+	console.log("Nope");
+ var chat_with="";
+ var prev="";
+	$('.users-list a').on('click',function(){
+		console.log($(this));
+
+
+		if(chat_with!="")
+			{
+				console.log($(prev));
+				$(prev).removeClass('active');
+				console.log('hmm');
+			}
+	$(this).addClass('active');
+	prev=this;
+	var fuser=$(this).attr('target');
 	chat_with=fuser;
-	console.log(fuser+'selected');
+
 	$.ajax({
-        url: '/ajax/messages',
-		   
-        data:{'fuser':fuser,
-        },
-        dataType: 'json',
-        success: function (data) {
+				url: '/ajax/messages',
+
+				data:{'fuser':fuser,
+				},
+				dataType: 'json',
+				success: function (data) {
 		var content="";
 		var data=JSON.parse( data );
 		$.each (data, function (val) {
 		if('{{user.username}}'==data[val].fields.username)
-        content+='<p class=" text-right list-group-item"> <span data-placement="left" data-toggle="tooltip" title="'+data[val].fields.time+'" >'+data[val].fields.text+'</span></p>'
-																														
+				content+='<p class=" text-right list-group-item"> <span data-placement="left" data-toggle="tooltip" title="'+data[val].fields.time+'" >'+data[val].fields.text+'</span></p>'
+
 		else
 		content+='<p class=" text-left list-group-item"> <span data-placement="right" data-toggle="tooltip" title="'+data[val].fields.time+'" >'+data[val].fields.text+'</span></p>'
 		});
 		$("#msg-list").html(content);
 		//alert(document.getElementById("msg-list").scrollHeight);
 		$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
-		$(document).ready(function(){
-		$('[data-toggle="tooltip"]').tooltip();   
-		});
-        }
-      });
-    }
+		$('[data-toggle="tooltip"]').tooltip();
+	}
+	});
+
+
+	});
+
+
+	$("#chatform").on("submit", function(event) {
+	if(chat_with=="")
+		{alert("please select the user");return;}
+	var text=document.getElementById("text_message").value;
+
+	var fuser=chat_with;
+	var user='{{user.username}}';
+
+	var message ={
+		text,fuser,user
+	};
+			socket.send(JSON.stringify(message));
+			document.getElementById("text_message").value="";
+			return false;
+	});
+
+})( jQuery );
+
+
+
 
 </script>
-{% endblock content %}
-
-{% block javascript%}
-
  {%endblock%}

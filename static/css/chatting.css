@@ -1,0 +1,12 @@
+.users-list {
+    height: 85vh;
+    overflow-y: auto;
+}
+#msg-list { overflow-y:auto;
+		margin-top:10px;
+		height:75vh;
+		margin-bottom:4px;}
+#chatform {margin-bottom:4px;}
+.msg_container{
+	
+}

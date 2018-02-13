@@ -1,0 +1,15 @@
+{% extends "chat/chat_list.html" %}
+{% block message_content %}
+<div id ="msg-list" class="msg-list">
+				<h4>This is the begining of a great new conversation.</h4>
+				<p>Let's get started now!</p>
+</div>
+				<form id="chatform" method="POST" action="">{%csrf_token%}
+					<div id="chat-bottom" class="input-group">
+						<input type="text" autocomplete="off" id="text_message" name="chat-msg" class="form-control"/>
+						<span class="input-group-btn">
+							<input class="btn btn-default" id="send" type="submit" value="Send"/>
+						</span>
+					</div>
+				</form>
+{%endblock message_content%}

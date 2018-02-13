@@ -1,32 +1,21 @@
-				<div class="sidebar-nav-fixed affix">
-					<div class="well bs-sidebar" id="sidebar" style="background-color:#fff">			
-						<ul class="nav nav-pills nav-stacked" name="chat_with" id="chat_user" size="8" onchange="showUser(this.value)" >
-						{% for user_obj in users %}
+				<div class="list-group users-list" style="position:fixed">
+				  {% for user_obj in users %}
 						{%if user.username !=  user_obj.username %}
-							<li>
-								<a  href="javascript:void(0)" id='{{user_obj}}'  onclick="showUser('{{user_obj}}')">
-								<div class="profile">
-									<div class="profile_pic">
-										{%if user_obj.profile.sid%}
-										<img class="img-rounded"  src="{{user_obj.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+					<a href="javascript:void(0)" target='{{user_obj}}'  class="list-group-item">
+
+					  {%if user_obj.profile.sid%}
+										<img class="img-rounded" style=" border-radius: 50%;"  src="{{user_obj.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
 										{%else%}
-										<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+										<img class="conversation-portrait" src="/static/img/user.png" alt="My image" width="42" height="42"/>
 										{%endif%}
-									</div>
-									<div data-username="{{ user_obj|escape }}" class="online">
+
+					  {{ user_obj.profile.fname}}{%if user_obj.profile.lname%} {{user_obj.profile.lname}} {%endif%}
+						<div data-username="{{ user_obj|escape }}" class="online">
 										{%ifequal user_obj.status|slugify "online"%}
 										<span style="background: rgb(66, 183, 42); border-radius: 50%; float:right; height: 6px;display: inline-block; margin-left: 4px;margin-top: 17px; width: 6px;"></span>
 										{% endifequal %}
 									</div>
-									<div class="profile_name">
-										{{ user_obj.profile.fname}}{%if user_obj.profile.lname%} {{user_obj.profile.lname}} {%endif%}
-									</div>								
-									
-								</div>
-								</a>
-							</li>
-							{%endif%}
-							{% endfor %}
-						</ul>
-					</div><!--col-sm-2-->
+					</a>
+						{%endif%}
+				  {% endfor %}
 				</div>

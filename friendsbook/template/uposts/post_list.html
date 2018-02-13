@@ -1,13 +1,21 @@
 {% extends "friendsbook/structure.html" %}
+{% load static %}
+{%block head%}
+	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
+	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
+{%endblock head%}
 {% block content %}
 
-	<div class="row"><br><br><br><br>	
+	<div class="row"><br><br><br><br>
 			<div class="col-sm-2">
-			 {%include "groups/group_list.html"%}			 
+			 {%include "groups/group_list.html"%}
 			</div>
-			<div class="col-sm-5">	
-			{%include "uposts/only_post.html" %}<br>	
-			</div> 
+			<div class="col-sm-5">
+			{%include "uposts/only_post.html" %}<br>
+			<div class="load" syle="position:center;">
+			     <img src="/static/img/loading.gif">
+			</div>
+			</div>
 			<div class="col-sm-2">
 				<div class="container">
 					<div class="row">
@@ -16,20 +24,111 @@
 						</div>
 					</div>
 				</div>
-			</div> 
-			<div class="col-sm-1"></div>
-			<div class="col-sm-2">
+			</div>
+			<div class="col-sm-3">
 			{%include "chat/online_user_list.html"%}
-			</div> 
+			</div>
+
 	</div>
-	
-  
+
+
 {%endblock%}
 
 {%block javascript%}
 <script>
+function comment(obj){
+sid=obj.parentNode.parentNode.parentNode.parentNode.id;
+commentid='comment-'+sid;
+text=document.getElementById(commentid).value;
+if(text=="")	return;
+$.ajax({
+url: '/ajax/comment/',
+data:{
+	'text':text,
+	'sid':sid
+},
+dataType: 'json',
+success: function (data) {
+	if( data!=0){
+		$('#Allcomments'+sid).append("<p> {{user.username}} :"+data +"</p>");
+		document.getElementById(commentid).value="";
+		}
+	else
+		alert("not send");
+	}
+});
+}
+
+function like(obj) {
+var type=obj.id;
+console.log(type);
+//4 times for comment likes
+//3 times for post like
+if(obj.id=='comment_like')
+	{id=obj.parentNode.parentNode.parentNode.parentNode.id;
+	likeid='comment-'+id;
+	}
+else
+	{id=obj.parentNode.parentNode.parentNode.id;
+	likeid='like-'+id;
+	}
+console.log(id);
+$.ajax({
+	url: '/ajax/like_post/',
+	data:{
+		'id':id,
+		'type':type
+	},
+	dataType: 'json',
+	success: function (data) {
+		if( data!=0)
+			document.getElementById(likeid).innerHTML=data;
+		else
+			document.getElementById(likeid).innerHTML="";
+	}
+	});
+}
+
+function change_post_comment(obj){
+	type=obj.parentNode.parentNode.parentNode.id;
+	alert("are u sure?");
+	var id;
+	if(type=="status")
+		id=obj.parentNode.parentNode.parentNode.parentNode.parentNode.id;
+	else if(type=="comment")
+		id=obj.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id;
+	else
+		{console.log('error while getting the id');
+		return;
+		}
+	console.log(type);
+	console.log(id);
+	$.ajax({
+		url:'/ajax/deleteCommentPost/',
+		data:{
+		'id':id,
+		'type':type
+		},
+		dataType:'json',
+		success:function(data){
+			if(type=="status")
+			document.getElementById(id).style.display="none";
+			if(type=="comment")
+			document.getElementById(id)="";
+			}
+		});
+}
+function showcomment(obj){
+	id=obj.parentNode.parentNode.parentNode.id;
+	id='comment_class'+id;
+	var isDisplayBlock=document.getElementById(id).style.display;
+	if(isDisplayBlock=="none")
+	document.getElementById(id).style.display="block";
+	else
+	document.getElementById(id).style.display="none";
+
+	}
 
 </script>
 
 {% endblock %}
-

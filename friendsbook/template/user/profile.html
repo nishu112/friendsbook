@@ -73,8 +73,7 @@
 					</div>
 				</div>
 				<div class="col-sm-7">
-						<br>
-						<h1>Space for create post</h1>
+						
 						<div class="row">
 							<div class="col-sm-12">
 								{%include "uposts/only_post.html" %}<br>
@@ -109,8 +108,12 @@
 
 <script>
 function profileshowfriendlist(){
+	var pathurl='{{request.path}}';
 	$.ajax({
         url: '/ajax/users/profile/friend_list/',
+		data:{
+					pathurl:pathurl
+				},
 		type:'get',
         dataType: 'json',
         success: function (data) {
@@ -122,8 +125,13 @@ function profileshowfriendlist(){
     }
 
 function profileshowphoto(){
+	var pathurl='{{request.path}}';
+	console.log(pathurl);
 	$.ajax({
         url: '/ajax/users/profile/photoframe/',
+		data:{
+					pathurl:pathurl
+				},
 		type:'get',
         dataType: 'json',
         success: function (data) {

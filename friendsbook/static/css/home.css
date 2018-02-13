@@ -51,7 +51,7 @@ float: right;
 
 
 #sidebar ul{ overflow-y:auto;
-			height:75vh;
+
 			margin-bottom:4px;
 }
 #msg-list { overflow-y:auto;

@@ -14,6 +14,7 @@ from .forms import *
 from .import views
 import json
 from django.contrib.auth.forms import UserCreationForm
+
 from django.http import JsonResponse
 from django.db.models import Q
 from django.core import serializers
@@ -45,6 +46,18 @@ def group_list(request):
 	groups=Groups.objects.all()
 	return groups
 
+class GroupsView(generic.DetailView):
+	model = Groups
+
+	def get_queryset(self):
+		user=self.request.user.username
+		user=Groups.objects.get(username=user)
+		return Groups.objects.all().select_related('username').order_by('-time')
+
+	def get_context_data(self, **kwargs):
+		context = super(GroupView,self).get_context_data(**kwargs)
+		return context
+
 
 def user_list_data(request):
 	users = User.objects.select_related('logged_in_user')
@@ -55,10 +68,8 @@ def user_list_data(request):
 def user_list(request):
 	users=user_list_data(request)
 
-	return render(request, 'chat/chat_list.html', {'users': users})
+	return render(request, 'chat/main_chat.html', {'users': users})
 	#remove these lines
-	users = Profile.objects.select_related('username')
-	return render(request, 'chat/chat_list.html', {'users': users})
 
 ##searching of user
 
@@ -308,6 +319,13 @@ def Timeline_friend_list(request):
 	template_name="user/partial/friends_list.html"
 	print('hello')
 	if request.method == 'GET':
+		str=request.GET.get('pathurl')
+		currentusersearch=str.split("/")
+		currentusersearch=(currentusersearch[3].split("-")[0])
+		user=User.objects.get(username=currentusersearch)
+		print(currentusersearch)
+		print(user)
+		#Write query for friends list for a particular user
 		friends_list = Profile.objects.all()
 		friends_list = render_to_string(template_name, {'friends_list': friends_list})
 	return JsonResponse(friends_list,safe=False)
@@ -316,7 +334,11 @@ def Timeline_photo_frame(request):
 	template_name="user/partial/photo_frame.html"
 	print('hello')
 	if request.method == 'GET':
-		photo_albums = Status.objects.all()
+		str=request.GET.get('pathurl')
+		currentusersearch=str.split("/")
+		currentusersearch=(currentusersearch[3].split("-")[0])
+		user=User.objects.get(username=currentusersearch)
+		photo_albums = Status.objects.filter(username=user)
 		photo_albums = render_to_string(template_name, {'photo_albums': photo_albums})
 		return JsonResponse(photo_albums,safe=False)
 
