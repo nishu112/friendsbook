@@ -1,231 +1,85 @@
 
- <div class='container-fluid post_style_box'  id={{status.id}}>
-	<div class="upper_post">
-    {% ifequal status.username.username user.username  %}
-    <div class="edit_delete" id="status">
-			<div class="dropdown">
-			  <button type="submit" class="edit_button_icon" >
-				<span class="glyphicon glyphicon-chevron-down"></span>
-			  </button>
-    			  <div class="dropdown-content" style="min-width: 60px;">
-    				<a href="javascript:void(0)" >Edit</a>
-    				<a href="javascript:void(0)" onclick="change_post_comment(this)" >Delete</a>
-    			  </div>
-			</div>
-		</div>
-    {% endifequal %}
-		{%if status.username.profile.sid%}
-			{%if status.username.profile.sid.image%}
-				<img class="img-rounded"  src="{{ status.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
-			{%endif%}
-		{%else%}
-				<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
-		{%endif%}
+ <li class='container-fluid post_style_box'  post-id={{status.id}} csrf="{{ csrf_token }}">
+   <div class="Status">
+    	<div class="upper_post">
+        {% ifequal status.username.username user.username  %}
+        <div class="edit_delete" id="status">
+    			<div class="dropdown">
+    			  <button type="submit" class="edit_button_icon" >
+    				<span class="glyphicon glyphicon-chevron-down"></span>
+    			  </button>
+        			  <div class="dropdown-content" style="min-width: 60px;">
+        				<a href="javascript:void(0)" >Edit</a>
+        				<a href="javascript:void(0)" class="delete_status" >Delete</a>
+        			  </div>
+    			</div>
+    		</div>
+        {% endifequal %}
+    		{%if status.username.profile.sid%}
+    			{%if status.username.profile.sid.image%}
+    				<img class="img-rounded"  src="{{ status.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+    			{%endif%}
+    		{%else%}
+    				<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+    		{%endif%}
 
 
 
-		 <a href="{% url 'profile_info' status.username.profile.slug %}">{{status.username.profile.fname}}</a>  {{status.title}}
-		 {% if status.gid %}
-			group {{status.gid}}
-		 {% endif %}<br>
-		 {{status.time}}<br>
-		 {% if status.text %}
+    		 <a href="{% url 'profile_info' status.username.profile.slug %}">{{status.username.profile.fname}}</a>  {{status.title}}
+    		 {% if status.gid %}
+    			group {{status.gid}}
+    		 {% endif %}<br>
+    		 {{status.time}}<br>
+    		 {% if status.text %}
 
-			<br>{{status.text}}<br>
-		 {% endif %}
-		 {% if status.image  %}<br>
-			{% if ".jpg" in status.image.url or ".jpeg" in status.image.url or ".tif" in status.image.url or   ".png" in status.image.url or ".gif" in status.image.url %}
-      <a href="#"  data-toggle="modal" data-target="#status-{{status.id}}" ><img class="img-rounded"  src="{{ status.image.url}}" alt="My image" width="100%"/></a>
+    			<br>{{status.text}}<br>
+    		 {% endif %}
+    		 {% if status.image  %}<br>
+    			{% if ".jpg" in status.image.url or ".jpeg" in status.image.url or ".tif" in status.image.url or   ".png" in status.image.url or ".gif" in status.image.url %}
+          <a href="#"  data-toggle="modal" data-target="#status-{{status.id}}" ><img class="img-rounded"  src="{{ status.image.url}}" alt="My image" width="100%"/></a>
 
-			{% else %}
-				<video  controls class="video-js vjs-default-skin vjs-big-play-centered" width="100%"
-				height="360" >
-				<source src="{{ status.image.url}}" type="video/mp4"></video>
-			{% endif %}
-		 {% endif %}
-		 <div class="post_button">
-			<button class="glyphicon glyphicon-thumbs-up" id="post_like" style="margin-top:10px" type="button" onclick="like(this)" ></button>
-			<button style="margin-left:15px" type="button" onclick="showcomment(this)">Comment</button>
-			<span id="numberOfComments{{status.id}}">{%if numberOfComments%} {{numberOfComments}}{%endif%}</span>
-
-			<button style="margin-left:15px" type="button" onclick="">Share</button><br>
-		</div>
-			<p style="margin-top:10px" id='like-{{status.id}}'>{%if status.likes %}{{status.likes}}{%endif%} </p>
-
-	</div>
-	<div class="comment_class" id="comment_class{{status.id}}" style="display:none" >
-		<div id="comments" class="input-group">
-			<input style="margin-left:5px" type="text" id='comment-{{status.id}}'  class="form-control"/>
-			<span class="input-group-btn">
-				<input class="btn btn-default"  autocomplete="off" onclick="comment(this)" type="submit" value="comment"/>
-			</span>
-		</div>
-		<div id="Allcomments{{status.id}}" class="Allcomments">
-			{%for comment in comments%}
-				<div class="row" id="{{comment.slug}}">
-				<hr>
-					<div class="col-sm-2" >
-					{{comment.username}}
-					</div>
-					<div class="col-sm-10">
-						<div class="row">
-							{{comment.text}}
-						{%if comment.username.username == user.username%}
-						<div class="edit_delete" id="comment">
-							<div class="dropdown">
-							  <button type="submit" class="edit_button_icon" >
-								<span class="glyphicon glyphicon-option-vertical"></span>
-							  </button>
-							  <div class="dropdown-content" style="min-width: 60px;">
-								<a href="javascript:void(0)" >Edit</a>
-								<a href="javascript:void(0)" onclick="change_post_comment(this)" >Delete</a>
-							  </div>
-							</div>
-						</div>
-						{%endif%}
-						</div>
-						<div class="row">
-						<span >
-						<p id="comment-{{comment.slug}}">{%if comment.likes%}{{comment.likes}}{%endif%}</p>
-							<a class="" href="javascript:void(0)" role="button" id="comment_like" onclick="like(this)" tabindex="0">Like</a>
-							&nbsp;
-							<a class="" href="javascript:void(0)" role="button">Reply</a>
-						</span>
-						</div>
-					</div>
-					<div class="col-sm-2">
-
-					</div>
-				</div>
-
-			{% endfor %}
-		</div>
-	</div>
-</div>
+    			{% else %}
+    				<video  controls class="video-js vjs-default-skin vjs-big-play-centered" width="100%"
+    				height="360" >
+    				<source src="{{ status.image.url}}" type="video/mp4"></video>
+    			{% endif %}
+    		 {% endif %}
+    		 <div class="post_button">
 
 
-
-
-<div class="modal fade" id="status-{{status.id}}" role="dialog">
-    <div class="modal-dialog">
-
-      <!-- Modal content-->
-      <div class="modal-content">
-		<div class="well">
-
-			<div class="row">
-
-			<div class="col-sm-12">
-        <div class='container-fluid' style="background-color:#fff ;margin-bottom:50px;" id={{status.id}}>
-        <div class="upper_post">
-           {% ifequal status.username.username user.username  %}
-           <div class="edit_delete" id="status">
-            <div class="dropdown">
-              <button type="submit" class="edit_button_icon" >
-              <span class="glyphicon glyphicon-chevron-down"></span>
-              </button>
-                  <div class="dropdown-content" style="min-width: 60px;">
-                  <a href="javascript:void(0)" >Edit</a>
-                  <a href="javascript:void(0)" onclick="change_post_comment(this)" >Delete</a>
-                  </div>
-            </div>
-          </div>
-           {% endifequal %}
-          {%if status.username.profile.sid%}
-            {%if status.username.profile.sid.image%}
-              <img class="img-rounded"  src="{{ status.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
-            {%endif%}
-          {%else%}
-              <img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
-          {%endif%}
-
-
-
-           <a href="{% url 'profile_info' status.username.profile.slug %}">{{status.username.profile.fname}}</a>  {{status.title}}
-           {% if status.gid %}
-            group {{status.gid}}
-           {% endif %}<br>
-           {{status.time}}<br>
-           {% if status.text %}
-
-            <br>{{status.text}}<br>
+           {% if status.is_like %}
+             <a href="#" style="text-decoration: none;" class="like unlike" type="post_like">
+               <span class="glyphicon glyphicon-thumbs-up"></span>
+               <span class="text">Unlike</span>
+               (<span class="like-count">{%if status.likes %}{{status.likes}}{%endif%} </span>)
+             </a>
+           {% else %}
+             <a href="#" style="text-decoration: none;" class="like" type="post_like">
+               <span class="glyphicon glyphicon-thumbs-up"></span>
+               <span class="text">Like</span>
+               (<span class="like-count">{{status.likes}} </span>)
+             </a>
            {% endif %}
-           {% if status.image  %}<br>
-            {% if ".jpg" in status.image.url or ".jpeg" in status.image.url or ".tif" in status.image.url or   ".png" in status.image.url or ".gif" in status.image.url %}
-             <a href="#"  data-toggle="modal" data-target="#status-{{status.id}}" ><img class="img-rounded"  src="{{ status.image.url}}" alt="My image" width="100%"/></a>
+           &nbsp;&nbsp;
+           <a href="javascript:void(0)" style="text-decoration: none;" class="comment">
+             <span class="glyphicon glyphicon-comment"></span> Comment
+             (<span class="comment-count">{{status.comments}}</span>)
+           </a>
 
-            {% else %}
-              <video  controls class="video-js vjs-default-skin vjs-big-play-centered" width="100%"
-              height="360" >
-              <source src="{{ status.image.url}}" type="video/mp4"></video>
-            {% endif %}
-           {% endif %}
-           <div class="post_button">
-            <button class="glyphicon glyphicon-thumbs-up" id="post_like" style="margin-top:10px" type="button" onclick="like(this)" ></button>
-            <button style="margin-left:15px" type="button" onclick="showcomment(this)">Comment</button>
-            <span id="numberOfComments{{status.id}}">{%if numberOfComments%} {{numberOfComments}}{%endif%}</span>
+         </div>
+    	</div>
 
-            <button style="margin-left:15px" type="button" onclick="">Share</button><br>
-          </div>
-            <p style="margin-top:10px" id='like-{{status.id}}'>{%if status.likes %}{{status.likes}}{%endif%} </p>
+      <div class="comments" style="display:none">
+        <form role="form" method="post" action="" onsubmit="return false">
+          {% csrf_token %}
+          <input type="hidden" name="Status" value="{{status.id }}">
+          <input type="text" autocomplete="off" class="form-control input-sm" placeholder="Write a comment..." name="post" maxlength="255">
+        </form>
+
+        <div  class="Allcomments">
 
         </div>
-        <div class="comment_class" id="comment_class{{status.id}}" style="display:none" >
-          <div id="comments" class="input-group">
-            <input style="margin-left:5px" type="text" id='comment-{{status.id}}'  class="form-control"/>
-            <span class="input-group-btn">
-              <input class="btn btn-default"  autocomplete="off" onclick="comment(this)" type="submit" value="comment"/>
-            </span>
-          </div>
-          <div id="Allcomments{{status.id}}" class="Allcomments">
-            {%for comment in comments%}
-              <div class="row" id="{{comment.slug}}">
-              <hr>
-                <div class="col-sm-2" >
-                {{comment.username}}
-                </div>
-                <div class="col-sm-10">
-                  <div class="row">
-                    {{comment.text}}
-                  {%if comment.username.username == user.username%}
-                  <div class="edit_delete" id="comment">
-                    <div class="dropdown">
-                      <button type="submit" class="edit_button_icon" >
-                      <span class="glyphicon glyphicon-option-vertical"></span>
-                      </button>
-                      <div class="dropdown-content" style="min-width: 60px;">
-                      <a href="javascript:void(0)" >Edit</a>
-                      <a href="javascript:void(0)" onclick="change_post_comment(this)" >Delete</a>
-                      </div>
-                    </div>
-                  </div>
-                  {%endif%}
-                  </div>
-                  <div class="row">
-                  <span >
-                  <p id="comment-{{comment.slug}}">{%if comment.likes%}{{comment.likes}}{%endif%}</p>
-                    <a class="" href="javascript:void(0)" role="button" id="comment_like" onclick="like(this)" tabindex="0">Like</a>
-                    &nbsp;
-                    <a class="" href="javascript:void(0)" role="button">Reply</a>
-                  </span>
-                  </div>
-                </div>
-                <div class="col-sm-2">
-
-                </div>
-              </div>
-
-            {% endfor %}
-          </div>
-        </div>
-       </div>
-
-
-			</div>
-			</div>
-
-		</div>
-
       </div>
     </div>
-  </div>
+
+</li>

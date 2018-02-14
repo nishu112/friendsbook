@@ -1,41 +1,3 @@
-{% extends "friendsbook/structure.html" %}
-{% load static %}
-{%block head%}
-	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
-	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
-{%endblock head%}
-{% block content %}
-
-	<div class="row"><br><br><br><br>
-			<div class="col-sm-2">
-			 {%include "groups/group_list.html"%}
-			</div>
-			<div class="col-sm-5">
-			{%include "uposts/only_post.html" %}<br>
-			<div class="load" syle="position:center;">
-			     <img src="/static/img/loading.gif">
-			</div>
-			</div>
-			<div class="col-sm-2">
-				<div class="container">
-					<div class="row">
-						<div class="col-sm-12">
-						<p>Suggested friends</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-3">
-			{%include "chat/online_user_list.html"%}
-			</div>
-
-	</div>
-
-
-{%endblock%}
-
-{%block javascript%}
-<script>
 $(function () {
 
 	$("div.upper_post").on("click", ".like", function () {
@@ -226,9 +188,3 @@ $(".comments").on("keydown", "input[name='post']", function (evt){
  });
 
 });
-
-
-
-</script>
-
-{% endblock %}

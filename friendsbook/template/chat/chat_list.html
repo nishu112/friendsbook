@@ -81,10 +81,10 @@
 
 
 	$("#chatform").on("submit", function(event) {
-	if(chat_with=="")
-		{alert("please select the user");return;}
+	if(chat_with=="" )
+		{alert("please select the user");return false;}
 	var text=document.getElementById("text_message").value;
-
+if(text=="")	return false;
 	var fuser=chat_with;
 	var user='{{user.username}}';
 

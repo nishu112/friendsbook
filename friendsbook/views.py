@@ -26,21 +26,20 @@ from django.utils.encoding import force_text
 from django.template.loader import render_to_string
 
 
-def user_post(request,user,context):
-	comment_list=list()
-	numberOfComments=list()
-	for x in context['status_object']:
-		newcomment=Comment.objects.filter(sid=x.id)
-		numberOfComments.append(newcomment.count())
-		comment_list.append(newcomment)
-	context['status_object']=zip(context['status_object'],comment_list,numberOfComments)
+def user_post(request,user):
+	posts=Status.objects.all().select_related('username').order_by('-time')
+	# modify it to get all the timeline posts
+	for x in posts:
+		x.likes=StatusLikes.objects.filter(sid=x).count()
+		x.comments=Comment.objects.filter(sid=x).count()
+		x.is_like=StatusLikes.objects.filter(username=request.user,sid=x).count()
+	return posts
+
+def Check_user_online(request):
 	chatusers=User.objects.select_related('logged_in_user')
 	for user in chatusers:
 		user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
-	context['users']=chatusers
-	return context
-
-
+	return chatusers
 
 def group_list(request):
 	groups=Groups.objects.all()
@@ -68,8 +67,14 @@ def user_list_data(request):
 def user_list(request):
 	users=user_list_data(request)
 
-	return render(request, 'chat/main_chat.html', {'users': users})
+	return render(request, 'chat/main_chat.html', {'chatusers': users})
 	#remove these lines
+
+#get all the friends
+def FriendList(request,user):
+	friends=Profile.objects.all()
+	return friends
+
 
 ##searching of user
 
@@ -188,36 +193,18 @@ def logout(request):
 #    })
 
 
-class PostView(generic.ListView):
-	template_name='uposts/post_list.html'
-	context_object_name='status_object'
-#paginate_by = 10
-#use pagination to limit the number of post a user can see
-#update this view later
-	def get_queryset(self):
-		user=self.request.user.username
-		user=User.objects.get(username=user)
-		return Status.objects.all().select_related('username').order_by('-time')
+def home(request):
+	posts=user_post(request,request.user)
+	chatusers=Check_user_online(request)
+	groups=group_list(request)
+	return render(request,"home/index.html",{'posts':posts,'chatusers':chatusers,'groups':groups})
 
-	def get_context_data(self,**kwargs):
-		context=super(PostView,self).get_context_data(**kwargs)
-		context=user_post(self.request,self.request.user.username,context)
-		context['groups']=group_list(self.request)
-		return context
+def grouphome(request):
+	return render(request,"groups/index.html")
 
-class PostDetailView(generic.DetailView):
-	model=Status
-	context_object_name='status'
-	template_name='uposts/post_detail.html'
 
-	def get_queryset(self):
-		obj=FriendsView()
-		return Status.objects.all().select_related('username').order_by('-time')
 
-	def get_context_data(self,**kwargs):
-		context=super(PostDetailView,self).get_context_data(**kwargs)
-		context['users']=user_list_data(self.request)
-		return context
+
 
 
 class UploadProfile(View):
@@ -315,6 +302,20 @@ class FriendsView(generic.ListView):  ##print friendlist of user here
 		context=friends_list(self.request,self.request.user.username,context)
 		return context
 
+##this is for profile
+class  FriendView(generic.DetailView):
+	model=Profile
+	context_object_name='User'
+	template_name='user/profile.html'
+
+	def get_context_data(self,**kwargs):
+		context=super(FriendView,self).get_context_data(**kwargs)
+		context['posts']=user_post(self.request,context['User'].username)
+		searched_by=self.request.user.username
+		# modify it to show send friend request
+		context['chatusers']=Check_user_online(self.request)
+		return context
+
 def Timeline_friend_list(request):
 	template_name="user/partial/friends_list.html"
 	print('hello')
@@ -323,16 +324,13 @@ def Timeline_friend_list(request):
 		currentusersearch=str.split("/")
 		currentusersearch=(currentusersearch[3].split("-")[0])
 		user=User.objects.get(username=currentusersearch)
-		print(currentusersearch)
-		print(user)
 		#Write query for friends list for a particular user
-		friends_list = Profile.objects.all()
+		friends_list=FriendList(request,user)
 		friends_list = render_to_string(template_name, {'friends_list': friends_list})
 	return JsonResponse(friends_list,safe=False)
 
 def Timeline_photo_frame(request):
 	template_name="user/partial/photo_frame.html"
-	print('hello')
 	if request.method == 'GET':
 		str=request.GET.get('pathurl')
 		currentusersearch=str.split("/")
@@ -350,39 +348,11 @@ def Timeline_posts(request):
 		currentusersearch=str.split("/")
 		currentusersearch=(currentusersearch[3].split("-")[0])
 		user=User.objects.get(username=currentusersearch)
-		context={}
-		context['status_object']=Status.objects.filter(username=user).select_related('username').order_by('-time')
-		context=user_post(request,user.username,context)
-		status= render_to_string(template_name, {'status_object': context['status_object']})
+		posts=user_post(request,user)
+		status= render_to_string(template_name, {'posts': posts})
 		return JsonResponse(status,safe=False)
 
 
-##this is for profile
-class  FriendView(generic.DetailView):
-	model=Profile
-	context_object_name='User'
-	template_name='user/profile.html'
-
-	def get_context_data(self,**kwargs):
-		context=super(FriendView,self).get_context_data(**kwargs)
-		searched_by=self.request.user.username
-		context['status_object']=Status.objects.filter(username=User.objects.get(username=context['User'].username)).order_by('-time')
-		comment_list=list()
-		numberOfComments=list()
-		for x in context['status_object']:
-			newcomment=Comment.objects.filter(sid=x.id)
-			numberOfComments.append(newcomment.count())
-			if newcomment.exists():
-				print(newcomment)
-			comment_list.append(newcomment)
-		context['status_object']=zip(context['status_object'],comment_list,numberOfComments)
-		chatusers=User.objects.select_related('logged_in_user')
-		for user in chatusers:
-			user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
-		context['users']=chatusers
-		context['photo_albums']=Status.objects.filter(username=context['User'].username)
-		context['friends_list']=Profile.objects.all().select_related('username')
-		return context
 
 def liveSearch(request):
 	if request.is_ajax():
@@ -402,8 +372,10 @@ def validate_username(request):
 def like(request):
 	if request.is_ajax():
 		username = request.user.username
-		id=request.GET.get('id',None)
-		type=request.GET.get('type',None)
+		id=request.POST['id']
+		type=request.POST['type']
+		print(id)
+		print(type)
 		if type=="post_like":
 			check=StatusLikes.objects.filter(username=User.objects.get(username=username)).filter(sid=Status.objects.get(id=id))
 			likes=Status.objects.get(id=id).likes
@@ -417,31 +389,41 @@ def like(request):
 				likes=likes-1
 				Status.objects.filter(id=id).update(likes=likes)
 				StatusLikes.objects.filter(username=User.objects.get(username=username),sid=Status.objects.get(id=id)).delete()
-			return JsonResponse(likes,safe=False)
-		if type=="comment_like":
-			check=CommentLikes.objects.filter(username=User.objects.get(username=username)).filter(cid=Comment.objects.get(slug=id))
-			likes=Comment.objects.get(slug=id).likes
+			return HttpResponse(likes)
+		if type=="Comment_like":
+			print('not done')
+			check=CommentLikes.objects.filter(username=User.objects.get(username=username)).filter(cid=Comment.objects.get(id=id))
+			print('1 done')
+			likes=Comment.objects.get(id=id).likes
+			print('calculated')
 			if not check.exists():
 				#print("inside")
 				likes=likes+1
-				Comment.objects.filter(slug=id).update(likes=likes)
-				like=CommentLikes(username=User.objects.get(username=username),cid=Comment.objects.get(slug=id))
+				Comment.objects.filter(id=id).update(likes=likes)
+				like=CommentLikes(username=User.objects.get(username=username),cid=Comment.objects.get(id=id))
 				like.save()
 			else:
 				likes=likes-1
-				Comment.objects.filter(slug=id).update(likes=likes)
-				CommentLikes.objects.filter(username=User.objects.get(username=username),cid=Comment.objects.get(slug=id)).delete()
-			return JsonResponse(likes,safe=False)
+				Comment.objects.filter(id=id).update(likes=likes)
+				CommentLikes.objects.filter(username=User.objects.get(username=username),cid=Comment.objects.get(id=id)).delete()
+			print(likes)
+			print('check')
+			return HttpResponse(likes)
 
 #ajax
 def deleteCommentPost(request):
 	if request.is_ajax():
-		id=request.GET.get('id',None)
-		type=request.GET.get('type',None)
-		if type=='comment':
-			Comment.objects.get(slug=id).delete()
-		if type=='status':
+		id=request.POST['id']
+		type=request.POST['type']
+		print(id)
+		print('trying')
+		print(type)
+		if type=='delete_comment':
+			Comment.objects.get(id=id).delete()
+			print('Comment deleted')
+		if type=='delete_status':
 			Status.objects.get(id=id).delete()
+			print('status deleted')
 		response=1
 		return JsonResponse(response,safe=False)
 #ajax function
@@ -485,15 +467,30 @@ def AddFriend(request):
 		result=1
 		return JsonResponse(result,safe=False)
 
-def AddComment(request):
+
+def Comments(request):
 	if request.is_ajax():
-		username=request.user.username
-		text=request.GET.get('text',None)
-		sid=request.GET.get('sid',None)
-		user_obj=User.objects.get(username=username)
-		sid=Status.objects.get(id=sid)
-		Comment.objects.create(username=user_obj,text=text,sid=sid)
-		return JsonResponse(text,safe=False)
+		if request.method=="POST":
+			user=request.user
+			sid=request.POST['Status']
+			text=request.POST['post']
+			sid=Status.objects.get(id=sid)
+			comment=Comment.objects.create(username=user,text=text,sid=sid)
+			noOflikesonComment=CommentLikes.objects.filter(cid=comment.id)
+			likes=noOflikesonComment.count()
+			jsonobj=render_to_string('uposts/partials/comment.html', {'comment': comment,'likes':likes},request)
+			return JsonResponse(jsonobj,safe=False)
+		else:
+			sid=request.GET.get('sid',None)
+			comments=Comment.objects.filter(sid=Status.objects.get(id=sid)).select_related('username')
+			for x in comments:
+				x.likes=CommentLikes.objects.filter(cid=x.id).count()
+				x.is_like=CommentLikes.objects.filter(cid=x.id,username=request.user).count()
+
+			jsonobj=render_to_string('uposts/partials/comments.html', {'comments': comments},request)
+			return JsonResponse(jsonobj,safe=False)
+			#below methods are not working? because of some unknown issues
+			return render(request, 'uposts/partials/comments.html',{'comments': comments})
 
 class PartialGroupView(TemplateView):
 	def get_context_data(self, **kwargs):

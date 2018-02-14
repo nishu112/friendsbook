@@ -11,19 +11,15 @@
 	<link rel="stylesheet" href="{% static 'css/notification.css' %}" type = "text/css"/>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	{% block head %}
 
 	{% endblock head %}
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
 
 </head>
 
 <body  style="">
-
-
 
 {%include "friendsbook/header.html"%}
 <div class="container">
@@ -34,9 +30,6 @@
 </div>
 
 
-	<script  src="{% static 'custom/javscript.js'%}"></script>
-	<script src="{% static 'js/bootstrap.js' %}"></script>
-
 
 	<script src="{% static 'custom/home.js' %}"></script>
 	<script src="{% static 'js/profile/profile.js' %}"></script>
@@ -46,6 +39,9 @@
   <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
   <script src="{% static 'js/js/basic-upload.js' %}"></script>
   <script src="{% static 'custom/messaging.js' %}" type="text/javascript"></script>
+
+
+
   <script>
 
 
@@ -82,7 +78,7 @@
 	  var text = data['text'];
 	  var fuser = data['fuser'];
    console.log('send');
-	  
+
 		console.log("not")
 	  if('{{user.username}}'==user)
       $('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+data['time']+'"> <p class=" text-right list-group-item">' +data['text'] + '</p></span>')
@@ -98,12 +94,11 @@
     if (socket.readyState == WebSocket.OPEN) {
       socket.onopen();
     }
-
-
-
   </script>
+
 	  {% block javascript %}
 		{% endblock  %}
+
 
 </body>
 

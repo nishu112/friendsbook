@@ -1,0 +1,88 @@
+{% extends "friendsbook/structure.html" %}
+{% block content %}
+{% load static %}
+{%block head%}
+	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
+	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
+	<link href="{% static 'css/pages/cover.css' %}" rel="stylesheet">
+	<link href="{% static 'css/pages/group/navigation.css' %}" rel="stylesheet">
+{%endblock head%}
+<div class="container"><br><br><br>
+
+	<div class="row">
+		<div class="col-sm-9">
+			<div class="row ">
+				<div class="col-sm-2 well" style="background-color:#fff">
+					<div style="font-weight:bold ;text-align: center;">Gname
+					</div>
+					<ul class="nav ">
+						<li><a href="javascript:void(0)">About</a></li>
+						<li><a href="javascript:void(0)">Members</a></li>
+						<li><a href="javascript:void(0)">Video</a></li>
+						<li><a href="javascript:void(0)">Photo</a></li>
+						<li><a href="javascript:void(0)">Files</a></li>
+						<li><a href="javascript:void(0)">Manage </a></li>
+
+					</ul>
+				</div>
+			  <div class="col-sm-10">
+					<div class="background_pic_design" style="height:280px">
+						{%if User.profileCover.image%}
+							<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("{{User.profileCover.image.url}}");'>
+						{%else%}
+							<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
+						{%endif%}
+						<p class="name">{{User.username.profile.fname}} {%if User.username.profile.lname%}{{User.username.profile.lname}}{%endif%}</p>
+						</div>
+						<div >
+								<div class="dropdown">
+							    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+							    <span class="caret"></span></button>
+							    <ul class="dropdown-menu">
+							      <li><a href="#">HTML</a></li>
+							      <li><a href="#">CSS</a></li>
+							      <li><a href="#">JavaScript</a></li>
+							    </ul>
+							  </div>
+								<div class="dropdown">
+							    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+							    <span class="caret"></span></button>
+							    <ul class="dropdown-menu">
+							      <li><a href="#">HTML</a></li>
+							      <li><a href="#">CSS</a></li>
+							      <li><a href="#">JavaScript</a></li>
+							    </ul>
+							  </div>
+								<div class="dropdown">
+							    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+							    <span class="caret"></span></button>
+							    <ul class="dropdown-menu">
+							      <li><a href="#">HTML</a></li>
+							      <li><a href="#">CSS</a></li>
+							      <li><a href="#">JavaScript</a></li>
+							    </ul>
+							  </div>
+						</div>
+
+				  </div>
+						<!-- Example single danger button -->
+
+			  </div>
+		</div>
+	</div>
+	<div class="col-sm-3">
+		Online users
+	</div>
+</div>
+
+</div>
+<script>
+
+
+</script>
+{% endblock %}
+
+
+{%block javascript%}
+
+{% endblock %}
