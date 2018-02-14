@@ -1,0 +1,296 @@
+
+.myfont {
+color: white;
+}
+
+.add_friendbutton button{
+float: right;
+}
+
+.group_input_fields{
+	display: block;
+    width: 50%;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.mynavbar {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.mynavbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.main {
+  padding: 16px;
+  margin-top: 30px;
+  height: 1500px; /* Used in this example to enable*/
+}
+
+
+#sidebar ul{ overflow-y:auto;
+
+			margin-bottom:4px;
+}
+
+
+
+
+.navbar li a, .navbar .navbar-brand {
+
+        color: #fff !important;
+    	font-size: 18px;
+}
+.navbar-nav li a:hover, .navbar-nav li.active a {
+    color: #f4511e !important;
+    background-color: #ECEFF1 !important;
+}
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+    color:#000000!important;
+}
+
+
+.status_image {
+    padding-top: 5px;
+    float: left;
+}
+.upper_post {
+    padding-top: 2px;
+	margin: 05px 5px 5px 5px;
+}
+
+.comments {
+    padding-top: 2px;
+	padding-bottom:2px;
+	margin: 05px 5px 5px 5px;
+}
+.comment_class{
+	border-top: 1px solid #d4cece;
+	padding-top: 5px;
+}
+.Allcomments{
+width:100%;
+padding-top:2px;
+
+}
+
+.subcomment{
+width:100%;
+margin: 5px;	
+margin-right: 10px;
+}
+.edit_delete{
+	float:right;
+}
+
+.comment_text{
+	float:left;
+	margin-left:10px;
+}
+
+.profile_pic{
+	float:left;
+	display:inline-block;
+}
+
+.profile{
+	display: inline-block;
+}
+
+.profile_name{
+	overflow: hidden;
+    padding-left: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	padding-top: 10px;
+	
+}
+
+.edit_button_icon{
+	border:0;
+     background:none;
+}
+.comment_dropdown{
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.pic{
+	 position:absolute;
+	 padding-left:10px;
+    bottom: 0;
+}
+div.myautoscroll:hover {
+     overflow: auto;
+     padding-right: 1px;
+}
+.online{
+	float:right;
+	display: inline-block;
+}
+
+.glyphicon.glyphicon-globe {
+    font-size: 20px;
+}
+
+.cover_background {
+    
+    height: 100%; 
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+	
+	
+
+
+
+
+
+
+.background_pic_design{
+	position:relative;
+	height: 300px;
+    padding: 4px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
+.post_buttons{
+	margin-top:10px;
+	margin-bottom:10px;
+	    border-top: 1px solid #d4cece;
+		border-bottom: 1px solid #d4cece;
+}
+
+
+
+ .friends_list_pic{
+	     float: left;
+    margin-top: -9px;
+ }
+ .friends_list_addFriends{
+	     float: right;
+    margin-top: -21px;
+ }
+	
+.intro{
+	background-color:white;
+	width:80%;
+	height:250px;
+	position:absolute;	
+	padding-left: 5%;
+}
+
+.name{
+	
+left:240px;
+font-size:20px;
+font-family:verdana;
+color:black;
+top:230px;
+height:50px;
+width:200px;
+position:absolute;
+}
+
+
+
+
+
+
+.btn-group{
+	top:255px;
+	right:-210px;
+	margin-right:460px;	
+}
+
+ul.djng-form-errors {
+        margin-left: 0;
+        display: inline-block;
+        list-style-type: none;
+}
+ul.djng-form-errors li.invalid {
+        color: #e9322d;
+}
+ul.djng-form-errors li.invalid:before {
+        content: "\2716\20";  /* adds a red cross before the error message */
+}
+ul.djng-form-errors li.valid:before {
+        color: #00c900;
+        content: "\2714";  /* adds a green tick */
+}
+
+label.djng-field-required::after {
+    content: "\00a0*";
+}

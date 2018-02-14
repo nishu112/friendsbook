@@ -1,0 +1,11 @@
+/* CSS used here will be applied after bootstrap.css */
+.badge-notify {
+    background: red;
+    position: relative;
+    top: -15px;
+    left: -15px;
+}
+.notification_button{
+
+background-color: transparent;
+}
