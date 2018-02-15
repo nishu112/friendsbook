@@ -17,7 +17,7 @@ class LoggedInUser(models.Model):
 
 
 class Status(models.Model):
-    title=models.CharField(max_length=20,default="updated status",null=True)
+    title=models.CharField(max_length=30,default="updated status",null=True)
     username = models.ForeignKey(User,on_delete=models.CASCADE,related_name='fbuser')
     text = models.TextField(blank=True, null=True)
     image = models.FileField(upload_to="media/image",null=True, blank=True)
@@ -162,7 +162,7 @@ class Groups(models.Model):
 class ConsistOf(models.Model):
     username = models.ForeignKey(User,on_delete=models.CASCADE,related_name='groupuser')
     gid =models.ForeignKey(Groups,on_delete=models.CASCADE,related_name='groupid')
-    gadmin = models.SmallIntegerField()
+    gadmin = models.SmallIntegerField(default=0)
     time = models.DateTimeField(auto_now_add=True)
 
     class Meta:

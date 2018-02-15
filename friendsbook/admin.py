@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile,Status,StatusLikes,FriendsWith,Message,Comment,Groups,CommentLikes
+from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 # Register your models here.
@@ -11,6 +11,7 @@ admin.site.register(Message)
 admin.site.register(Comment)
 admin.site.register(Groups)
 admin.site.register(CommentLikes)
+admin.site.register(ConsistOf)
 
 #admin.site.register(Gender)
 

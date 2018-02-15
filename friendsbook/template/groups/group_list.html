@@ -4,7 +4,7 @@
 		<ul class="nav nav-pills nav-stacked"  id="Groups" size="8" onchange="showUser(this.value)" >
 		{% for group in groups %}
 			<li>
-				<a data-group="{{ group|escape }}" href="javascript:void(0)">
+				<a data-group="{{ group|escape }}" href="{%url 'GroupsHomepage' group.id%}">
 				<div class="group_detail">
 					<div class="detail">
 						{{group.gname}}
@@ -17,8 +17,8 @@
 				<div  style="margin-bottom: 20px;">
 						<button type="button" class="btn btn-primary " data-toggle="modal" data-target="#myModal">
 						  <span class="	glyphicon glyphicon-plus" ></span> Create Group
-						</button>				
-				</div>	
+						</button>
+				</div>
 			</li>
 		</ul>
 	</div><!--col-sm-2-->

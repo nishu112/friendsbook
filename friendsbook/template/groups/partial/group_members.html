@@ -1,0 +1,14 @@
+<div class="group_members">
+	<h1> Members:-</h1>
+	<div class="well">
+		<h4> Members and moderators:</h4>
+		<ul style="list-style-type:none">
+			{%for group_member in group_members%}
+			<li>
+				{{group_member.username}}
+			</li>
+			{%endfor%}
+		
+		</ul>
+	</div>
+</div>

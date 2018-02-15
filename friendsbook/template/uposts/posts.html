@@ -26,9 +26,7 @@
 
 
     		 <a href="{% url 'profile_info' status.username.profile.slug %}">{{status.username.profile.fname}}</a>  {{status.title}}
-    		 {% if status.gid %}
-    			group {{status.gid}}
-    		 {% endif %}<br>
+    		 <br>
     		 {{status.time}}<br>
     		 {% if status.text %}
 

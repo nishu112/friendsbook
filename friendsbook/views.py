@@ -14,6 +14,7 @@ from .forms import *
 from .import views
 import json
 from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import get_object_or_404
 
 from django.http import JsonResponse
 from django.db.models import Q
@@ -45,17 +46,6 @@ def group_list(request):
 	groups=Groups.objects.all()
 	return groups
 
-class GroupsView(generic.DetailView):
-	model = Groups
-
-	def get_queryset(self):
-		user=self.request.user.username
-		user=Groups.objects.get(username=user)
-		return Groups.objects.all().select_related('username').order_by('-time')
-
-	def get_context_data(self, **kwargs):
-		context = super(GroupView,self).get_context_data(**kwargs)
-		return context
 
 
 def user_list_data(request):
@@ -199,13 +189,63 @@ def home(request):
 	groups=group_list(request)
 	return render(request,"home/index.html",{'posts':posts,'chatusers':chatusers,'groups':groups})
 
-def grouphome(request):
-	return render(request,"groups/index.html")
+def grouphome(request,pk):
+	group=get_object_or_404(Groups, id=pk)
+	if request.method=='POST':
+		#check user is a member of group or not
+		group=Groups.objects.get(id=pk)
+		print('Create this method')
+		form=CreatePost(request.POST,request.FILES)
+		if form.is_valid():
+			post=form.save(commit=False)
+			post.username=User.objects.get(username=request.user.username)
+			post.title="Posted in "+group.gname
+			post.gid=pk
+			newstatus=form.save()
+			print(newstatus)
+			posts=Status.objects.filter(id=newstatus.id)
+			print(posts)
+			posts=render_to_string('uposts/partials/singlepost.html',{'posts':posts},request)
+			print(posts)
+			return JsonResponse(posts,safe=False)
+		else:
+			return JsonResponse(0,safe=False)
+	print(pk)
+	form =CreatePost(None)
+	#check user have the permission to access this group
+	#only then user able to access this method
+	posts=user_post(request,request.user)
+	return render(request,"groups/index.html",{'posts':posts,'group':group,'form':form})
 
+def LoadGroupMembers(request):
+	if request.is_ajax:
+		id=request.GET.get('id',None)
+		print(id)
+		members=ConsistOf.objects.filter(gid=Groups.objects.get(id=id)).select_related('username')
+		for x in members:
+			a=x.username
+		data=render_to_string('groups/partial/group_members.html',{'group_members':members},request)
+		print(data)
+		return JsonResponse(data,safe=False)
 
+def LoadGroupPosts(request):
+	if request.is_ajax:
+		id=request.GET.get('id',None)
+		print(id)
+		posts=user_post(request,request.user)
+		data=render_to_string('groups/partial/group_posts.html',{'posts':posts},request)
+		print(data)
+		return JsonResponse(render_to_string('groups/partial/group_posts.html',{'posts':posts},request),safe=False)
 
-
-
+def LoadGroupPhotos(request):
+	template_name="groups/partial/photo_frame.html"
+	if request.is_ajax:
+		id=request.GET.get('id',None)
+		print(id)
+		photo_albums = Status.objects.all()
+		#update this to just load the group photos
+		data = render_to_string(template_name, {'photo_albums': photo_albums})
+		return JsonResponse(data,safe=False)
 
 class UploadProfile(View):
 	def get(self, request):
@@ -254,10 +294,14 @@ def NewGroup(request):
 	if request.is_ajax():
 		gname=request.GET.get('gname',None)
 		privacy=request.GET.get('privacy',None)
-		Groups.objects.create(
+		group=Groups.objects.create(
 		gname=gname,
 		privacy=privacy
 		)
+		print('trying')
+		print(group)
+		ConsistOf.objects.create(username=request.user,gid=Groups.objects.get(id=group.id),gadmin=1)
+		print('done')
 		data = {'is_valid': True,'gname':gname}
 		return JsonResponse(data)
 

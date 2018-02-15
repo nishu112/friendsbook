@@ -1,3 +1,4 @@
+
 $(function () {
 
 	$("div.upper_post").on("click", ".like", function () {

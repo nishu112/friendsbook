@@ -1,0 +1,29 @@
+	<h2>Posts</h2>
+		<button type="button" class="btn btn-default btn-sm  pull-right btn-compose" >
+				<span class="glyphicon glyphicon-share-alt"></span> Create Post
+		</button>
+		&nbsp;
+		<div class="well grouppostform" style="background-color:#fff ;display:none;">
+
+			<form action="" onsubmit="return false" id='compose_form' method="post" enctype='multipart/form-data'>{%csrf_token %}
+						<div class="form-group">
+						  <label for="id_text">Text:</label>
+						  <textarea class="form-control" rows="5" name="text"  id="id_text" style="margin: 0px 161.578px 0px 0px; width: 382px; height: 123px;"></textarea>
+						</div>
+							<p><label for="id_privacy">Privacy:</label>
+						<select name="privacy">
+						  <option value="fs">Friends</option>
+						  <option value="fsofs">Friends of Friends</option>
+						  <option value="pbc">Public</option>
+						</select>
+					<div class="post">
+						<div class="status_image">
+							<input type="file" name="image" id="id_image">
+						</div>
+						<div class="post_status">
+							<input  type="submit" value="Post"/>
+						</div>
+					</div>
+			</form>
+		</div>
+		{%include "uposts/only_post.html" %}
