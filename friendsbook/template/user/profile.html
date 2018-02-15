@@ -7,7 +7,7 @@
 	<link href="{% static 'css/pages/cover.css' %}" rel="stylesheet">
 {%endblock head%}
 <div class="container"><br><br><br>
-	<div class="row">
+	<div class="row ">
 		<div class="col-sm-9">
 			<div class="row ">
 				<div class="background_pic_design">
@@ -17,10 +17,10 @@
 					{%else%}
 						<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
 					{%endif%}
-					<button onclick="profileshowstatus()" class="button1">Timeline</button>
+					<button class="button1">Timeline</button>
 					<button class="button2">About</button>
-					<button onclick="profileshowfriendlist()" class="button3">Friends</button>
-					<button onclick="profileshowphoto()" class="button4">Photos</button>
+					<button class="button3">Friends</button>
+					<button class="button4">Photos</button>
 					<button class="button5">More</button>
 					{% ifequal User.username.username user.username  %}
 					<div class="button6" style="margin-bottom: 20px;">
@@ -36,7 +36,7 @@
 					</div>
 					{%endifequal%}
 					<p class="name">{{User.username.profile.fname}} {%if User.username.profile.lname%}{{User.username.profile.lname}}{%endif%}</p>
-						<div class="pic"  onmouseout="notdisplaychangebutton()" onmouseover="displaychangebutton()">
+						<div class="pic" >
 						{%if User.sid%}
 									{%if User.sid.image%}
 										<img class="img-rounded" id="my_profile_pic"  src="{{ User.sid.image.url}}" alt="My image" width="200" height="200"/>
@@ -95,70 +95,72 @@
 
 
 <script>
+$(function () {
+	$(document).on("click", "#cover_background .button1", function () {
+		var pathurl='{{request.path}}';
+		console.log(pathurl);
+		$.ajax({
+			url: '/ajax/users/profile/status/',
+					data:{
+						pathurl:pathurl
+					},
+			type:'get',
+			dataType: 'json',
+			success: function (data) {
+				console.log(data);
+				document.getElementById('profileonclickbuttons').innerHTML=data;
+			}
+		  });
+		});
 
-function profileshowfriendlist(){
-	var pathurl='{{request.path}}';
-	$.ajax({
-        url: '/ajax/users/profile/friend_list/',
-		data:{
-					pathurl:pathurl
-				},
-		type:'get',
-        dataType: 'json',
-        success: function (data) {
-			console.log(data);
-			document.getElementById('profileonclickbuttons').innerHTML=data;
+	$(document).on("click", "#cover_background .button3", function () {
+		var pathurl='{{request.path}}';
+		$.ajax({
+			url: '/ajax/users/profile/friend_list/',
+			data:{
+						pathurl:pathurl
+					},
+			type:'get',
+			dataType: 'json',
+			success: function (data) {
+				console.log(data);
+				document.getElementById('profileonclickbuttons').innerHTML=data;
 
-        }
-      });
-    }
+			}
+		  });
+	});
 
-function profileshowphoto(){
-	var pathurl='{{request.path}}';
-	console.log(pathurl);
-	$.ajax({
-        url: '/ajax/users/profile/photoframe/',
-		data:{
-					pathurl:pathurl
-				},
-		type:'get',
-        dataType: 'json',
-        success: function (data) {
-			console.log(data);
-			document.getElementById('profileonclickbuttons').innerHTML=data;
+	$(document).on("click", "#cover_background .button4", function () {
+		var pathurl='{{request.path}}';
+		console.log(pathurl);
+		$.ajax({
+			url: '/ajax/users/profile/photoframe/',
+			data:{
+						pathurl:pathurl
+					},
+			type:'get',
+			dataType: 'json',
+			success: function (data) {
+				console.log(data);
+				document.getElementById('profileonclickbuttons').innerHTML=data;
 
-        }
-      });
-    }
+			}
+		  });
+		});
+{% ifequal User.username.username user.username  %}
+	$('.pic').on("mouseenter",function(){
+	var prop='display:block;opacity:1;background-color: #008CBA;color: white;'
+	document.getElementById('mypic').style.display='block'
+	});
+	
+	$('.pic').on("mouseleave",function(){
+	document.getElementById('mypic').style.display='none'
+	});
+{%endifequal%}
 
-function profileshowstatus(){
-	var pathurl='{{request.path}}';
-	console.log(pathurl);
-	$.ajax({
-        url: '/ajax/users/profile/status/',
-				data:{
-					pathurl:pathurl
-				},
-		type:'get',
-        dataType: 'json',
-        success: function (data) {
-			console.log(data);
-			document.getElementById('profileonclickbuttons').innerHTML=data;
-        }
-      });
-}
+});
 
 
-
-function displaychangebutton(){
-var prop='display:block;opacity:1;background-color: #008CBA;color: white;'
-document.getElementById('mypic').style.display='block'
-
-}
-
-function notdisplaychangebutton(){
-document.getElementById('mypic').style.display='none'
-}
 </script>
 {% endblock %}
 

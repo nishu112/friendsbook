@@ -133,7 +133,7 @@
 
 $(function () {
 	console.log("Nope")
-	$(".maincontainer").on("click", ".btn-compose", function () {
+	$(document).on("click", ".maincontainer .btn-compose", function () {
 
 		//update and correct this
 		if ($(".grouppostform").hasClass("composing")) {
@@ -150,7 +150,7 @@ $(function () {
 
 		console.log('done')
 	});
-	$(".grouppostform").on("click", "input[value='Post']", function (){
+	$(document).on("click", ".grouppostform input[value='Post']", function (){
 	console.log("done2")
 	ul=$(this).closest('ul');
 	form=$(this).closest('form');
@@ -176,13 +176,17 @@ $(function () {
 	});
 	function getmembers(id){
 	console.log("members");
-		
+
 	}
-	$(".navigation").on("click", 'a[href^="#"]', function (event){
+	prev_selected_tab=$('ul li.active');
+	$(document).on("click", '.navigation a[href^="#"]', function (event){
 	console.log("Nope")
 	link=$(this).attr('href');
 	event.preventDefault();
 	ul=$(this).closest('ul')
+		$(prev_selected_tab).removeClass('active')
+	prev_selected_tab=$(this).closest('li');
+	$(prev_selected_tab).addClass('active')
 	group_id=$(ul).attr('group_id')
 	if( link =='#1'){
 		$.ajax({
@@ -198,7 +202,7 @@ $(function () {
 		  });
 	}
 	if( link =='#2'){
-	
+
 		$.ajax({
 		  url: "/ajax/groupPosts/",
 		  data:{
@@ -236,7 +240,7 @@ $(function () {
 			$('.maincontainer').html(data);
 			}
 		  });
-	}	
+	}
 	if( link =='#5'){
 		$.ajax({
 		  url: "/ajax/groupPhotoFrames/",

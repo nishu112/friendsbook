@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 	'friendsbook',
 	'channels',
 	'django_ajax',
+	'django.contrib.humanize',
 ]
 
 

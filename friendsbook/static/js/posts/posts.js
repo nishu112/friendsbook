@@ -1,13 +1,13 @@
-
 $(function () {
 
-	$("div.upper_post").on("click", ".like", function () {
+	
+		$(document).on("click", "div.upper_post .like", function () {
 		console.log("working");
 		var type=$(this).attr("type");
-    var li = $(this).closest("li");
-    var id = $(li).attr("post-id");
-		var upper_post=$(this).closest(".upper_post")
-    var csrf = $(li).attr("csrf");
+		var li = $(this).closest("li");
+		var id = $(li).attr("post-id");
+		var upper_post=$(this).closest(".upper_post");
+		var csrf = $(li).attr("csrf");
 		console.log(id)
 		console.log(type)
     $.ajax({
@@ -36,7 +36,7 @@ $(function () {
     return false;
   });
 
-$("div.upper_post").on("click", ".delete_status", function () {
+$(document).on("click", "div.upper_post .delete_status", function () {
  console.log('delete post')
 	var li = $(this).closest("li");
 	var id = $(li).attr("post-id");
@@ -64,7 +64,7 @@ $("div.upper_post").on("click", ".delete_status", function () {
 });
 
 
-	$("div.Allcomments").on("click", ".like", function () {
+	$(document).on("click", "div.Allcomments .like", function () {
 		console.log("comment likes")
     id=$(this).closest('.particularcomment').attr('id')
 		type=$(this).attr('type')
@@ -98,7 +98,7 @@ $("div.upper_post").on("click", ".delete_status", function () {
 });
 
 
-$("div.Allcomments").on("click", ".delete_comment", function () {
+$(document).on("click", "div.Allcomments .delete_comment", function () {
 	console.log("delete comment ")
 	id=$(this).closest('.particularcomment').attr('id')
 	type=$(this).attr('class')
@@ -128,7 +128,8 @@ $("div.Allcomments").on("click", ".delete_comment", function () {
 });
 
 
-$("div.post_button").on("click", ".comment", function () {
+$(document).on("click", "div.post_button .comment", function () {
+	console.log("hey")
 	var li = $(this).closest("li");
 	if($(".comments", li).css('display') != 'none')
 			{
@@ -159,7 +160,7 @@ $("div.post_button").on("click", ".comment", function () {
 });
 
 
-$(".comments").on("keydown", "input[name='post']", function (evt){
+$(document).on("keydown", ".comments input[name='post']", function (evt){
 	 var keyCode = evt.which?evt.which:evt.keyCode;
 	 if (keyCode == 13) {
 		 var form = $(this).closest("form");

@@ -15,6 +15,7 @@ from .import views
 import json
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import get_object_or_404
+from django.template.context_processors import csrf
 
 from django.http import JsonResponse
 from django.db.models import Q
@@ -393,7 +394,9 @@ def Timeline_posts(request):
 		currentusersearch=(currentusersearch[3].split("-")[0])
 		user=User.objects.get(username=currentusersearch)
 		posts=user_post(request,user)
-		status= render_to_string(template_name, {'posts': posts})
+
+		status= render_to_string(template_name, {'posts': posts},request)
+		print(status)
 		return JsonResponse(status,safe=False)
 
 
@@ -532,6 +535,7 @@ def Comments(request):
 				x.is_like=CommentLikes.objects.filter(cid=x.id,username=request.user).count()
 
 			jsonobj=render_to_string('uposts/partials/comments.html', {'comments': comments},request)
+			print(jsonobj)
 			return JsonResponse(jsonobj,safe=False)
 			#below methods are not working? because of some unknown issues
 			return render(request, 'uposts/partials/comments.html',{'comments': comments})

@@ -1,4 +1,4 @@
-
+{% load humanize %}
  <li class='container-fluid post_style_box'  post-id={{status.id}} csrf="{{ csrf_token }}">
    <div class="Status">
     	<div class="upper_post">
@@ -27,7 +27,7 @@
 
     		 <a href="{% url 'profile_info' status.username.profile.slug %}">{{status.username.profile.fname}}</a>  {{status.title}}
     		 <br>
-    		 {{status.time}}<br>
+    		 {{status.time|naturaltime}}<br>
     		 {% if status.text %}
 
     			<br>{{status.text}}<br>
