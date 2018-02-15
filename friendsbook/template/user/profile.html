@@ -9,7 +9,7 @@
 <div class="container"><br><br><br>
 	<div class="row ">
 		<div class="col-sm-9">
-			<div class="row ">
+			<div class="row profile " profilefor="{{User.username}}">
 				<div class="background_pic_design">
 
 					{%if User.profileCover.image%}
@@ -46,7 +46,7 @@
 						{%endif%}
 						{% ifequal User.username.username user.username  %}
 						<div class="button7" >
-						<button type="button" class="btn btn-primary js-upload-photos" id="mypic">
+						<button type="button" class="btn btn-primary js-upload-photos" id="mypic" style="display:none">
 						  <span class="glyphicon glyphicon-cloud-upload"></span> Upload Profile Picture
 						</button>
 
@@ -99,15 +99,16 @@ $(function () {
 	$(document).on("click", "#cover_background .button1", function () {
 		var pathurl='{{request.path}}';
 		console.log(pathurl);
+		username=$($(this).closest('.profile')).attr('profilefor')
+		console.log(username)
 		$.ajax({
 			url: '/ajax/users/profile/status/',
 					data:{
-						pathurl:pathurl
+						'username':username
 					},
 			type:'get',
 			dataType: 'json',
 			success: function (data) {
-				console.log(data);
 				document.getElementById('profileonclickbuttons').innerHTML=data;
 			}
 		  });
@@ -115,17 +116,16 @@ $(function () {
 
 	$(document).on("click", "#cover_background .button3", function () {
 		var pathurl='{{request.path}}';
+		username=$($(this).closest('.profile')).attr('profilefor')
 		$.ajax({
 			url: '/ajax/users/profile/friend_list/',
 			data:{
-						pathurl:pathurl
+						'username':username
 					},
 			type:'get',
 			dataType: 'json',
 			success: function (data) {
-				console.log(data);
 				document.getElementById('profileonclickbuttons').innerHTML=data;
-
 			}
 		  });
 	});
@@ -133,28 +133,26 @@ $(function () {
 	$(document).on("click", "#cover_background .button4", function () {
 		var pathurl='{{request.path}}';
 		console.log(pathurl);
+		username=$($(this).closest('.profile')).attr('profilefor')
 		$.ajax({
 			url: '/ajax/users/profile/photoframe/',
 			data:{
-						pathurl:pathurl
+						'username':username
 					},
 			type:'get',
 			dataType: 'json',
-			success: function (data) {
-				console.log(data);
+			success: function (data) {				
 				document.getElementById('profileonclickbuttons').innerHTML=data;
-
 			}
 		  });
 		});
 {% ifequal User.username.username user.username  %}
 	$('.pic').on("mouseenter",function(){
-	var prop='display:block;opacity:1;background-color: #008CBA;color: white;'
-	document.getElementById('mypic').style.display='block'
+		$('#mypic').show()
 	});
 	
 	$('.pic').on("mouseleave",function(){
-	document.getElementById('mypic').style.display='none'
+		$('#mypic').hide()
 	});
 {%endifequal%}
 

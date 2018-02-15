@@ -365,9 +365,7 @@ def Timeline_friend_list(request):
 	template_name="user/partial/friends_list.html"
 	print('hello')
 	if request.method == 'GET':
-		str=request.GET.get('pathurl')
-		currentusersearch=str.split("/")
-		currentusersearch=(currentusersearch[3].split("-")[0])
+		currentusersearch=request.GET.get('username')
 		user=User.objects.get(username=currentusersearch)
 		#Write query for friends list for a particular user
 		friends_list=FriendList(request,user)
@@ -377,9 +375,7 @@ def Timeline_friend_list(request):
 def Timeline_photo_frame(request):
 	template_name="user/partial/photo_frame.html"
 	if request.method == 'GET':
-		str=request.GET.get('pathurl')
-		currentusersearch=str.split("/")
-		currentusersearch=(currentusersearch[3].split("-")[0])
+		currentusersearch=request.GET.get('username')
 		user=User.objects.get(username=currentusersearch)
 		photo_albums = Status.objects.filter(username=user)
 		photo_albums = render_to_string(template_name, {'photo_albums': photo_albums})
@@ -389,9 +385,7 @@ def Timeline_posts(request):
 	template_name="user/partial/only_post.html"
 	print('done')
 	if request.method=='GET':
-		str=request.GET.get('pathurl')
-		currentusersearch=str.split("/")
-		currentusersearch=(currentusersearch[3].split("-")[0])
+		currentusersearch=request.GET.get('username')
 		user=User.objects.get(username=currentusersearch)
 		posts=user_post(request,user)
 
