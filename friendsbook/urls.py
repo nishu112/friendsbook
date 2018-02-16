@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^ajax/deleteCommentPost/$', views.deleteCommentPost, name='deleteCommentPost'),
 	url(r'^ajax/UpdateProfile/$',views.UploadProfile.as_view(),name='UpdateProfile'),
     url(r'^ajax/UpdateCover/$',views.UploadCover.as_view(),name='UpdateCover'),
+    url(r'^ajax/groupUpdateCover/$',views.UploadGroupCover,name='groupUpdateCover'),
     url(r'^ajax/CreateGroup/$', login_required(views.NewGroup), name='NewGroup'),
     url(r'^chat-room/$', login_required(views.user_list), name='user_list'),
     url(r'^groups/(?P<pk>\d+)$', login_required(views.grouphome), name='GroupsHomepage'),

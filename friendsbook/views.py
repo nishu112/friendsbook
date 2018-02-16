@@ -45,6 +45,11 @@ def Check_user_online(request):
 
 def group_list(request):
 	groups=Groups.objects.all()
+	print(request.user)
+	groups=ConsistOf.objects.filter(username=request.user).select_related('gid')
+	print('group_list')
+	for x in groups:
+		print(x.gid.id)
 	return groups
 
 
@@ -248,6 +253,34 @@ def LoadGroupPhotos(request):
 		data = render_to_string(template_name, {'photo_albums': photo_albums})
 		return JsonResponse(data,safe=False)
 
+def UploadGroupCover(request):
+	if request.is_ajax and request.method=='POST':
+		print("insife")
+		form=Cover(request.POST,request.FILES)
+		print(request.POST)
+		gid=request.POST['gid']
+
+		if form.is_valid():
+			cover=form.save(commit=False)
+			cover.username=request.user
+			cover.title="Posted in "
+			cover.gid=gid
+			##correct this behavior right now only changing cover for a specific group
+			cover.save()
+			print(cover)
+			print(cover.id)
+			print(cover.gid)
+			Groups.objects.filter(id=gid).update(cover=Status.objects.get(id=cover.id))
+			obj=Status.objects.get(id=cover.id)
+			print(obj.id)
+			print(obj.image)
+
+			data = {'is_valid': True,'url':obj.image.url}
+		else:
+			data = {'is_valid': False}
+		print("ok")
+		return JsonResponse(data,safe=False)
+
 class UploadProfile(View):
 	def get(self, request):
 		user=self.request.username
@@ -255,7 +288,7 @@ class UploadProfile(View):
 		return render(self.request,'user/profile.html', {'ProfileObj':ProfileObj})
 
 	def post(self, request):
-		form = UpdateProfile(self.request.POST, self.request.FILES)
+		form = Cover(self.request.POST, self.request.FILES)
 		if form.is_valid():
 			ProfileForm=form.save(commit=False)
 			ProfileForm.username=User.objects.get(username=self.request.user.username)
@@ -271,13 +304,9 @@ class UploadProfile(View):
 
 
 class UploadCover(View):
-	def get(self, request):
-		user=self.request.username
-		CoverObj=Profile.objects.get(username=User.objects.get(username=user))
-		return render(self.request,'user/profile.html', {'CoverObj':CoverObj})
-
 	def post(self, request):
-		form = UpdateCover(self.request.POST, self.request.FILES)
+		print("enter")
+		form = Cover(self.request.POST, self.request.FILES)
 		if form.is_valid():
 			CoverForm=form.save(commit=False)
 			CoverForm.username=User.objects.get(username=self.request.user.username)
@@ -533,9 +562,3 @@ def Comments(request):
 			return JsonResponse(jsonobj,safe=False)
 			#below methods are not working? because of some unknown issues
 			return render(request, 'uposts/partials/comments.html',{'comments': comments})
-
-class PartialGroupView(TemplateView):
-	def get_context_data(self, **kwargs):
-		context = super(PartialGroupView, self).get_context_data(**kwargs)
-	# update the context
-		return context

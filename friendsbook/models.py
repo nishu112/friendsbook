@@ -151,8 +151,7 @@ class Groups(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     id = models.AutoField(primary_key=True)
     privacy = models.CharField(max_length=5)
-    sid=models.ForeignKey(Status,on_delete=models.SET_NULL,null=True,blank=True)
-    cover=models.ForeignKey(Status,on_delete=models.SET_NULL,null=True,blank=True,related_name='cover_photo')
+    cover=models.ForeignKey(Status,on_delete=models.SET_NULL,null=True,blank=True)
     #for group photo
 
     class Meta:

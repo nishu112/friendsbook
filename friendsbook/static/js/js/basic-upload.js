@@ -34,4 +34,22 @@ $(function () {
       }
     }
   });
+  
+  
+  $("#groupCoverPhoto").fileupload({
+    dataType: 'json',
+    done: function (e, data) {
+      if (data.result.is_valid) {
+		  var str='url("'+data.result.url+'")'
+        document.getElementById("cover_background").style.backgroundImage=str;
+		}
+      }
+  });
+  
+  
+  $('#groupcover').click(function() {
+	  console.log('done')
+	  $('#groupCoverPhoto').click();
+	  
+  });
 });

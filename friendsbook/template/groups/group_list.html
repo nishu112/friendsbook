@@ -4,10 +4,10 @@
 		<ul class="nav nav-pills nav-stacked"  id="Groups" size="8" onchange="showUser(this.value)" >
 		{% for group in groups %}
 			<li>
-				<a data-group="{{ group|escape }}" href="{%url 'GroupsHomepage' group.id%}">
+				<a data-group="{{ group|escape }}" href="{%url 'GroupsHomepage' group.gid.id%}">
 				<div class="group_detail">
 					<div class="detail">
-						{{group.gname}}
+						{{group.gid.gname}}
 					</div>
 				</div>
 				</a>
