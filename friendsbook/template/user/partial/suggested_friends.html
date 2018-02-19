@@ -1,0 +1,10 @@
+<div class="suggested_friends "style="position:fixed;">
+	<h4>Suggested Friends</h4>
+	<ul>
+		{%for x in friends_suggestion%}
+		<li>
+		<a href="{%url 'profile_info' x.profile.slug%}">{{x.profile.fname}}</a>
+		</li>
+		{%endfor%}
+	</ul>
+</div>

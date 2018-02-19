@@ -23,7 +23,6 @@ class Status(models.Model):
     image = models.FileField(upload_to="media/image",null=True, blank=True)
     time = models.DateTimeField(auto_now_add=True)
     privacy = models.CharField(max_length=5, blank=True, null=True,default="fs")
-    gid = models.IntegerField(blank=True, null=True)
     slug = models.SlugField(null=False,unique=True,blank=False)
     likes=models.IntegerField(default=0)
 
@@ -167,3 +166,13 @@ class ConsistOf(models.Model):
     class Meta:
         db_table = 'consist_of'
         verbose_name_plural = "consist_of"
+        unique_together = ("gid", "username")
+
+class GroupContainsStatus(models.Model):
+    gid=models.ForeignKey(Groups,on_delete=models.CASCADE)
+    sid=models.ForeignKey(Status,on_delete=models.CASCADE)
+    #for group photo
+
+    class Meta:
+        db_table='GroupContainsStatus'
+        verbose_name_plural = "GroupContainsStatus"

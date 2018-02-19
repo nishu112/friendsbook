@@ -14,6 +14,31 @@
 {%endblock head%}
 <div class="container-fluid"><br><br><br>
 
+	<div class="modal fade" id="addMembersToGroup" role="dialog">
+	    <div class="modal-dialog">
+
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">Add members</h4>
+	        </div>
+			<div class="container-fluid">
+				<div class="membersearch">
+					<form action="" method="post" onsubmit="return false">{%csrf_token %}
+						<input type="text" autocomplete="off" id="searchToAddMembers" size="75" placeholder="Search" name="search_user">
+						<input type="hidden" name="group_id" value="{{group.id}}"/>
+						<hr>
+						<input class="btn btn-primary pull-right" style="margin:4px" type="submit" value="Add"/>
+					</form>
+				</div>
+			</div>
+		  </div>
+
+	     </div>
+		</div>
+
+
 	<div class="row">
 		<div class="col-sm-10">
 			<div class="row ">
@@ -68,7 +93,7 @@
 									    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">More
 									    <span class="caret"></span></button>
 									    <ul class="dropdown-menu">
-									      <li><a href="#">Add Member</a></li>
+									      <li><a href="#" data-toggle="modal" data-target="#addMembersToGroup">Add Member</a></li>
 									      <li><a href="#">Group setting</a></li>
 									    </ul>
 									  </div>
@@ -124,10 +149,13 @@
 
 
 		</div>
+		<div class="col-sm-2">
+
+			{%include "chat/online_user_list.html"%}
+		</div>
 	</div>
-	<div class="col-sm-2">
-		Online users
-	</div>
+
+
 </div>
 
 </div>
@@ -293,6 +321,26 @@ $(function () {
 		  });
 	}
 	});
+
+$(document).on("click", ".membersearch input[type='submit']", function (event){
+	form=$(this).closest('form')
+	addMembersToGroup=$(this).closest('#addMembersToGroup')
+	close=$('.close',addMembersToGroup)
+	$($(this).closest('.close')).click();
+	$.ajax({
+		url: "{%url 'addgroupmember' %}",
+		data:$(form).serialize(),
+		type:'POST',
+		dataType: 'json',
+		success: function (data) {
+			console.log('back');
+			console.log(data)
+			$(close).click();
+		}
+	});
+
+});
+
 
 });
 

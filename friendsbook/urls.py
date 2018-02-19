@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^ajax/groupMembers/$', login_required(views.LoadGroupMembers), name='GroupsMembers'),
     url(r'^ajax/groupPosts/$', login_required(views.LoadGroupPosts), name='GroupsPosts'),
     url(r'^ajax/groupPhotoFrames/$', login_required(views.LoadGroupPhotos), name='Groupsphotos'),
+    url(r'^ajax/addnewMembertoGroup/$', login_required(views.AddMembers), name='addgroupmember'),
 
     url(r'^groups/$', login_required(views.grouphome), name='GroupsHome'),
     #validate_username

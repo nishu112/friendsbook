@@ -31,7 +31,7 @@
 
 	      <ul class="mynav_content nav navbar-nav navbar-right ">
 	        {% if user.is_authenticated %}
-							<li><a href="/"><div   class="glyphicon glyphicon-user">{{user.username}}</div></a></li>
+							<li><a href="{%url 'profile_info' request.user.profile.slug %}"><div   class="glyphicon glyphicon-user">{{request.user.profile.fname}}</div></a></li>
 					{%endif%}
 						<li><a href={% url 'user_list'%}>
 							<div class="glyphicon glyphicon-globe">

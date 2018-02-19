@@ -26,6 +26,9 @@
 
 
     		 <a href="{% url 'profile_info' status.username.profile.slug %}">{{status.username.profile.fname}}</a>  {{status.title}}
+			 {%if status.gid%}
+				{{status.gid}}
+			 {%endif%}
     		 <br>
     		 {{status.time|naturaltime}}<br>
     		 {% if status.text %}

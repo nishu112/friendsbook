@@ -28,8 +28,7 @@ from django.utils.encoding import force_text
 from django.template.loader import render_to_string
 
 
-def user_post(request,user):
-	posts=Status.objects.all().select_related('username').order_by('-time')
+def user_post(request,user,posts):
 	# modify it to get all the timeline posts
 	for x in posts:
 		x.likes=StatusLikes.objects.filter(sid=x).count()
@@ -37,8 +36,16 @@ def user_post(request,user):
 		x.is_like=StatusLikes.objects.filter(username=request.user,sid=x).count()
 	return posts
 
-def Check_user_online(request):
-	chatusers=User.objects.select_related('logged_in_user')
+def Check_user_online(request,user):
+	print(user)
+	obj1=FriendsWith.objects.filter(username=user,confirm_request=2).select_related('fusername').values('fusername')
+	obj1=User.objects.filter(id__in=obj1)
+	obj2=FriendsWith.objects.filter(fusername=user,confirm_request=2).select_related('username').values('username')
+	obj2=User.objects.filter(id__in=obj2)
+	obj=obj1 | obj2
+	chatusers=obj1|obj2
+	for x in chatusers:
+		print(x)
 	for user in chatusers:
 		user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
 	return chatusers
@@ -48,8 +55,6 @@ def group_list(request):
 	print(request.user)
 	groups=ConsistOf.objects.filter(username=request.user).select_related('gid')
 	print('group_list')
-	for x in groups:
-		print(x.gid.id)
 	return groups
 
 
@@ -61,10 +66,22 @@ def user_list_data(request):
 	return users
 
 def user_list(request):
-	users=user_list_data(request)
+	users=Check_user_online(request,request.user)
 
 	return render(request, 'chat/main_chat.html', {'chatusers': users})
 	#remove these lines
+
+def FriendsOfFriends(request,user):
+	chatusers=Check_user_online(request,User.objects.get(username=user))
+	friends_suggestion=User.objects.none()
+	for x in chatusers:
+		y=Check_user_online(request,x)
+		friends_suggestion= friends_suggestion | y
+	user=User.objects.filter(username=user)
+	user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
+	chatusers=user|chatusers
+	friends_suggestion=friends_suggestion|chatusers
+	return friends_suggestion
 
 #get all the friends
 def FriendList(request,user):
@@ -96,15 +113,15 @@ def friends_list(request,searched_by,context):
 							addfriends_list.append(1)
 						else:
 							addfriends_list.append(2)
-			#define
-			#0-send request
-			#1-cancel request
-			#2- confirm request sent by user
-			#3 unfriends( means already friends)
 			else:
 				addfriends_list.append(0)
 	context['data']=zip(context['data'],addfriends_list)
 	return context
+	#define
+	#0-send request
+	#1-cancel request
+	#2- confirm request sent by user
+	#3 unfriends( means already friends)
 
 class RegistrationView(View):
 	user_class=SignUpForm
@@ -189,30 +206,35 @@ def logout(request):
 #    })
 
 
+
+
 def home(request):
-	posts=user_post(request,request.user)
-	chatusers=Check_user_online(request)
+	chatusers=Check_user_online(request,request.user)
+	friends_suggestion=FriendsOfFriends(request,request.user)
+	user=User.objects.filter(username=request.user)
+	user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
+	chatusers=chatusers|user
+	friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=chatusers)
+	posts=Status.objects.filter(username__in=chatusers).select_related('username').order_by('-time')
+	posts=user_post(request,request.user,posts)
 	groups=group_list(request)
-	return render(request,"home/index.html",{'posts':posts,'chatusers':chatusers,'groups':groups})
+	return render(request,"home/index.html",{'posts':posts,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion})
 
 def grouphome(request,pk):
 	group=get_object_or_404(Groups, id=pk)
 	if request.method=='POST':
 		#check user is a member of group or not
 		group=Groups.objects.get(id=pk)
-		print('Create this method')
 		form=CreatePost(request.POST,request.FILES)
 		if form.is_valid():
 			post=form.save(commit=False)
 			post.username=User.objects.get(username=request.user.username)
-			post.title="Posted in "+group.gname
-			post.gid=pk
+			post.title="Posted in "
 			newstatus=form.save()
-			print(newstatus)
+			sid=Status.objects.get(id=post.id)
+			GroupContainsStatus.objects.create(gid=group,sid=sid)
 			posts=Status.objects.filter(id=newstatus.id)
-			print(posts)
 			posts=render_to_string('uposts/partials/singlepost.html',{'posts':posts},request)
-			print(posts)
 			return JsonResponse(posts,safe=False)
 		else:
 			return JsonResponse(0,safe=False)
@@ -220,8 +242,10 @@ def grouphome(request,pk):
 	form =CreatePost(None)
 	#check user have the permission to access this group
 	#only then user able to access this method
-	posts=user_post(request,request.user)
-	return render(request,"groups/index.html",{'posts':posts,'group':group,'form':form})
+	posts=GroupContainsStatus.objects.filter(gid=group).values('sid')
+	posts=Status.objects.filter(id__in=posts)
+	chatusers=Check_user_online(request,request.user)
+	return render(request,"groups/index.html",{'posts':posts,'group':group,'form':form,'chatusers':chatusers})
 
 def LoadGroupMembers(request):
 	if request.is_ajax:
@@ -231,16 +255,13 @@ def LoadGroupMembers(request):
 		for x in members:
 			a=x.username
 		data=render_to_string('groups/partial/group_members.html',{'group_members':members},request)
-		print(data)
 		return JsonResponse(data,safe=False)
 
 def LoadGroupPosts(request):
 	if request.is_ajax:
 		id=request.GET.get('id',None)
-		print(id)
-		posts=user_post(request,request.user)
+		posts=user_post(request,request.user,Status.objects.all().select_related('username').order_by('-time'))
 		data=render_to_string('groups/partial/group_posts.html',{'posts':posts},request)
-		print(data)
 		return JsonResponse(render_to_string('groups/partial/group_posts.html',{'posts':posts},request),safe=False)
 
 def LoadGroupPhotos(request):
@@ -264,22 +285,37 @@ def UploadGroupCover(request):
 			cover=form.save(commit=False)
 			cover.username=request.user
 			cover.title="Posted in "
-			cover.gid=gid
 			##correct this behavior right now only changing cover for a specific group
 			cover.save()
-			print(cover)
-			print(cover.id)
-			print(cover.gid)
-			Groups.objects.filter(id=gid).update(cover=Status.objects.get(id=cover.id))
+			sid=Status.objects.get(id=cover.id)
+			Groups.objects.filter(id=gid).update(cover=sid)
+			gid=Groups.objects.get(id=gid)
+			GroupContainsStatus.objects.create(gid=gid,sid=sid)
 			obj=Status.objects.get(id=cover.id)
-			print(obj.id)
-			print(obj.image)
-
 			data = {'is_valid': True,'url':obj.image.url}
 		else:
 			data = {'is_valid': False}
 		print("ok")
 		return JsonResponse(data,safe=False)
+
+def AddMembers(request):
+	if request.is_ajax:
+		print("here")
+		print(request.POST)
+		user=request.POST['search_user']
+		gid=request.POST['group_id']
+		print(user)
+		print(gid)
+		try:
+			user=User.objects.get(username=user)
+		except:
+			print('Not available')
+			return JsonResponse(0,safe=False)
+
+		gid=get_object_or_404(Groups,id=gid)
+		user=User.objects.get(username=user)
+		ConsistOf.objects.create(gid=gid,username=user)
+		return JsonResponse(1,safe=False)
 
 class UploadProfile(View):
 	def get(self, request):
@@ -331,7 +367,6 @@ def NewGroup(request):
 		print('trying')
 		print(group)
 		ConsistOf.objects.create(username=request.user,gid=Groups.objects.get(id=group.id),gadmin=1)
-		print('done')
 		data = {'is_valid': True,'gname':gname}
 		return JsonResponse(data)
 
@@ -359,7 +394,7 @@ def create_post(request):
 			form.save()
 			return redirect('index')
 	else:
-		form=CreatePost()
+		form=CreatePost(None)
 	return render(request,"uposts/post_create.html",{'form':form})
 
 class FriendsView(generic.ListView):  ##print friendlist of user here
@@ -373,6 +408,7 @@ class FriendsView(generic.ListView):  ##print friendlist of user here
 
 	def get_context_data(self,**kwargs):
 		context=super(FriendsView,self).get_context_data(**kwargs)
+		context['chatusers']=Check_user_online(self.request,self.request.user)
 		context=friends_list(self.request,self.request.user.username,context)
 		return context
 
@@ -384,10 +420,21 @@ class  FriendView(generic.DetailView):
 
 	def get_context_data(self,**kwargs):
 		context=super(FriendView,self).get_context_data(**kwargs)
-		context['posts']=user_post(self.request,context['User'].username)
-		searched_by=self.request.user.username
+		print('ok----------------')
+		print(Profile.fname)
+		print(self.object.username)
+		chatusers=Check_user_online(self.request,self.object.username)
+		friends_suggestion=FriendsOfFriends(self.request,self.request.user)
+		user=User.objects.filter(username=self.object.username)
+		user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
+		chatusers=chatusers|user
+		friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=chatusers)
+		posts=Status.objects.filter(username__in=chatusers).select_related('username').order_by('-time')
+		posts=user_post(self.request,self.request.user,posts)
+		context['posts']=user_post(self.request,self.request.user,posts)
+
 		# modify it to show send friend request
-		context['chatusers']=Check_user_online(self.request)
+		context['chatusers']=Check_user_online(self.request,self.request.user)
 		return context
 
 def Timeline_friend_list(request):
@@ -396,8 +443,9 @@ def Timeline_friend_list(request):
 	if request.method == 'GET':
 		currentusersearch=request.GET.get('username')
 		user=User.objects.get(username=currentusersearch)
+		chatusers=Check_user_online(request,user)
 		#Write query for friends list for a particular user
-		friends_list=FriendList(request,user)
+		friends_list=Profile.objects.filter(username__in=chatusers)
 		friends_list = render_to_string(template_name, {'friends_list': friends_list})
 	return JsonResponse(friends_list,safe=False)
 
@@ -412,14 +460,19 @@ def Timeline_photo_frame(request):
 
 def Timeline_posts(request):
 	template_name="user/partial/only_post.html"
-	print('done')
 	if request.method=='GET':
 		currentusersearch=request.GET.get('username')
 		user=User.objects.get(username=currentusersearch)
-		posts=user_post(request,user)
+
+		chatusers=Check_user_online(request,user)
+		friends_suggestion=FriendsOfFriends(request,user)
+		user=User.objects.filter(username=user)
+		user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
+		chatusers=chatusers|user
+		posts=Status.objects.filter(username__in=chatusers).select_related('username').order_by('-time')
+		posts=user_post(request,request.user,posts).select_related('username').order_by('-time')
 
 		status= render_to_string(template_name, {'posts': posts},request)
-		print(status)
 		return JsonResponse(status,safe=False)
 
 
@@ -517,25 +570,33 @@ def user_messages(request):
 #3 unfriends( means already friends)
 
 def AddFriend(request):
-	if request.is_ajax():
-		fuser=request.GET.get('fuser',None)
-		type=request.GET.get('type',None)
-		user=request.user.username
-		user_obj=User.objects.get(username=user)
+	if request.is_ajax() and request.method=='POST':
+		fuser=request.POST['fuser']
+		type=request.POST['type']
+		user_obj=User.objects.get(username=request.user)
 		fuser_obj=User.objects.get(username=fuser)
 		##check again these conditions to make it more secure and reliable
 		#not completed
-		if type=='0':
+		print(fuser)
+		print(type)
+		if request.user==fuser:#this can't happen.Only by some inspect element tools
+			return JsonResponse(0,safe=False)
+		if type=='Send':
+			#check if relationship already exists between users
+			obj=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj))
+			if obj.exists():
+				print(obj)
+				return JsonResponse(0,safe=False)
 			FriendsWith.objects.create(username=user_obj,fusername=fuser_obj)
-		elif type=='1' or type=='3':
+		elif type=='Delete' or type=='Unfriend' or type=='Cancel':
 			#write code to update te result
-			abc=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj))
 			FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj)).delete()
-		elif type=='2':
+		elif type=='Confirm':
 			FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj)).update(confirm_request=2)
-			abc=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj))
-		result=1
-		return JsonResponse(result,safe=False)
+		else:
+			print('hhh')
+			return JsonResponse(0,safe=False)
+		return JsonResponse(1,safe=False)
 
 
 def Comments(request):
@@ -558,7 +619,6 @@ def Comments(request):
 				x.is_like=CommentLikes.objects.filter(cid=x.id,username=request.user).count()
 
 			jsonobj=render_to_string('uposts/partials/comments.html', {'comments': comments},request)
-			print(jsonobj)
 			return JsonResponse(jsonobj,safe=False)
 			#below methods are not working? because of some unknown issues
 			return render(request, 'uposts/partials/comments.html',{'comments': comments})
