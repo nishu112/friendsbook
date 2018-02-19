@@ -163,6 +163,7 @@ class LoginView(View):
 	template_name="user/login.html"
 	#get method
 	def get(self,request):
+		print('hello')
 		if request.user.is_authenticated:
 			return redirect('index')
 		form=LoginForm(None)
@@ -173,6 +174,7 @@ class LoginView(View):
 		username = request.POST['username']
 		password = request.POST['password']
 		user=authenticate(username=username,password=password)
+		print('hello')
 		if user is not None:
 			auth_login(request,user)
 			return redirect('index')

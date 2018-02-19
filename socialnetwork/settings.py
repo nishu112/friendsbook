@@ -98,10 +98,10 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ddb30u1pddnnb2',
-        'USER': 'arguhkjrlpjvol',
-        'PASSWORD': '812a172949119d4a91ef482c5d6fda2967089b9d1f0dc3e0278a4531b3f25a20',
-        'HOST': 'ec2-54-163-237-249.compute-1.amazonaws.com',
+        'NAME': 'd511as0fptahva',
+        'USER': 'ejzwyszhmmrppy',
+        'PASSWORD': '167420b6b51b9d7193e1d8df29403acf031d84d070d0498f29ae6394558ec998',
+        'HOST': 'ec2-54-235-64-195.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
