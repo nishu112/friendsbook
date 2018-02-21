@@ -1,46 +1,46 @@
 
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
-    
+
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Create New Group</h4>
         </div>
-		
-		<div class="container">
+
+		<div class="container-fluid">
 			<div style="margin-bottom: 20px;">
-			
+
 			 <form id="create-new-group" enctype="multipart/form-data" >{%csrf_token%}
 				  <div class="form-group">
 					<label for="id_gname">Group Name</label>
-					<input type="text" class="group_input_fields"  type="text" name="gname" maxlength="20" required id="id_gname" placeholder="Group Name">
+					<input type="text" class="form-control"  type="text" name="gname" maxlength="20" required id="id_gname" placeholder="Group Name">
 
 				  </div>
 				  <div class="form-group">
 					<label for="id_privacy">Privacy</label>
-					<input class="group_input_fields" placeholder="Group Type" type="text" name="privacy" maxlength="5" required id="id_privacy">
-				  </div>					
-				  <input type="submit" class="btn btn-primary" value="Create"/>	
-			</form>		
+					<input class="form-control" placeholder="Group Type" type="text" name="privacy" maxlength="5" required id="id_privacy">
+				  </div>
+				  <input type="submit" class="btn btn-primary" value="Create"/>
+			</form>
 
 			</div>
 		</div>
 
       </div>
-      
+
     </div>
 	</div>
 <script>
 	    $('#create-new-group').on('submit', function(event){
         event.preventDefault();
-        console.log("form submitted!")  
+        console.log("form submitted!")
         create_group();
 		});
-		
+
 		function create_group() {
-        console.log("create group is working!") 
+        console.log("create group is working!")
 		var gname=$('#id_gname').val()
 		var privacy=$('#id_privacy').val()
 		console.log(gname)
@@ -48,20 +48,20 @@
 		$('#create-new-group').trigger("reset");
 
         $.ajax({
-            url : "ajax/CreateGroup/",    
-            data : { 
+            url : "ajax/CreateGroup/",
+            data : {
 				'gname':gname,
 				'privacy':privacy,
 				csrfmiddlewaretoken:'{{csrf_token}}',
-				
+
 				},
 			dataType: 'json',
-            success : function(json) {   
+            success : function(json) {
 			console.log(json)
 			console.log(json['gname'])
-			$("#Groups").prepend(                
+			$("#Groups").prepend(
 			'<li><a data-group="{{ group|escape }}" href="javascript:void(0)"><div class="group_detail">	<div class="detail">' + json['gname']+'</div>	</div>	</a> </li>')
-                console.log(json);              
+                console.log(json);
             },
 			error : function(xhr,errmsg,err) {
                 alert("unable to create new Group")

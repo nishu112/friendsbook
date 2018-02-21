@@ -17,23 +17,11 @@ myServices.factory('MyModel', ['$resource', function($resource) {
 </script>
 
 
-<form name="{{ form.form_name }}" djng-endpoint="help/" ng-model-options="{allowInvalid: true}" novalidate>
-  {{ form.as_div }}
-  <button ng-click="do(update()).then(redirectTo()).catch(scrollToRejected())" type="button">
-    Forced Submission <i class="some-icon"></i>
-  </button>
-  <button ng-click="do(update()).then(redirectTo())" ng-disabled="isDisabled()" type="button">
-    Validated Submission <i class="some-icon"></i>
-  </button>
-  <button ng-click="do(spinner()).then(update({delay: true})).then(showOK()).then(delay(500)).then(redirectTo()).catch(showFail()).then(delay(1500)).finally(restore())" ng-disabled="isDisabled()" type="button">
-    Delayed Submission <i class="some-icon"></i>
-  </button>
-  <button ng-click="do(fetch())" type="button">
-    Fetch Defaults <i class="some-icon"></i>
-  </button>
+<form >{%csrf_token%}
+  {{form.as_p}}
 </form>
 <script>
-var app = angular.module("myShoppingList", []); 
+var app = angular.module("myShoppingList", []);
 app.controller("myCtrl", function($scope) {
     $scope.products = ["Milk", "Bread", "Cheese"];
 });
@@ -51,5 +39,5 @@ app.controller("myCtrl", function($scope) {
 
 	</br>
 {%endfor%}
-					
+
 {%endblock%}

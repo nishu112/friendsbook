@@ -4,20 +4,7 @@
 
 <form action="" method="post"><input type='hidden'  />{%csrf_token %}
 
-  {% for hidden in form.hidden_fields %}
-    {{ hidden }}
-  {% endfor %}
-
-  {% for field in form.visible_fields %}
-    <div class="form-group">
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field|add_class:'form-control' }}
-
-      {% for error in field.errors %}
-        <span class="help-block">{{ error }}</span>
-      {% endfor %}
-    </div>
-  {% endfor %}
+  {{form.as_p}}
 
             {% if form.errors %}
                     <p class=" label label-danger">

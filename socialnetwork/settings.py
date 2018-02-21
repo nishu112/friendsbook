@@ -44,11 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'friendsbook',
-	'channels',
+    'channels',
 	'django_ajax',
-	'django.contrib.humanize',
-]
+    'widget_tweaks',
+    'django.contrib.humanize',
 
+]
 
 
 MIDDLEWARE = [

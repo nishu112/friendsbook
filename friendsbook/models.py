@@ -147,10 +147,20 @@ class CommentLikes(models.Model):
 
 
 class Groups(models.Model):
+    OPEN = 'OP'
+    CLOSED = 'CL'
+    PRIVACY_CHOICES = (
+        (OPEN, 'OPEN'),
+        (CLOSED, 'CLOSED'),
+    )
     gname = models.CharField(max_length=20)
     time = models.DateTimeField(auto_now_add=True)
     id = models.AutoField(primary_key=True)
-    privacy = models.CharField(max_length=5)
+    privacy = models.CharField(
+        max_length=2,
+        choices=PRIVACY_CHOICES,
+        default=CLOSED,
+    )
     cover=models.ForeignKey(Status,on_delete=models.SET_NULL,null=True,blank=True)
     #for group photo
 

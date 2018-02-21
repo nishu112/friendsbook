@@ -37,17 +37,16 @@ def user_post(request,user,posts):
 	return posts
 
 def Check_user_online(request,user):
-	print(user)
 	obj1=FriendsWith.objects.filter(username=user,confirm_request=2).select_related('fusername').values('fusername')
 	obj1=User.objects.filter(id__in=obj1)
 	obj2=FriendsWith.objects.filter(fusername=user,confirm_request=2).select_related('username').values('username')
 	obj2=User.objects.filter(id__in=obj2)
 	obj=obj1 | obj2
 	chatusers=obj1|obj2
-	for x in chatusers:
-		print(x)
 	for user in chatusers:
 		user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
+	for user in chatusers:
+		print(user ,user.status)
 	return chatusers
 
 def group_list(request):
@@ -221,9 +220,16 @@ def home(request):
 	friends_suggestion=FriendsOfFriends(request,request.user)
 	user=User.objects.filter(username=request.user)
 	user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
-	chatusers=chatusers|user
-	friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=chatusers)
-	posts=Status.objects.filter(username__in=chatusers).select_related('username').order_by('-time')
+	print(chatusers)
+	for x in chatusers:
+		print(x.status)
+	print(chatusers)
+	friendsAndMe=chatusers|user
+	print(chatusers)
+
+
+	friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=friendsAndMe)
+	posts=Status.objects.filter(username__in=friendsAndMe).select_related('username').order_by('-time')
 	posts=user_post(request,request.user,posts)
 	groups=group_list(request)
 	return render(request,"home/index.html",{'posts':posts,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion})
@@ -247,6 +253,14 @@ def grouphome(request,pk):
 		else:
 			return JsonResponse(0,safe=False)
 	print(pk)
+
+
+
+	result=ConsistOf.objects.filter(username=request.user,gid=group)
+	print(result)
+
+
+
 	form =CreatePost(None)
 	#check user have the permission to access this group
 	#only then user able to access this method
@@ -393,7 +407,7 @@ def query(request):
 	query_set=likes=Status.objects.filter(id=12)
 	query_set=User.objects.all()
 	template_name='friendsbook/home.html'
-	form=SubscribeForm(None)
+	form=CreateGroup(None)
 	return render(request,template_name,{'data':query_set,'form':form})
 
 def create_post(request):

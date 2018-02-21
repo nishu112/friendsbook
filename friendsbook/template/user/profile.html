@@ -42,7 +42,6 @@
 							{% ifnotequal User.username.username user.username  %}
 							<div class="particularuser" user={{User.username}} csrf={{csrf_token}}>
 								<div class="col-sm-6 add_friendbutton" >
-
  	 								{%if y is 0 or y is 1 or y is 2%}
  	 										<button class="btn btn-default type1" actiontype="type1" type="button" performaction="{%if y is 0%}Send{%elif y is 1%}Cancel{%elif y is 2%}Confirm{%endif%}" onclick="return false"  >
  	 										{%if y is 0%} Send request {%elif y is 1%} Cancel request{%elif y is 2%}Confirm Request{%endif%}

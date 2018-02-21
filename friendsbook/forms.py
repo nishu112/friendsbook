@@ -11,9 +11,11 @@ from django.core.exceptions import ValidationError
 
 
 
-
-
 class SignUpForm(ModelForm):
+	password = forms.CharField(
+		widget=forms.PasswordInput(attrs={'class':'form-control'}),
+		max_length=35,
+		required=True)
 	class Meta:
 		model=User
 		fields = ["username","password","password"]
@@ -29,18 +31,36 @@ class CreatePost(ModelForm):
 		model=Status
 		fields = ["text","image","privacy"]
 
+class CreateGroup(ModelForm):
+	OPEN = 'OP'
+	CLOSED = 'CL'
+	PRIVACY_CHOICES = (
+		(OPEN, 'OPEN'),
+		(CLOSED, 'CLOSED'),
+	)
+	gname=forms.CharField(
+		widget=forms.TextInput(attrs={'class':'form-control'}),
+		max_length=35,
+		required=True)
+	privacy=forms.ChoiceField(widget = forms.Select(attrs={'class':'form-control'}),
+                     choices=PRIVACY_CHOICES, initial='CL', required = True)
+
+	class Meta:
+		model=Groups
+		fields=["gname","privacy"]
+
 class LoginForm(ModelForm):
 
 	username = forms.CharField(
 		widget=forms.TextInput(attrs={'class':'form-control'}),
 		max_length=35,
-		required=True, help_text='Write here your message!',
+		required=True,
 		error_messages={'required': 'Please enter your name hethg'})
 
 	password = forms.CharField(
-		widget=forms.TextInput(attrs={'class':'form-control'}),
+		widget=forms.PasswordInput(attrs={'class':'form-control'}),
 		max_length=35,
-		required=True, help_text='Wrong Pass',
+		required=True,
 		error_messages={'required': 'Wrong password'})
 
 	class Meta:
