@@ -179,11 +179,3 @@ class ConsistOf(models.Model):
         verbose_name_plural = "consist_of"
         unique_together = ("gid", "username")
 
-class GroupContainsStatus(models.Model):
-    gid=models.ForeignKey(Groups,on_delete=models.CASCADE)
-    sid=models.ForeignKey(Status,on_delete=models.CASCADE)
-    #for group photo
-
-    class Meta:
-        db_table='GroupContainsStatus'
-        verbose_name_plural = "GroupContainsStatus"
