@@ -12,7 +12,6 @@ admin.site.register(Comment)
 admin.site.register(Groups)
 admin.site.register(CommentLikes)
 admin.site.register(ConsistOf)
-admin.site.register(GroupContainsStatus)
 
 #admin.site.register(Gender)
 
