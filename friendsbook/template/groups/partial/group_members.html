@@ -5,10 +5,36 @@
 		<ul style="list-style-type:none">
 			{%for group_member in group_members%}
 			<li>
-				{{group_member.username}}
+				<a href="{% url 'profile_info' group_member.username.profile.slug%}">
+					<strong>{{group_member.username.profile.fname}}
+					</strong>
+				</a>
+						
+						<div class="group_buttons" >
+								<div class="dropdown">
+									<button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Joined
+									<span class="caret"></span></button>
+									<ul class="dropdown-menu">
+										<li><a href="#">Leave Group</a></li>
+									</ul>
+								</div>
+								&nbsp;
+
+								<div class="dropdown">
+									<button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">More
+									<span class="caret"></span></button>
+									<ul class="dropdown-menu">
+										<li><a href="#" data-toggle="modal" data-target="#addMembersToGroup">Add Member</a></li>
+										<li><a href="#">Group setting</a></li>
+									</ul>
+								</div>
+						</div>
+
+
+
 			</li>
 			{%endfor%}
-		
+
 		</ul>
 	</div>
 </div>

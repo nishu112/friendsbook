@@ -91,6 +91,22 @@ def FriendList(request,user):
 
 ##searching of user
 
+def friendship(user_obj,fuser_obj):
+	friendship=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj))
+	if friendship.exists():
+		for y in friendship:
+			if y.confirm_request==2:
+				return 3
+			else:
+				checkConnectionDirection=FriendsWith.objects.filter(username=user_obj,fusername=fuser_obj)
+				if checkConnectionDirection.exists():
+					return 1
+				else:
+					return 2
+	else:
+		return 0
+
+
 def friends_list(request,searched_by,context):
 	addfriends_list=list()
 
@@ -102,19 +118,7 @@ def friends_list(request,searched_by,context):
 			fuser=x.username
 			user_obj=User.objects.get(username=user)
 			fuser_obj=User.objects.get(username=fuser)
-			friendship=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj) |Q(username=fuser_obj,fusername=user_obj))
-			if friendship.exists():
-				for y in friendship:
-					if y.confirm_request==2:
-						addfriends_list.append(3)
-					else:
-						checkConnectionDirection=FriendsWith.objects.filter(username=user_obj,fusername=fuser_obj)
-						if checkConnectionDirection.exists():
-							addfriends_list.append(1)
-						else:
-							addfriends_list.append(2)
-			else:
-				addfriends_list.append(0)
+			addfriends_list.append(friendship(user_obj,fuser_obj))
 	context['data']=zip(context['data'],addfriends_list)
 	return context
 	#define
@@ -163,7 +167,6 @@ class LoginView(View):
 	template_name="user/login.html"
 	#get method
 	def get(self,request):
-		print('hello')
 		if request.user.is_authenticated:
 			return redirect('index')
 		form=LoginForm(None)
@@ -174,11 +177,14 @@ class LoginView(View):
 		username = request.POST['username']
 		password = request.POST['password']
 		user=authenticate(username=username,password=password)
-		print('hello')
 		if user is not None:
 			auth_login(request,user)
 			return redirect('index')
 		else:
+			print(form.errors)
+			print(form)
+
+
 			return render(request,"user/login.html",{'form':form})
 
 def logout(request):
@@ -232,9 +238,9 @@ def grouphome(request,pk):
 			post=form.save(commit=False)
 			post.username=User.objects.get(username=request.user.username)
 			post.title="Posted in "
+			post.gid=group
 			newstatus=form.save()
 			sid=Status.objects.get(id=post.id)
-			GroupContainsStatus.objects.create(gid=group,sid=sid)
 			posts=Status.objects.filter(id=newstatus.id)
 			posts=render_to_string('uposts/partials/singlepost.html',{'posts':posts},request)
 			return JsonResponse(posts,safe=False)
@@ -244,8 +250,7 @@ def grouphome(request,pk):
 	form =CreatePost(None)
 	#check user have the permission to access this group
 	#only then user able to access this method
-	posts=GroupContainsStatus.objects.filter(gid=group).values('sid')
-	posts=Status.objects.filter(id__in=posts)
+	posts=Status.objects.filter(gid=group)
 	chatusers=Check_user_online(request,request.user)
 	return render(request,"groups/index.html",{'posts':posts,'group':group,'form':form,'chatusers':chatusers})
 
@@ -262,7 +267,9 @@ def LoadGroupMembers(request):
 def LoadGroupPosts(request):
 	if request.is_ajax:
 		id=request.GET.get('id',None)
-		posts=user_post(request,request.user,Status.objects.all().select_related('username').order_by('-time'))
+		group=get_object_or_404(Groups,id=id)
+		posts=Status.objects.filter(gid=group).select_related('username').order_by('-time')
+		posts=user_post(request,request.user,posts)
 		data=render_to_string('groups/partial/group_posts.html',{'posts':posts},request)
 		return JsonResponse(render_to_string('groups/partial/group_posts.html',{'posts':posts},request),safe=False)
 
@@ -271,7 +278,10 @@ def LoadGroupPhotos(request):
 	if request.is_ajax:
 		id=request.GET.get('id',None)
 		print(id)
-		photo_albums = Status.objects.all()
+		group=get_object_or_404(Groups,id=id)
+		posts=Status.objects.filter(gid=group).select_related('username').order_by('-time')
+		photo_albums=user_post(request,request.user,posts)
+
 		#update this to just load the group photos
 		data = render_to_string(template_name, {'photo_albums': photo_albums})
 		return JsonResponse(data,safe=False)
@@ -292,7 +302,6 @@ def UploadGroupCover(request):
 			sid=Status.objects.get(id=cover.id)
 			Groups.objects.filter(id=gid).update(cover=sid)
 			gid=Groups.objects.get(id=gid)
-			GroupContainsStatus.objects.create(gid=gid,sid=sid)
 			obj=Status.objects.get(id=cover.id)
 			data = {'is_valid': True,'url':obj.image.url}
 		else:
@@ -430,10 +439,12 @@ class  FriendView(generic.DetailView):
 		user=User.objects.filter(username=self.object.username)
 		user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
 		chatusers=chatusers|user
+		context['y']=friendship(self.request.user,self.object.username)
 		friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=chatusers)
 		posts=Status.objects.filter(username__in=chatusers).select_related('username').order_by('-time')
 		posts=user_post(self.request,self.request.user,posts)
 		context['posts']=user_post(self.request,self.request.user,posts)
+
 
 		# modify it to show send friend request
 		context['chatusers']=Check_user_online(self.request,self.request.user)

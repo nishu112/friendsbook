@@ -30,9 +30,32 @@ class CreatePost(ModelForm):
 		fields = ["text","image","privacy"]
 
 class LoginForm(ModelForm):
+
+	username = forms.CharField(
+		widget=forms.TextInput(attrs={'class':'form-control'}),
+		max_length=35,
+		required=True, help_text='Write here your message!',
+		error_messages={'required': 'Please enter your name hethg'})
+
+	password = forms.CharField(
+		widget=forms.TextInput(attrs={'class':'form-control'}),
+		max_length=35,
+		required=True, help_text='Wrong Pass',
+		error_messages={'required': 'Wrong password'})
+
 	class Meta:
 		model=User
 		fields = ["username","password"]
+
+	def clean(self):
+		cleaned_data = super(LoginForm, self).clean()
+		username = cleaned_data.get('username')
+		password = cleaned_data.get('password')
+		print(username)
+		print(password)
+		print('hey')
+		if not username:
+			raise forms.ValidationError('You have to write something!')
 
 class Cover(ModelForm):
 	class Meta:

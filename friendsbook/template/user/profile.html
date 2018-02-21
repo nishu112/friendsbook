@@ -34,7 +34,31 @@
 							   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'/>
 					</div>
 					{%endifequal%}
-					<p class="name">{{User.username.profile.fname}} {%if User.username.profile.lname%}{{User.username.profile.lname}}{%endif%}</p>
+					<div  class="name">
+						<div class="row">
+							<div class="col-sm-6">
+								{{User.username.profile.fname}} {%if User.username.profile.lname%}{{User.username.profile.lname}}{%endif%}
+							</div>
+							{% ifnotequal User.username.username user.username  %}
+							<div class="particularuser" user={{User.username}} csrf={{csrf_token}}>
+								<div class="col-sm-6 add_friendbutton" >
+
+ 	 								{%if y is 0 or y is 1 or y is 2%}
+ 	 										<button class="btn btn-default type1" actiontype="type1" type="button" performaction="{%if y is 0%}Send{%elif y is 1%}Cancel{%elif y is 2%}Confirm{%endif%}" onclick="return false"  >
+ 	 										{%if y is 0%} Send request {%elif y is 1%} Cancel request{%elif y is 2%}Confirm Request{%endif%}
+ 	 										</button>
+ 	 								{%endif%}
+ 	 								{%if y is 2 or y is 3%}
+ 	 								<button class="btn btn-default type2" actiontype="type2" performaction="{%if y is 2%}Delete{%elif y is 3 %}Unfriend{%endif%}" type="button">
+ 	 									{%if y is 2%}Delete Request{%elif y is 3 %}Unfriend{%endif%}
+ 	 								</button>
+ 	 								{%endif%}
+ 							 {%endifnotequal%}
+							</div>
+						</div>
+					</div>
+
+					</div>
 						<div class="pic" >
 						{%if User.sid%}
 									{%if User.sid.image%}
@@ -158,6 +182,7 @@ $(function () {
 
 {%block javascript%}
 <script src="{% static 'js/posts/posts.js' %}"></script>
+<script src="{% static 'js/addfriends/friendrequest.js' %}"></script>
 
 
 {% endblock %}

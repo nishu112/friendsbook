@@ -70,6 +70,7 @@ margin-top: 50px; border: 0px; width: 270px; background-color: white;" id="liveS
       },
       dataType: 'json',
       success: function (data) {
+        console.log('get')
         var data=JSON.parse(data);
         var content="<table>";
         $.each (data, function (val) {
@@ -79,6 +80,7 @@ margin-top: 50px; border: 0px; width: 270px; background-color: white;" id="liveS
           content+='<tr><td>'+'<a  href='+'/users/profile/'+data[val].fields.slug+'>'+data[val].fields.fname+' '+data[val].fields.lname+'</td></tr>';
         });
         content+='</table>'
+        console.log(content)
         document.getElementById("liveSearchResult").innerHTML=content;
         document.getElementById("liveSearchResult").style.display="Block";
       }

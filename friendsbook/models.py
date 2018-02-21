@@ -20,6 +20,7 @@ class Status(models.Model):
     title=models.CharField(max_length=30,default="updated status",null=True)
     username = models.ForeignKey(User,on_delete=models.CASCADE,related_name='fbuser')
     text = models.TextField(blank=True, null=True)
+    gid=models.ForeignKey('Groups',on_delete=models.CASCADE,related_name='group_posts',null=True)
     image = models.FileField(upload_to="media/image",null=True, blank=True)
     time = models.DateTimeField(auto_now_add=True)
     privacy = models.CharField(max_length=5, blank=True, null=True,default="fs")
@@ -45,7 +46,7 @@ class Profile(models.Model):
     username=models.OneToOneField(User,on_delete=models.CASCADE)
     fname = models.CharField( max_length=20,blank=False,null=False)  # Field name made lowercase.
     lname = models.CharField(max_length=20, blank=True, null=True)
-    emailid = models.CharField(max_length=30)
+    emailid = models.EmailField(max_length=30)
     # Field name made lowercase.
     country_code = models.IntegerField(blank=True, null=True)
     phone_no = models.BigIntegerField(blank=True, null=True)

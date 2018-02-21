@@ -99,7 +99,7 @@ padding-top:2px;
 
 .subcomment{
 width:100%;
-margin: 5px;	
+margin: 5px;
 margin-right: 10px;
 }
 .edit_delete{
@@ -123,7 +123,7 @@ margin-right: 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
 	padding-top: 10px;
-	
+
 }
 
 .edit_button_icon{
@@ -156,15 +156,15 @@ div.myautoscroll:hover {
 }
 
 .cover_background {
-    
-    height: 100%; 
+
+    height: 100%;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
 }
 
-	
-	
+
+
 
 
 
@@ -240,24 +240,24 @@ div.myautoscroll:hover {
 	     float: right;
     margin-top: -21px;
  }
-	
+
 .intro{
 	background-color:white;
 	width:80%;
 	height:250px;
-	position:absolute;	
+	position:absolute;
 	padding-left: 5%;
 }
 
 .name{
-	
+
 left:240px;
 font-size:20px;
 font-family:verdana;
 color:black;
 top:230px;
 height:50px;
-width:200px;
+width: 500px;
 position:absolute;
 }
 
@@ -269,7 +269,7 @@ position:absolute;
 .btn-group{
 	top:255px;
 	right:-210px;
-	margin-right:460px;	
+	margin-right:460px;
 }
 
 ul.djng-form-errors {

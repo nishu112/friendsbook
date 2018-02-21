@@ -1,12 +1,37 @@
 {% extends "user/base.html" %}
+{% load widget_tweaks %}
 {% block content %}
-<form action="" method="post"><input type='hidden'  />{%csrf_token %}
-<p style="padding-left:30px"> <input type="text" placeholder="Username" name="username"  size="35" maxlength="50" required id="id_username" /></p>
-<p style="padding-left:30px"> <input type="password" suggested: "current-password" placeholder="Password" name="password"  size="35" maxlength="50" required id="id_password" /></p>
 
-  <div class="submit-row">
-    <label>&nbsp;</label><input type="submit" value="Log in" />
-  </div>
+<form action="" method="post"><input type='hidden'  />{%csrf_token %}
+
+  {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+  {% endfor %}
+
+  {% for field in form.visible_fields %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field|add_class:'form-control' }}
+
+      {% for error in field.errors %}
+        <span class="help-block">{{ error }}</span>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+            {% if form.errors %}
+                    <p class=" label label-danger">
+                        Your username and password didn't match.
+                        Please try again.
+                    </p>
+                {% endif %}
+
+  <div class="form-group">
+        <button type="submit" class="btn btn-default ">
+          Login
+        </button>
+        <a href="{% url 'signup' %}" class="btn btn-default">SignUp</a>
+      </div>
+
 </form>
-<p>Don't have an account? <a href="{% url 'signup' %}">Sign up!</a></p>
 {% endblock %}
