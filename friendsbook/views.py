@@ -461,7 +461,7 @@ def GroupsSettings(request,pk):
 		group.relation=0
 	else:
 		group.relation=1
-	if group.privacy=='CL' and result==None or result and result.confirm==0:
+	if group.privacy=='CL' and result==None or result and result.confirm==0 or group.new is 1:
 		return redirect('groupMembers',pk=pk)
 
 
