@@ -48,6 +48,7 @@
   <script>
 (function( $ ){
 $('[data-toggle="tooltip"]').tooltip();
+});
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/users/');
 	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/{{user.username}}/');
@@ -94,7 +95,7 @@ $('[data-toggle="tooltip"]').tooltip();
       socket.onopen();
     }
 
-	});
+	
   </script>
 
 	  {% block javascript %}
