@@ -855,6 +855,7 @@ def UserProfile(request,slug):
 	privacy='NoConnection'
 	if request.user ==profile.username:
 		posts=user_post(request,request.user,GetUserPosts(request))
+		print(posts)
 		privacy='NoNeed'
 	elif profile.username in chatusers:
 		privacy='fs'
@@ -886,7 +887,7 @@ def UserProfile(request,slug):
 			if x.gid.privacy=='OP':
 				friendsPostWithGroupPrivacyOpen=friendsPostWithGroupPrivacyOpen|Status.objects.filter(id=x.id)
 		posts=usersPost|friendsPostWithoutGroup|friendsPostWithGroupPrivacyOpen
-	else:
+	elif privacy=='NoConnection':
 		#define some post methods here
 		chatusers=Check_user_online(request,profile.username)
 		userposts=Status.objects.filter(username=profile.username,privacy='pbc').select_related('username').order_by('time')
