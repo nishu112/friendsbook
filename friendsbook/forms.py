@@ -171,7 +171,7 @@ class CreateGroup(ModelForm):
 		fields=["gname","privacy"]
 
 	def clean(self):
-		cleaned_data = super(CreateGroupPost, self).clean()
+		cleaned_data = super(CreateGroup, self).clean()
 		gname = cleaned_data.get('gname')
 		privacy = cleaned_data.get('privacy')
 		if not gname or not privacy:
