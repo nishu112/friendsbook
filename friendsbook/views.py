@@ -1203,8 +1203,7 @@ def get_contifications(request):
 		PostNotification=Notification.objects.none()
 		for x in chatusers:
 			PostNotification=PostNotification|Notification.objects.filter(from_user=x,to_user__isnull=True,is_read=False)
-
-		notifications=(IndividualNotifications|PostNotification)[:4]
+		notifications=((IndividualNotifications|PostNotification)|Notification.objects.filter(to_user=request.user,is_read=False))[:4]
 		print(notifications)
 		for notification in notifications:
 			notification.is_read=True
@@ -1221,7 +1220,7 @@ def get_contifications(request):
 		for x in chatusers:
 			PostNotification=PostNotification|Notification.objects.filter(from_user=x,to_user__isnull=True)
 
-		notifications=(IndividualNotifications|PostNotification).select_related('from_user')
+		notifications=(IndividualNotifications|PostNotification|Notification.objects.filter(to_user=request.user,is_read=False)).select_related('from_user')
 		print(notifications)
 		return render(request,"notification/notifications.html",{'notifications':notifications})
 
@@ -1239,6 +1238,6 @@ def check_contification(request):
 		for x in chatusers:
 			PostNotification=PostNotification|Notification.objects.filter(from_user=x,to_user__isnull=True,is_read=False)
 
-		notifications=(IndividualNotifications|PostNotification)
+		notifications=(IndividualNotifications|PostNotification)|Notification.objects.filter(to_user=request.user,is_read=False)
 		data=len(notifications)
 		return JsonResponse(data,safe=False)
