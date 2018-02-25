@@ -1,7 +1,8 @@
 				<div class="list-group users-list" style="position:fixed">
 				  {% for user_obj in chatusers %}
 						{%if user.username !=  user_obj.username %}
-					<a href="javascript:void(0)" target='{{user_obj}}'  class="list-group-item">
+
+					<a    href="{%url 'Messenger' slug1=user.profile slug2=user_obj.profile%}" target='{{user_obj}}' class="list-group-item {%ifequal user_obj fuser_obj %} active{%endifequal%}">
 
 					  {%if user_obj.profile.sid%}
 										<img class="img-rounded" style=" border-radius: 50%;"  src="{{user_obj.profile.sid.image.url}}" alt="My image" width="42" height="42"/>

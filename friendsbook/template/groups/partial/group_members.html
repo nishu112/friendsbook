@@ -1,40 +1,257 @@
-<div class="group_members">
-	<h1> Members:-</h1>
-	<div class="well">
-		<h4> Members and moderators:</h4>
-		<ul style="list-style-type:none">
-			{%for group_member in group_members%}
-			<li>
-				<a href="{% url 'profile_info' group_member.username.profile.slug%}">
-					<strong>{{group_member.username.profile.fname}}
-					</strong>
-				</a>
-						
-						<div class="group_buttons" >
-								<div class="dropdown">
-									<button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Joined
-									<span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a href="#">Leave Group</a></li>
-									</ul>
-								</div>
-								&nbsp;
+{% extends "friendsbook/structure.html" %}
+{% block content %}
+{% load static %}
+{%block head%}
+	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
+	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
+	<link href="{% static 'css/pages/cover.css' %}" rel="stylesheet">
+	<link href="{% static 'css/pages/group/navigation.css' %}" rel="stylesheet">
+	<style>
+	.maincontainer ul{
+		margin-left:-40px;
+	}
+	</style>
+{%endblock head%}
+<div class="container-fluid"><br><br><br>
 
-								<div class="dropdown">
-									<button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">More
-									<span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a href="#" data-toggle="modal" data-target="#addMembersToGroup">Add Member</a></li>
-										<li><a href="#">Group setting</a></li>
-									</ul>
+	<div class="modal fade" id="addMembersToGroup" role="dialog">
+	    <div class="modal-dialog">
+
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">Add members</h4>
+	        </div>
+			<div class="container-fluid">
+				<div class="membersearch">
+					<form action="" method="post" onsubmit="return false">{%csrf_token %}
+						<input type="text" autocomplete="off" id="searchToAddMembers" size="75" placeholder="Search" name="search_user">
+						<input type="hidden" name="group_id" value="{{group.id}}"/>
+						<hr>
+						<input class="btn btn-primary pull-right" style="margin:4px" type="submit" value="Add"/>
+					</form>
+				</div>
+			</div>
+		  </div>
+
+	     </div>
+		</div>
+
+
+	<div class="row">
+		<div class="col-sm-10">
+			<div class="row ">
+
+
+				{%include "groups/group_navigation.html"  with active='members'%}
+
+			  <div class="col-sm-10">
+					<div class="row">
+					{%include "groups/partial/group_cover.html"%}
+						<!-- Example single danger button -->
+
+
+</br></br></br>
+						<div class="well" style="background-color:#fff">
+							<div class="row" >
+								<h1 style="text-align:center">  <strong  >Admins: </strong></h1>
+							</div>
+
+							<div class="row admins">
+
+							{%for admin in admins%}
+
+
+
+							<div class="particularuser col-sm-6" user={{admin.username}} csrf={{csrf_token}} id={{group.id}}>
+								<div class="well add_friendbutton " >
+									{%if admin.username.profile.sid%}
+										{%if admin.username.profile.sid.image%}
+											<img class="img-rounded"  src="{{ admin.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+										{%endif%}
+									{%else%}
+											<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+									{%endif%}
+
+									<a href="{%url 'profile_info' admin.username.profile.slug %}">{{admin.username.profile.fname}}{%if admin.username.profile.lname%} {{admin.username.profile.lname}} {%endif%}</a>
+
+									{%if group.new is 0 and group_consist.gadmin is 1%}
+										<span>
+										<button class="btn btn-default type1" style="font-size:12px;"  type="button" performaction="Remove from admin" onclick="return false"  >
+										Remove from admin
+										</button>
+
+
+										<button class="btn btn-default type2" style="font-size:12px;"  performaction="Remove From group" type="button">
+											Remove From group
+										</button>
+									</span>
+									{%endif%}
+
 								</div>
+								<br>
+
+							</div>
+							{%endfor%}
+
+							</div>
 						</div>
 
 
 
-			</li>
-			{%endfor%}
 
-		</ul>
+
+
+						<div class="well" style="background-color:#fff">
+							<div class="row" >
+								<h1 style="text-align:center">  <strong  >Members: </strong></h1>
+							</div>
+
+							<div class="row group_members">
+
+							{%for member in group_members%}
+
+
+
+							<div class="particularuser col-sm-6" user={{member.username.profile.username}} csrf={{csrf_token}} id={{group.id}}>
+								<div class="well add_friendbutton " >
+									{%if member.username.profile.sid%}
+										{%if  member.username.profile.sid.image%}
+											<img class="img-rounded"  src="{{  member.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+										{%endif%}
+									{%else%}
+											<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+									{%endif%}
+
+									<a href="{%url 'profile_info'  member.username.profile.slug %}">{{ member.username.profile.fname}}{%if  member.username.profile.lname%} {{ member.username.profile.lname}} {%endif%}</a>
+
+
+										{%if group.new is 0 and group_consist.gadmin is 1%}
+																			<span>
+																			<button class="btn btn-default" style="font-size:12px;"  type="button" performaction="Make him admin" onclick="return false"  >
+																			Make him admin
+																			</button>
+
+
+																			<button class="btn btn-default" style="font-size:12px;"  performaction="Remove From group" type="button">
+																				Remove From group
+																			</button>
+																		</span>
+											{%endif%}
+
+								</div>
+								<br>
+
+							</div>
+							{%endfor%}
+
+							</div>
+						</div>
+
+
+
+				</div>
+			</div>
+
+			</div>
+		</div>
+
+		<div class="col-sm-2">
+
+			{%include "chat/online_user_list.html"%}
+		</div>
 	</div>
+
 </div>
+
+
+
+
+{% endblock %}
+
+
+{%block javascript%}
+
+<script src="{% static 'js/posts/posts.js' %}"></script>
+<script>
+
+$(function () {
+
+$(document).on("click",".particularuser button",function (){
+console.log('hey')
+button=$(this).closest('button')
+action=$(button).attr('performaction')
+console.log(action)
+particularuser=$(this).closest('.particularuser')
+console.log(particularuser)
+user=$(particularuser).attr('user')
+console.log(user)
+csrf=$(particularuser).attr('csrf')
+gid=$(particularuser).attr('id')
+console.log(gid)
+console.log(action)
+
+
+console.log(button)
+		$.ajax({
+			url:"{%url 'GroupMemberListActions'%}",
+			data:{'csrfmiddlewaretoken':csrf,'gid':gid,'user':user,'action':action},
+			type:'POST',
+			dataType:'json',
+			success: function(data){
+				console.log('back')
+				if (action=='Make him admin')
+					{
+						
+						$('.admins').append(data)
+
+					$(particularuser).fadeOut(400, function () {
+		           $(particularuser).remove();
+		         });
+
+				}
+				if (action=='Remove From group')
+					{
+
+						$(particularuser).fadeOut(400, function () {
+			           $(particularuser).remove();
+			         });
+
+				}
+				if (action=='Remove from admin')
+
+					$('.group_members').append(data)
+					$(particularuser).fadeOut(400, function () {
+		           $(particularuser).remove();
+		         });
+			}
+		});
+});
+
+
+$(document).on("click", ".membersearch input[type='submit']", function (event){
+	form=$(this).closest('form')
+	addMembersToGroup=$(this).closest('#addMembersToGroup')
+	close=$('.close',addMembersToGroup)
+	$($(this).closest('.close')).click();
+	$.ajax({
+		url: "{%url 'addgroupmember' %}",
+		data:$(form).serialize(),
+		type:'POST',
+		dataType: 'json',
+		success: function (data) {
+			console.log('back');
+			console.log(data)
+			$(close).click();
+		}
+	});
+
+});
+
+
+});
+
+</script>
+
+{% endblock %}

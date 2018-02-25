@@ -1,5 +1,5 @@
 <header>
-<nav class="navbar navbar-default navbar-fixed-top" style="background-color:#00897b">
+<nav class="navbar navbar-default navbar-fixed-top" style="background-color:#00897b" role="navigation">
   <div class="container">
     <div class="navbar-header navbar-hover">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -33,12 +33,11 @@
 	        {% if user.is_authenticated %}
 							<li><a href="{%url 'profile_info' request.user.profile.slug %}"><div   class="glyphicon glyphicon-user">{{request.user.profile.fname}}</div></a></li>
 					{%endif%}
-						<li><a href={% url 'user_list'%}>
-							<div class="glyphicon glyphicon-globe">
-
-							</div>
-							<span class="badge badge-notify">3</span>
-						</a></li>
+						<li>
+              <a href="#" id="notifications" data-container="body" data-toggle="popover" data-placement="bottom" title="Notifications">
+                    <span class="glyphicon glyphicon-globe">  <span class="badge badge-notify"></span></span>
+              </a>
+            </li>
 						<li><a href={% url 'user_list'%}>Chat Room</a></li>
 						<li><a href={% url 'new_post'%}>Create Post</a></li>
 						<li><a href={% url 'logout' %}><div class="glyphicon glyphicon-log-in"></div> Logout</a></li>
@@ -88,5 +87,56 @@ margin-top: 50px; border: 0px; width: 270px; background-color: white;" id="liveS
     })
 
         })( jQuery );
+
+        $(function () {
+          $('#notifications').popover({html: true, content: 'Loading...', trigger: 'manual'});
+
+          $("#notifications").click(function () {
+            if ($(".popover").is(":visible")) {
+              $("#notifications").popover('hide');
+            }
+            else {
+              
+              $("#notifications").popover('show');
+              $.ajax({
+                url: '/notifications/',
+                beforeSend: function () {
+                  $(".popover-content").html("<div style='text-align:center'><img src='/static/img/loading.gif'></div>");
+                  $("#notifications").removeClass("new-notifications");
+                },
+                success: function (data) {
+                  $(".popover-content").html(data);
+                }
+              });
+            }
+            return false;
+          });
+
+
+
+          function check_notifications() {
+            $.ajax({
+              url: '/notifications/check/',
+              cache: false,
+              success: function (data) {
+                if (data != "0") {
+
+                  $('.badge-notify').html(data)
+                  $("#notifications").addClass("new-notifications");
+                }
+                else {
+
+                  $("#notifications").removeClass("new-notifications");
+                }
+              },
+              complete: function () {
+                window.setTimeout(check_notifications, 30000);
+              }
+            });
+          };
+        check_notifications();
+
+        });
+
 </script>
 </header>

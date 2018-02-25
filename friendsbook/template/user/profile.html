@@ -1,12 +1,15 @@
 {% extends "friendsbook/structure.html" %}
-{% block content %}
+
 {% load static %}
 {%block head%}
 	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
 	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
 	<link href="{% static 'css/pages/cover.css' %}" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet">
+
 {%endblock head%}
-<div class="container"><br><br><br>
+{% block content %}
+<div class="container-fluid"><br><br><br>
 	<div class="row ">
 		<div class="col-sm-9">
 			<div class="row profile " profilefor="{{User.username}}">
@@ -16,11 +19,20 @@
 					{%else%}
 						<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
 					{%endif%}
-					<button class="btn btn-default button1">Timeline</button>
-					<button class="btn btn-default button2">About</button>
-					<button class="btn btn-default button3">Friends</button>
-					<button class="btn btn-default button4">Photos</button>
-					<button class="btn btn-default button5">More</button>
+					<span class="btn btn-default button1"><a href="timeline">Timeline</a></span>
+					<span class="btn btn-default button2"><a href="">About</a></span>
+					<span class="btn btn-default button3"><a href="friends">Friends</a></span>
+					<span class="btn btn-default button4"><a href="photos">Photos</a></span>
+					{%ifequal User.username.username user.username%}
+					<div class="dropdown button5">
+						<button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">More
+						<span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li><a href="ChaneProfileInfo">Setting</a></li>
+
+						</ul>
+					</div>
+					{%endifequal%}
 					{% ifequal User.username.username user.username  %}
 					<div class="btn button6" style="margin-bottom: 20px;">
 						<button type="button" class="btn btn-primary js-upload-photos" id="mycover">
@@ -52,9 +64,9 @@
  	 									{%if y is 2%}Delete Request{%elif y is 3 %}Unfriend{%endif%}
  	 								</button>
  	 								{%endif%}
- 							 {%endifnotequal%}
 							</div>
 						</div>
+						{%endifnotequal%}
 					</div>
 
 					</div>
@@ -88,16 +100,41 @@
 
 			<!---
 			-->
+			{%block profile_content%}
 			<br><br><br>
+			
+			<div id="profileonclickbuttons" style="display:block";class="row">
+							<div class="col-sm-3">
+								<div class ="intro" >
+									<h4><img src="/static/img/introicon.png" width="25px" height="25px"><strong>&nbsp&nbspIntro </strong></h4>
+									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudying at </p>
+									{%if User.state%}
+									<p><img src="/static/img/images.png" width="20px" height="20px">&nbsp&nbspLives in {{User.state}}</p>
+									{%endif%}
+									{%if User.country%}
+									<p><img src="/static/img/color-icons-green-home.png" width="20px" height="20px">&nbsp&nbspFrom {{User.country}}</p>
+									{%endif%}
+									{%if User.dob%}
+									<p><img src="/static/img/born.png" width="20px" height="20px">&nbsp&nbsp Born in {{User.dob}}</p>
+									{%endif%}
+								</div>
+							</div>
+							<div class="col-sm-9">
 
-			{%include "user/partial/only_post.html" %}
+									<div class="row">
+										<div class="col-sm-12">
+											{%include "uposts/only_post.html" %}<br>
+										</div>
+									</div>
+							</div>
+						</div>
 
 
 
 
 		<!---
 		-->
-
+			{%endblock profile_content%}
 
 			<div class="row">
 
@@ -115,53 +152,30 @@
 
 
 
-
 <script>
+  $(function() {
+
+$('body').on('focus',".datepicker", function(){
+	datepicker=(this).closest('.datepicker')
+$(datepicker).datepicker({
+
+	changeMonth: true,
+	changeYear: true,
+	yearRange: "1970:2018",
+	// You can put more options here.
+
+});
+});
+
+});
 $(function () {
-	$(document).on("click", "#cover_background .button1", function () {
-		username=$($(this).closest('.profile')).attr('profilefor')
-		$.ajax({
-			url: '/ajax/users/profile/status/',
-					data:{
-						'username':username
-					},
-			type:'get',
-			dataType: 'json',
-			success: function (data) {
-				document.getElementById('profileonclickbuttons').innerHTML=data;
-			}
-		  });
-		});
 
-	$(document).on("click", "#cover_background .button3", function () {
-		username=$($(this).closest('.profile')).attr('profilefor')
-		$.ajax({
-			url: '/ajax/users/profile/friend_list/',
-			data:{
-						'username':username
-					},
-			type:'get',
-			dataType: 'json',
-			success: function (data) {
-				document.getElementById('profileonclickbuttons').innerHTML=data;
-			}
-		  });
-	});
 
-	$(document).on("click", "#cover_background .button4", function () {
-		username=$($(this).closest('.profile')).attr('profilefor')
-		$.ajax({
-			url: '/ajax/users/profile/photoframe/',
-			data:{
-						'username':username
-					},
-			type:'get',
-			dataType: 'json',
-			success: function (data) {
-				document.getElementById('profileonclickbuttons').innerHTML=data;
-			}
-		  });
-		});
+
+
+
+
+
 {% ifequal User.username.username user.username  %}
 	$('.pic').on("mouseenter",function(){
 		$('#mypic').show()
@@ -172,8 +186,8 @@ $(function () {
 	});
 {%endifequal%}
 
-});
 
+});
 
 </script>
 {% endblock %}
@@ -182,6 +196,8 @@ $(function () {
 {%block javascript%}
 <script src="{% static 'js/posts/posts.js' %}"></script>
 <script src="{% static 'js/addfriends/friendrequest.js' %}"></script>
+
+
 
 
 {% endblock %}

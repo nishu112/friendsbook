@@ -1,0 +1,29 @@
+{% extends 'friendsbook/structure.html' %}
+{% load staticfiles %}
+
+{% load humanize %}
+
+{% block title %} Notifications {% endblock %}
+
+
+
+{% block content %}
+<br><br><br>
+  <div class="page-header">
+    <h1>Notifications</h1>
+  </div>
+  <ul class="all-notifications">
+
+    {% for notification in notifications %}
+      <li class="clearfix">
+        <a href="{% url 'profile_info' notification.from_user.profile.slug %}"><img src="{{ notification.from_user.profile.get_picture }}" class="user-picture"></a>
+        <div>
+          <small>{{ notification.date|naturaltime }}</small>
+          <p>{{ notification|safe }}</p>
+        </div>
+      </li>
+    {% empty %}
+      <li>You have no notification</li>
+    {% endfor %}
+  </ul>
+{% endblock content %}

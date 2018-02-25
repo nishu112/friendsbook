@@ -1,18 +1,29 @@
-	<div class="row">
-				<h1>  <strong>Photo Album : </strong></h1>
-			</div>
-			<div class="row">    
-			{% for photo in photo_albums%}
-		<!-- comments and numberOfComments are not used-->			
-				{%if photo.image %}
-					{% if ".jpg" in photo.image.url or ".jpeg" in photo.image.url or ".tif" in photo.image.url or   ".png" in photo.image.url or ".gif" in photo.image.url %}
-					<div style="padding:0;" class="col-sm-3">
-					  <div style="margin-bottom:0;" class="panel panel-success">
+
+{% extends "user/profile.html" %}
+
+{%block profile_content%}
+
+				<div class="row">
+							<h1>  <strong>Photo Album : </strong></h1>
+				</div>
+						<div class="row">
+						{% for photo in photo_albums%}
 						
-						<div style="padding: 1px;"class="panel-body"><img src="{{ photo.image.url}}"  class="img-responsive" style="height: 206px;width: 206px;" alt="Image"></div>
-					  </div>
-					</div>
-					{%endif%}
-				{%endif%}
-			{%endfor%}
-			</div>
+					<!-- comments and numberOfComments are not used-->
+							{%if photo.image %}
+								{% if ".jpg" in photo.image.url or ".jpeg" in photo.image.url or ".tif" in photo.image.url or   ".png" in photo.image.url or ".gif" in photo.image.url %}
+								<div style="padding:0;" class="col-sm-3">
+									<div style="margin-bottom:0;" class="panel panel-success">
+
+									<div style="padding: 1px;"class="panel-body"><img src="{{ photo.image.url}}"  class="img-responsive" style="height: 206px;width: 206px;" alt="Image"></div>
+									</div>
+								</div>
+								{%endif%}
+							{%endif%}
+
+						{% empty %}
+						<h1>No Photos to show</h1>
+						{%endfor%}
+						</div>
+
+{%endblock profile_content%}

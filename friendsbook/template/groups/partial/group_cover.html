@@ -1,0 +1,108 @@
+	<div class="row">
+							<div class="background_pic_design" style="height:280px">
+								{%if group.cover.image%}
+									<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("{{group.cover.image.url}}");'>
+								{%else%}
+									<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
+								{%endif%}
+								</div>
+								{%if group.new is 0%}
+								<div class="btn button6" style="margin-bottom: 20px;">
+									<button type="button" class="btn btn-primary js-upload-photos" id="groupcover">
+
+									  <span class="glyphicon glyphicon-cloud-upload"></span> Upload Cover
+
+									</button>
+									<input id="groupCoverPhoto" type="file" name="image"
+										   style="display: none;"
+										   data-url="{%url 'groupUpdateCover'%}"
+										   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}","gid":"{{group.id}}"}'/>
+								</div>
+
+								<div class="group_buttons" >
+										<div class="dropdown">
+									    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Joined
+									    <span class="caret"></span></button>
+									    <ul class="dropdown-menu">
+									      <li class="leave" id={{group.id}} csrf={{csrf_token}}><a href="#">Leave Group</a></li>
+									    </ul>
+									  </div>
+										&nbsp;
+
+										<div class="dropdown">
+									    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">More
+									    <span class="caret"></span></button>
+									    <ul class="dropdown-menu">
+									      <li><a href="#" data-toggle="modal" data-target="#addMembersToGroup">Add Member</a></li>
+									      <li><a href="#">Group setting</a></li>
+									    </ul>
+									  </div>
+								</div>
+								{%endif%}
+								{%if group.new is 1%}
+
+								<button class="btn btn-default request" data={%if group.relation is 1%}"Cancel request"{%else%}"Request To join"{%endif%} id={{group.id}} csrf={{csrf_token}}>
+									{%if group.relation is  1%}Cancel request{%else%}Request To join{%endif%}
+								</button>
+								{%endif%}
+
+						  </div>
+					</div>
+					<script>
+					$(function () {
+
+						$(document).on("click",".leave a",function(){
+
+
+							li=$(this).closest('.leave')
+							id=$(li).attr('id')
+							csrf=$(li).attr('csrf')
+
+							$.ajax({
+								url: "{%url 'LeaveGroup' %}",
+								data:{'csrfmiddlewaretoken':csrf,'id':id},
+								type:'POST',
+								dataType: 'json',
+								success: function (data) {
+									console.log('removed')
+
+								}
+							});
+						});
+
+
+
+
+
+
+					$(document).on("click",".background_pic_design .request",function(){
+						console.log('hi')
+						button=$(this).closest('button')
+						data=$(button).attr('data')
+						id=$(button).attr('id')
+						csrf=$(button).attr('csrf')
+						console.log(csrf)
+						console.log(id)
+
+						$.ajax({
+							url: "{%url 'joinrequest' %}",
+							data:{'csrfmiddlewaretoken':csrf,'id':id,'data':data},
+							type:'POST',
+							dataType: 'json',
+							success: function (data) {
+								console.log('back');
+								$(button).html(data)
+								$(button).attr('data',data)
+
+							}
+						});
+
+					});
+
+
+
+
+				});
+
+
+					</script>

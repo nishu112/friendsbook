@@ -12,6 +12,7 @@ admin.site.register(Comment)
 admin.site.register(Groups)
 admin.site.register(CommentLikes)
 admin.site.register(ConsistOf)
+admin.site.register(Notification)
 
 #admin.site.register(Gender)
 

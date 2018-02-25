@@ -1,0 +1,26 @@
+<div class="col-sm-2 well navigation" style="background-color:#fff">
+					<div style="font-weight:bold ;text-align: center;">{{group.gname}}
+
+						{%ifequal group.privacy  "OP"%}(Open Group){%endifequal%}
+						{%ifequal group.privacy  "CL"%}(Closed Group){%endifequal%}
+
+					</div>
+					<ul class="nav nav-pills nav-stacked " group_id='{{group.id}}'>
+
+						<li class=" {% if active == 'about' %} active{% endif %}"><a href="{%url 'AboutGroup' group.id%}">About</a></li>
+						{%if  group.privacy == "OP" or group.new is 0 %}
+						<li class=" {% if active == 'discussion' %} active{% endif %}"><a href="{%url 'GroupDiscussion' group.id%}" >Discussion</a></li>
+						{%endif%}
+						<li class=" {% if active == 'members' %} active{% endif %}"><a  href="{%url 'groupMembers' group.id%}">Members</a></li>
+
+						{%if group.new is 0 %}
+						<li class=" {% if active == 'video' %} active{% endif %}"><a href="{%url 'GroupVideos' group.id%}">Video</a></li>
+						<li class=" {% if active == 'photos' %} active{% endif %}"><a href="{%url 'GroupsPhotos' group.id%}">Photo</a></li>
+						<li class=" {% if active == 'files' %} active{% endif %}"><a href="{%url 'GroupsFiles' group.id%}">Files</a></li>
+						{%if group_consist.gadmin is 1%}
+						<li class=" {% if active == 'manage' %} active{% endif %}"><a  href="{%url 'GroupManage' group.id%}">Manage </a></li>
+						<li class=" {% if active == 'settings' %} active{% endif %}"><a  href="{%url 'Groupsettings' group.id%}">Settings </a></li>
+						{%endif%}
+						{%endif%}
+					</ul>
+</div>

@@ -1,28 +1,51 @@
-	<div class="well" style="background-color:#fff">
-		<div class="row" >
-			<h1 style="text-align:center">  <strong  >Friend List: </strong></h1>
-		</div>
-		
-		<div class="row">
-		
-		{%for friend in friends_list%}
-			<div class="col-sm-6">		
-				<div class="well">
-					<div class="friends_list_pic">
-						<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
-					</div>
-					<div>
-						<span style="padding-left:4px"; >
-						<a href="{%url 'profile_info' friend.slug %}">{{friend.fname}}</a>
-						</span>
-					</div>
-					<div class="friends_list_addFriends">
-						<button type="button">Add friends</button>
-					</div>
-					
-				</div>
-			</div>
-		{%endfor%}
-			
-		</div>
-	</div>				
+{%extends "user/profile.html"%}
+{%block profile_content%}
+
+						<br><br><br>
+
+						<div class="well" style="background-color:#fff">
+							<div class="row" >
+								<h1 style="text-align:center">  <strong  >Friend List: </strong></h1>
+							</div>
+
+							<div class="row">
+
+							{%for friend in friends_list%}
+
+
+							
+							<div class=" particularuser col-sm-6" user={{friend.username}} csrf={{csrf_token}}>
+								<div class="well add_friendbutton " >
+									{%if friend.sid%}
+										{%if friend.sid.image%}
+											<img class="img-rounded"  src="{{ friend.sid.image.url}}" alt="My image" width="42" height="42"/>
+										{%endif%}
+									{%else%}
+											<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+									{%endif%}
+
+									<a href="{%url 'profile_info' friend.slug %}">{{friend.fname}}{%if profile.username.profile.lname%} {{profile.username.profile.lname}} {%endif%}</a>
+
+									{%if user.username  !=  friend.username.username %}
+
+											{%if friend.y is 0 or friend.y is 1 or friend.y is 2%}
+													<button class="btn btn-default type1" style="font-size:12px;" actiontype="type1" type="button" performaction="{%if friend.y is 0%}Send{%elif friend.y is 1%}Cancel{%elif friend.y is 2%}Confirm{%endif%}" onclick="return false"  >
+													{%if friend.y is 0%} Send request {%elif friend.y is 1%} Cancel request{%elif friend.y is 2%}Confirm Request{%endif%}
+													</button>
+											{%endif%}
+											{%if friend.y is 2 or friend.y is 3%}
+											<button class="btn btn-default type2" style="font-size:12px;" actiontype="type2" performaction="{%if friend.y is 2%}Delete{%elif friend.y is 3 %}Unfriend{%endif%}" type="button">
+												{%if friend.y is 2%}Delete Request{%elif friend.y is 3 %}Unfriend{%endif%}
+											</button>
+											{%endif%}
+									{%endif%}
+								</div>
+								<br>
+
+							</div>
+							{%endfor%}
+
+							</div>
+						</div>
+
+{%endblock profile_content%}

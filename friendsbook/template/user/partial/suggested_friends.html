@@ -5,6 +5,8 @@
 		<li>
 		<a href="{%url 'profile_info' x.profile.slug%}">{{x.profile.fname}}</a>
 		</li>
+		{%empty%}
+		No suggestions right Now
 		{%endfor%}
 	</ul>
 </div>

@@ -9,10 +9,12 @@
 	<link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
 	<link rel="stylesheet" href="{% static 'css/home.css' %}" type = "text/css"/>
 	<link rel="stylesheet" href="{% static 'css/notification.css' %}" type = "text/css"/>
-
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
+
+<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
 	{% block head %}
 
 	{% endblock head %}
@@ -22,13 +24,14 @@
 <body  style="">
 
 {%include "friendsbook/header.html"%}
+<main>
 <div class="container-fluid">
 {%include "groups/create_groups.html"%}
 		{% block content %}
 		{% endblock content%}
 
 </div>
-
+</main>
 
 
 	<script src="{% static 'custom/home.js' %}"></script>
@@ -43,8 +46,8 @@
 
 
   <script>
-
-
+(function( $ ){
+$('[data-toggle="tooltip"]').tooltip();
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/users/');
 	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/{{user.username}}/');
@@ -77,23 +80,21 @@
 	  }
 	  var text = data['text'];
 	  var fuser = data['fuser'];
-   console.log('send');
+		if('{{user.username}}'!=user)
+	  	{
 
-		console.log("not")
-	  if('{{user.username}}'==user)
-      $('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+data['time']+'"> <p class=" text-right list-group-item">' +data['text'] + '</p></span>')
+			$('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+data['time']+'"> <p class="text-left list-group-item">' +data['text'] + '</p></span>')
 
-	  else
-	  $('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+data['time']+'"> <p class="text-left list-group-item">' +data['text'] + '</p></span>')
+		  $('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
+			}
 
-	  $('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
-	  $(document).ready(function(){
-		$('[data-toggle="tooltip"]').tooltip();
-		});
+
     };
     if (socket.readyState == WebSocket.OPEN) {
       socket.onopen();
     }
+
+	});
   </script>
 
 	  {% block javascript %}

@@ -1,0 +1,31 @@
+<div class="particularuser col-sm-6" user={{member.username.profile.username}} csrf={{csrf_token}} id={{group.id}}>
+	<div class="well add_friendbutton " >
+		{%if member.username.profile.sid%}
+			{%if  member.username.profile.sid.image%}
+				<img class="img-rounded"  src="{{  member.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+			{%endif%}
+		{%else%}
+				<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+		{%endif%}
+
+		<a href="{%url 'profile_info'  member.username.profile.slug %}">{{ member.username.profile.fname}}{%if  member.username.profile.lname%} {{ member.username.profile.lname}} {%endif%}</a>
+
+
+			{%if group.new is 0 and group_consist.gadmin is 1%}
+												<span>
+
+												<button class="btn btn-default" style="font-size:12px;"  type="button" performaction={%if user_isadmin.gadmin is 1 %}"Remove From admin"{%else%}"Make him admin"{%endif%}  >
+												{%if user_isadmin.gadmin is 1%}Remove From admin{%else%}Make him admin{%endif%}
+												</button>
+
+
+												<button class="btn btn-default" style="font-size:12px;"  performaction="Remove From group" type="button">
+													Remove From group
+												</button>
+											</span>
+				{%endif%}
+
+	</div>
+	<br>
+
+</div>

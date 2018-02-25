@@ -12,16 +12,8 @@
 		<div class="container-fluid">
 			<div style="margin-bottom: 20px;">
 
-			 <form id="create-new-group" enctype="multipart/form-data" >{%csrf_token%}
-				  <div class="form-group">
-					<label for="id_gname">Group Name</label>
-					<input type="text" class="form-control"  type="text" name="gname" maxlength="20" required id="id_gname" placeholder="Group Name">
-
-				  </div>
-				  <div class="form-group">
-					<label for="id_privacy">Privacy</label>
-					<input class="form-control" placeholder="Group Type" type="text" name="privacy" maxlength="5" required id="id_privacy">
-				  </div>
+			 <form class="create-new-group"  onsubmit="return false" method='POST' enctype="multipart/form-data" >{%csrf_token%}
+				  {{newGroupForm.as_p}}
 				  <input type="submit" class="btn btn-primary" value="Create"/>
 			</form>
 
@@ -33,29 +25,20 @@
     </div>
 	</div>
 <script>
-	    $('#create-new-group').on('submit', function(event){
-        event.preventDefault();
-        console.log("form submitted!")
-        create_group();
-		});
 
-		function create_group() {
+$(document).on("click", ".create-new-group input[type='submit'] ", function () {
+        console.log("form submitted!")
+
         console.log("create group is working!")
-		var gname=$('#id_gname').val()
-		var privacy=$('#id_privacy').val()
-		console.log(gname)
-		console.log(privacy)
+		form=$(this).closest('form');
+
 		$('#create-new-group').trigger("reset");
 
         $.ajax({
             url : "ajax/CreateGroup/",
-            data : {
-				'gname':gname,
-				'privacy':privacy,
-				csrfmiddlewaretoken:'{{csrf_token}}',
-
-				},
-			dataType: 'json',
+            data : $(form).serialize() ,
+            type:'POST',
+			      dataType: 'json',
             success : function(json) {
 			console.log(json)
 			console.log(json['gname'])
@@ -68,5 +51,5 @@
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
-    };
+    });
 </script>

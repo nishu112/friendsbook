@@ -1,0 +1,190 @@
+{% extends "friendsbook/structure.html" %}
+{% block content %}
+{% load static %}
+{%block head%}
+	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
+	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
+	<link href="{% static 'css/pages/cover.css' %}" rel="stylesheet">
+	<link href="{% static 'css/pages/group/navigation.css' %}" rel="stylesheet">
+	<style>
+	.maincontainer ul{
+		margin-left:-40px;
+	}
+	</style>
+{%endblock head%}
+<div class="container-fluid"><br><br><br>
+
+	<div class="modal fade" id="addMembersToGroup" role="dialog">
+	    <div class="modal-dialog">
+
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">Add members</h4>
+	        </div>
+			<div class="container-fluid">
+				<div class="membersearch">
+					<form action="" method="post" onsubmit="return false">{%csrf_token %}
+						<input type="text" autocomplete="off" id="searchToAddMembers" size="75" placeholder="Search" name="search_user">
+						<input type="hidden" name="group_id" value="{{group.id}}"/>
+						<hr>
+						<input class="btn btn-primary pull-right" style="margin:4px" type="submit" value="Add"/>
+					</form>
+				</div>
+			</div>
+		  </div>
+
+	     </div>
+		</div>
+
+
+	<div class="row">
+		<div class="col-sm-10">
+			<div class="row ">
+
+
+				{%include "groups/group_navigation.html"  with active='manage'%}
+
+			  <div class="col-sm-10">
+					<div class="row">
+					{%include "groups/partial/group_cover.html"%}
+						<!-- Example single danger button -->
+
+
+							<div class="row">
+										<h1>  <strong>Pending Members : </strong></h1>
+							</div>
+							<div class="row joinrequests">
+								<div style="display:none; " class="alert alert-success alert-dismissable resultofsubmission">
+					            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+					            Member joined  successfully
+					      </div>
+							{% for member in pendingrequests%}
+
+
+							<div class="well particularuser col-sm-6" user={{member.username.profile.username}} id={{group.id}} csrf={{csrf_token}}>
+								<div class="add_friendbutton" >
+									{%if member.username.profile.sid%}
+										{%if member.username.profile.sid.image%}
+											<img class="img-rounded" src="{{ member.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+										{%endif%}
+									{%else%}
+											<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+									{%endif%}
+									<a href={% url 'profile_info' member.username.profile.slug %}>{{member.username.profile.fname}} {%if member.username.profile.lname%} {{member.username.profile.lname}} {%endif%}</a>
+									<button class="btn btn-primary">
+										Add to group
+									</button>
+
+
+								</div>
+								<br>
+
+							</div>
+
+
+							{%empty%}
+								<h2>No Pending Members</h2>
+							{%endfor%}
+							</div>
+					</div>
+
+				</div>
+
+
+			</div>
+		</div>
+
+		<div class="col-sm-2">
+
+			{%include "chat/online_user_list.html"%}
+		</div>
+
+
+</div>
+<script>
+
+
+</script>
+{% endblock %}
+
+
+{%block javascript%}
+
+<script src="{% static 'js/posts/posts.js' %}"></script>
+<script>
+
+$(function () {
+	console.log("Nope")
+$(document).on("click" , ".particularuser button", function() {
+	console.log('hey')
+	particularuser=$(this).closest('.particularuser')
+	user=$(particularuser).attr('user')
+	csrf=$(particularuser).attr('csrf')
+	id=$(particularuser).attr('id')
+
+	console.log(user)
+
+	$.ajax({
+		url: "{%url 'AdminAddQueueMembers' %}",
+		data: {'csrfmiddlewaretoken':csrf,'username':user,'id':id},
+		type:'POST',
+		dataType: 'json',
+		success: function (data) {
+			$(particularuser).remove()
+			$('.resultofsubmission').show()
+			$('.resultofsubmission').fadeOut(10000, function () {
+		           $('.resultofsubmission').hide();
+		         });
+
+
+		}
+	});
+
+});
+
+	$(document).on("click", ".maincontainer .btn-compose", function () {
+
+		//update and correct this
+		if ($(".grouppostform").hasClass("composing")) {
+      $(".grouppostform").removeClass("composing");
+      $(".grouppostform").slideUp();
+    }
+    else {
+      $(".grouppostform").addClass("composing");
+      $(".grouppostform textarea").val("");
+      $(".grouppostform").slideDown(400, function () {
+        $(".grouppostform textarea").focus();
+      });
+    }
+
+		console.log('done')
+	});
+
+
+$(document).on("click", ".membersearch input[type='submit']", function (event){
+	form=$(this).closest('form')
+	addMembersToGroup=$(this).closest('#addMembersToGroup')
+	close=$('.close',addMembersToGroup)
+	$($(this).closest('.close')).click();
+	$.ajax({
+		url: "{%url 'addgroupmember' %}",
+		data:$(form).serialize(),
+		type:'POST',
+		dataType: 'json',
+		success: function (data) {
+			console.log('back');
+			console.log(data)
+			$(close).click();
+		}
+	});
+
+});
+
+
+});
+
+</script>
+
+{% endblock %}

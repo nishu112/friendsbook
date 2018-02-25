@@ -1,0 +1,101 @@
+{% extends "friendsbook/structure.html" %}
+{% load static %}
+{% block head %}
+	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
+{% endblock head %}
+{% block content %}
+{%if chatusers%}
+		<div class="row"><br><br>
+			<h3> &nbsp&nbsp&nbsp   Messenger</h3>
+		</div>
+		<div class="row">
+			<div class="col-sm-3">
+			 <!-- Great, til you resize. -->
+				{%include "chat/online_user_list.html"%}
+			<!--<div class="well bs-sidebar affix" id="sidebar" style="background-color:#fff">-->
+			</div>
+			<div class="col-sm-6">
+			<div id="msg_container" class='container-fluid msg_container' style="background-color:#fff ">
+
+					<div id ="msg-list" class="msg-list">
+
+						{%for x in msg_obj%}
+								{%if user == x.username %}
+
+										<p class=" text-right list-group-item">
+											<span data-placement="left" data-toggle="tooltip" title={{x.time}} >
+													{{x.text}}
+											</span>
+										</p>
+
+								{%else%}
+								<p class=" text-left list-group-item">
+									<span data-placement="right" data-toggle="tooltip" title={{x.time}}>{{x.text}}
+									</span>
+								</p>
+								{%endif%}
+
+						{%empty%}
+									<h4>This is the begining of a great new conversation.</h4>
+									<p>Let's get started now!</p>
+						{%endfor%}
+					</div>
+					<form id="chatform" method="POST" action="" onsubmit="return false">{%csrf_token%}
+						<input type="hidden" name="fusername" value="{{fuser_obj}}" required="" id="id_fusername">
+						<div id="chat-bottom" class="input-group">
+							<input type="text" autocomplete="off" name="text" class="form-control" required="" id="id_text">
+							<span class="input-group-btn">
+								<input class="btn btn-default" id="send" type="submit" value="Send"/>
+							</span>
+						</div>
+					</form>
+
+
+
+			</div>
+			</div>
+
+
+		</div>
+{%else%}<br><br><br><br>
+	<h1>Make Some new Friends and Then Come to this Page</h1>
+{%endif%}
+
+{% endblock content %}
+
+
+{% block javascript%}
+<script>
+(function( $ ){
+	$('[data-toggle="tooltip"]').tooltip();
+	$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
+	$("#chatform").on("submit", function() {
+		form=$(this).closest('form')
+		values=$(form).serialize()
+	fuser=jQuery('input[name="fusername"]').val();
+	user='{{request.user}}'
+	text=jQuery('input[name="text"]').val();
+
+	$.ajax({
+	url: "{%url 'Message_received'%}",
+	data:$(form).serialize(),
+	type:'POST',
+	dataType: 'json',
+	success: function (data) {
+		console.log(data)
+		$('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+'WAIT'+'"> <p class=" text-right list-group-item">' +text + '</p></span>')
+		$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
+		$('#id_text').val('')
+	}
+	});
+	var message ={
+		text,fuser,user
+	};
+			socket.send(JSON.stringify(message));
+			return false;
+	});
+
+})( jQuery );
+
+</script>
+ {%endblock%}

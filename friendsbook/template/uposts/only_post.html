@@ -2,6 +2,7 @@
 	{% for status in posts%}
 
 		{%include "uposts/posts.html" %}
-
+		{%empty%}
+		<h2>No posts to show</h2>
 	{%endfor%}
 <ul>

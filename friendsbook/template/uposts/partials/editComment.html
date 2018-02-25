@@ -1,0 +1,55 @@
+<div class="col-sm-2" >
+<a href="{%url 'profile_info' comment.username.profile.slug%}">{{comment.username.profile.fname}}:</a>
+</div>
+<div class="col-sm-10 orignalcomment">
+	<div class="row">
+		{{comment.text}}
+
+	{% ifequal comment.username.username  user.username%}
+	<div class="edit_delete" id="comment">
+		<div class="dropdown">
+			<button type="submit" class="edit_button_icon" >
+			<span class="glyphicon glyphicon-option-vertical"></span>
+			</button>
+			<div class="dropdown-content" style="min-width: 60px;">
+			<a href="javascript:void(0)" class="edit_comment" >Edit</a>
+			<a href="javascript:void(0)" class="delete_comment" >Delete</a>
+			</div>
+		</div>
+	</div>
+	{%endifequal%}
+	</div>
+	<div class="Status_comments row">
+	<small>
+	{% if comment.is_like %}
+	 <a href="javascript:void(0)" style="text-decoration: none;" class="like unlike" type="Comment_like">
+		 <span class="glyphicon glyphicon-thumbs-up"></span>
+		 <span class="text">Unlike</span>
+		 (<span class="like-count">{{comment.likes}}</span>)
+	 </a>
+	 {% else %}
+	 <a href="javascript:void(0)" style="text-decoration: none;" class="like" type="Comment_like">
+		 <span class="glyphicon glyphicon-thumbs-up"></span>
+		 <span class="text">Like</span>
+		 (<span class="like-count">{{comment.likes}} </span>)
+	 </a>
+	 {% endif %}
+	</small>
+	</div>
+</div>
+
+
+<div class="col-sm-10 editcomment" style="display:none;">
+	<div class="row">
+
+		<form role="form" method="post" action="" onsubmit="return false">
+			{% csrf_token %}
+			<input type="hidden" name="cid" value="{{comment.id }}">
+			<small>
+			<input type="text" autocomplete="off" class=""  name="post" maxlength="255" value="{{comment.text}}">
+			</small>
+		</form>
+
+	</div>
+
+</div>

@@ -42,98 +42,54 @@
 	<div class="row">
 		<div class="col-sm-10">
 			<div class="row ">
-				<div class="col-sm-2 well navigation" style="background-color:#fff">
-					<div style="font-weight:bold ;text-align: center;">{{group.gname}}
-					</div>
-					<ul class="nav nav-pills nav-stacked " group_id='{{group.id}}'>
-						<li><a href="#1">About</a></li>
-						<li class="active"><a href="#2">Discussion</a></li>
-						<li><a href="#3">Members</a></li>
 
-						<li><a href="#4">Video</a></li>
-						<li><a href="#5">Photo</a></li>
-						<li><a href="#6">Files</a></li>
-						<li><a href="#7">Manage </a></li>
 
-					</ul>
-				</div>
-
+				{%include "groups/group_navigation.html"  with active='discussion'%}
 
 			  <div class="col-sm-10">
 					<div class="row">
-							<div class="background_pic_design" style="height:280px">
-								{%if group.cover.image%}
-									<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("{{group.cover.image.url}}");'>
-								{%else%}
-									<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
-								{%endif%}
-								</div>
-								<div class="btn button6" style="margin-bottom: 20px;">
-									<button type="button" class="btn btn-primary js-upload-photos" id="groupcover">
 
-									  <span class="glyphicon glyphicon-cloud-upload"></span> Upload Cover
 
-									</button>
-									<input id="groupCoverPhoto" type="file" name="image"
-										   style="display: none;"
-										   data-url="{%url 'groupUpdateCover'%}"
-										   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}","gid":"{{group.id}}"}'/>
-								</div>
-								<div class="group_buttons" >
-										<div class="dropdown">
-									    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Joined
-									    <span class="caret"></span></button>
-									    <ul class="dropdown-menu">
-									      <li><a href="#">Leave Group</a></li>
-									    </ul>
-									  </div>
-										&nbsp;
 
-										<div class="dropdown">
-									    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">More
-									    <span class="caret"></span></button>
-									    <ul class="dropdown-menu">
-									      <li><a href="#" data-toggle="modal" data-target="#addMembersToGroup">Add Member</a></li>
-									      <li><a href="#">Group setting</a></li>
-									    </ul>
-									  </div>
-								</div>
+						{%include "groups/partial/group_cover.html"%}
 
-						  </div>
-					</div>
-						<!-- Example single danger button -->
+
+
 					</br>
 						<div class="row" style="margin-top:10px;">
 
 							<div class="col-sm-8 maincontainer">
 								<h2>Posts</h2>
+								{%if group.new is 0 %}
+								<br>
 								<button type="button" class="btn btn-default btn-sm  pull-right btn-compose" >
 										<span class="glyphicon glyphicon-share-alt"></span> Create Post
 								</button>
+								<br><br>
 								&nbsp;
+
+
 								<div class="well grouppostform" style="background-color:#fff ;display:none;">
 
-									<form action="" onsubmit="return false" id='compose_form' method="post" enctype='multipart/form-data'>{%csrf_token %}
-												<div class="form-group">
-												  <label for="id_text">Text:</label>
-												  <textarea class="form-control" rows="5" name="text"  id="id_text" style="margin: 0px 161.578px 0px 0px; width: 382px; height: 123px;"></textarea>
-												</div>
-													<p><label for="id_privacy">Privacy:</label>
-												<select name="privacy">
-												  <option value="fs">Friends</option>
-												  <option value="fsofs">Friends of Friends</option>
-												  <option value="pbc">Public</option>
-												</select>
-											<div class="post">
-												<div class="status_image">
-													<input type="file" name="image" id="id_image">
-												</div>
-												<div class="post_status">
-													<input  type="submit" value="Post"/>
-												</div>
-											</div>
+									<form action="" method="post" enctype='multipart/form-data'>{%csrf_token %}
+										<div class="form-group">
+										  <label for="id_text">Text:</label>
+										  <textarea class="form-control" rows="5" name="text"  id="id_text" style="margin: 0px 161.578px 0px 0px; width: 382px; height: 123px;"></textarea>
+										</div>
+
+									<div class="post">
+										<div class="status_image">
+											<input type="file" name="image" id="id_image">
+										</div>
+										<div class="post_status">
+											<input  type="submit" value="Post"/>
+										</div>
+									</div>
 									</form>
 								</div>
+								{%endif%}
+								<br><br>
+
 								{%include "uposts/only_post.html" %}
 							</div>
 							<div class="col-sm-1">
@@ -149,6 +105,7 @@
 
 
 		</div>
+	</div>
 		<div class="col-sm-2">
 
 			{%include "chat/online_user_list.html"%}
@@ -190,156 +147,14 @@ $(function () {
 
 		console.log('done')
 	});
-	$(document).on("click", ".grouppostform input[value='Post']", function (){
-	console.log("done2")
-	ul=$(this).closest('ul');
-	form=$(this).closest('form');
-	console.log($(form).serialize());
-	$.ajax({
-      url: '{{request.path}}',
-      data:$(form).serialize(),
-      type: 'POST',
-      cache: false,
 
-	  beforeSend: function () {
-	  $(form).trigger("reset");
-	  $(".grouppostform").slideUp();
-	  $('ul.mainposts').prepend("<li class='loadcomment'><img src='/static/img/loading.gif'></li>");
-        },
-      success: function (data) {
-	  $('ul.mainposts li.loadcomment').remove();
-	  $('ul.mainposts').prepend(data);
-      }
-    });
-	console.log(form);
-	return false;
-	});
 	function getmembers(id){
 	console.log("members");
 
 	}
-	prev_selected_tab=$('ul li.active');
-	$(document).on("click", '.navigation a[href^="#"]', function (event){
-	console.log("Nope")
-	link=$(this).attr('href');
-	event.preventDefault();
-	ul=$(this).closest('ul')
-		$(prev_selected_tab).removeClass('active')
-	prev_selected_tab=$(this).closest('li');
-	$(prev_selected_tab).addClass('active')
-	group_id=$(ul).attr('group_id')
-	if( link =='#1'){
-		$.ajax({
-		  url: "/ajax/groupMembers/",
-		  data:{
-			'id':group_id,
-		  },
-		  dataType: 'json',
-		  success: function (data) {
-			console.log('ok')
-			$('.maincontainer').html(data);
-			}
-		  });
-	}
-	if( link =='#2'){
 
-		$.ajax({
-		  url: "/ajax/groupPosts/",
-		  data:{
-			'id':group_id,
-		  },
-		  dataType: 'json',
-		  success: function (data) {
-			console.log('ok')
-			$('.maincontainer').html(data);
-			}
-		  });
-	}
-	if( link =='#3'){
-		$.ajax({
-		  url: "/ajax/groupMembers/",
-		  data:{
-			'id':group_id,
-		  },
-		  dataType: 'json',
-		  success: function (data) {
-			console.log('ok')
-			$('.maincontainer').html(data);
-			}
-		  });
-	}
-	if( link =='#4'){
-		$.ajax({
-		  url: "/ajax/groupMembers/",
-		  data:{
-			'id':group_id,
-		  },
-		  dataType: 'json',
-		  success: function (data) {
-			console.log('ok')
-			$('.maincontainer').html(data);
-			}
-		  });
-	}
-	if( link =='#5'){
-		$.ajax({
-		  url: "/ajax/groupPhotoFrames/",
-		  data:{
-			'id':group_id,
-		  },
-		  dataType: 'json',
-		  success: function (data) {
-			console.log('ok')
-			$('.maincontainer').html(data);
-			}
-		  });
-	}
-	if( link =='#6'){
-		$.ajax({
-		  url: "/ajax/groupMembers/",
-		  data:{
-			'id':group_id,
-		  },
-		  dataType: 'json',
-		  success: function (data) {
-			console.log('ok')
-			$('.maincontainer').html(data);
-			}
-		  });
-	}
-	if( link =='#7'){
-		$.ajax({
-		  url: "/ajax/groupMembers/",
-		  data:{
-			'id':group_id,
-		  },
-		  dataType: 'json',
-		  success: function (data) {
-			console.log('ok')
-			$('.maincontainer').html(data);
-			}
-		  });
-	}
-	});
 
-$(document).on("click", ".membersearch input[type='submit']", function (event){
-	form=$(this).closest('form')
-	addMembersToGroup=$(this).closest('#addMembersToGroup')
-	close=$('.close',addMembersToGroup)
-	$($(this).closest('.close')).click();
-	$.ajax({
-		url: "{%url 'addgroupmember' %}",
-		data:$(form).serialize(),
-		type:'POST',
-		dataType: 'json',
-		success: function (data) {
-			console.log('back');
-			console.log(data)
-			$(close).click();
-		}
-	});
 
-});
 
 
 });

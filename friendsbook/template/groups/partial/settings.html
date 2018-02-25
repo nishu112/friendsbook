@@ -1,0 +1,266 @@
+{% extends "friendsbook/structure.html" %}
+{% block content %}
+{% load static %}
+{%block head%}
+	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
+	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
+	<link href="{% static 'css/pages/cover.css' %}" rel="stylesheet">
+	<link href="{% static 'css/pages/group/navigation.css' %}" rel="stylesheet">
+	<style>
+	.maincontainer ul{
+		margin-left:-40px;
+	}
+	</style>
+{%endblock head%}
+<div class="container-fluid"><br><br><br>
+
+	<div class="modal fade" id="addMembersToGroup" role="dialog">
+	    <div class="modal-dialog">
+
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">Add members</h4>
+	        </div>
+			<div class="container-fluid">
+				<div class="membersearch">
+					<form action="" method="post" onsubmit="return false">{%csrf_token %}
+						<input type="text" autocomplete="off" id="searchToAddMembers" size="75" placeholder="Search" name="search_user">
+						<input type="hidden" name="group_id" value="{{group.id}}"/>
+						<hr>
+						<input class="btn btn-primary pull-right" style="margin:4px" type="submit" value="Add"/>
+					</form>
+				</div>
+			</div>
+		  </div>
+
+	     </div>
+		</div>
+
+
+	<div class="row">
+		<div class="col-sm-10">
+			<div class="row ">
+
+
+				{%include "groups/group_navigation.html"  with active='video'%}
+
+			  <div class="col-sm-10">
+					<div class="row">
+					{%include "groups/partial/group_cover.html"%}
+						<!-- Example single danger button -->
+
+
+							<div class="row">
+										<h1>  <strong>Setting : </strong></h1>
+							</div>
+							<div class="well">
+								<form method="POST">{%csrf_token%}
+									{{form.as_p}}
+									<button class="btn btn-primary" type="submit">Save</button>
+								</form>
+							</div>
+					</div>
+
+				</div>
+
+
+			</div>
+		</div>
+
+		<div class="col-sm-2">
+
+			{%include "chat/online_user_list.html"%}
+		</div>
+
+
+</div>
+<script>
+
+
+</script>
+{% endblock %}
+
+
+{%block javascript%}
+
+<script src="{% static 'js/posts/posts.js' %}"></script>
+<script>
+
+$(function () {
+	console.log("Nope")
+	$(document).on("click", ".maincontainer .btn-compose", function () {
+
+		//update and correct this
+		if ($(".grouppostform").hasClass("composing")) {
+      $(".grouppostform").removeClass("composing");
+      $(".grouppostform").slideUp();
+    }
+    else {
+      $(".grouppostform").addClass("composing");
+      $(".grouppostform textarea").val("");
+      $(".grouppostform").slideDown(400, function () {
+        $(".grouppostform textarea").focus();
+      });
+    }
+
+		console.log('done')
+	});
+	$(document).on("click", ".grouppostform input[value='Post']", function (){
+	console.log("done2")
+	ul=$(this).closest('ul');
+	form=$(this).closest('form');
+	console.log($(form).serialize());
+	$.ajax({
+      url: '{{request.path}}',
+      data:$(form).serialize(),
+      type: 'POST',
+      cache: false,
+
+	  beforeSend: function () {
+	  $(form).trigger("reset");
+	  $(".grouppostform").slideUp();
+	  $('ul.mainposts').prepend("<li class='loadcomment'><img src='/static/img/loading.gif'></li>");
+        },
+      success: function (data) {
+	  $('ul.mainposts li.loadcomment').remove();
+	  $('ul.mainposts').prepend(data);
+      }
+    });
+	console.log(form);
+	return false;
+	});
+	function getmembers(id){
+	console.log("members");
+
+	}
+	prev_selected_tab=$('ul li.active');
+	$(document).on("click", '.navigation a[href^="#"]', function (event){
+	console.log("Nope")
+	link=$(this).attr('href');
+	event.preventDefault();
+	ul=$(this).closest('ul')
+		$(prev_selected_tab).removeClass('active')
+	prev_selected_tab=$(this).closest('li');
+	$(prev_selected_tab).addClass('active')
+	group_id=$(ul).attr('group_id')
+	if( link =='#1'){
+		$.ajax({
+		  url: "/ajax/groupMembers/",
+		  data:{
+			'id':group_id,
+		  },
+		  dataType: 'json',
+		  success: function (data) {
+			console.log('ok')
+			$('.maincontainer').html(data);
+			}
+		  });
+	}
+	if( link =='#2'){
+
+		$.ajax({
+		  url: "/ajax/groupPosts/",
+		  data:{
+			'id':group_id,
+		  },
+		  dataType: 'json',
+		  success: function (data) {
+			console.log('ok')
+			$('.maincontainer').html(data);
+			}
+		  });
+	}
+	if( link =='#3'){
+		$.ajax({
+		  url: "/ajax/groupMembers/",
+		  data:{
+			'id':group_id,
+		  },
+		  dataType: 'json',
+		  success: function (data) {
+			console.log('ok')
+			$('.maincontainer').html(data);
+			}
+		  });
+	}
+	if( link =='#4'){
+		$.ajax({
+		  url: "/ajax/groupMembers/",
+		  data:{
+			'id':group_id,
+		  },
+		  dataType: 'json',
+		  success: function (data) {
+			console.log('ok')
+			$('.maincontainer').html(data);
+			}
+		  });
+	}
+	if( link =='#5'){
+		$.ajax({
+		  url: "/ajax/groupPhotoFrames/",
+		  data:{
+			'id':group_id,
+		  },
+		  dataType: 'json',
+		  success: function (data) {
+			console.log('ok')
+			$('.maincontainer').html(data);
+			}
+		  });
+	}
+	if( link =='#6'){
+		$.ajax({
+		  url: "/ajax/groupMembers/",
+		  data:{
+			'id':group_id,
+		  },
+		  dataType: 'json',
+		  success: function (data) {
+			console.log('ok')
+			$('.maincontainer').html(data);
+			}
+		  });
+	}
+	if( link =='#7'){
+		$.ajax({
+		  url: "/ajax/groupMembers/",
+		  data:{
+			'id':group_id,
+		  },
+		  dataType: 'json',
+		  success: function (data) {
+			console.log('ok')
+			$('.maincontainer').html(data);
+			}
+		  });
+	}
+	});
+
+$(document).on("click", ".membersearch input[type='submit']", function (event){
+	form=$(this).closest('form')
+	addMembersToGroup=$(this).closest('#addMembersToGroup')
+	close=$('.close',addMembersToGroup)
+	$($(this).closest('.close')).click();
+	$.ajax({
+		url: "{%url 'addgroupmember' %}",
+		data:$(form).serialize(),
+		type:'POST',
+		dataType: 'json',
+		success: function (data) {
+			console.log('back');
+			console.log(data)
+			$(close).click();
+		}
+	});
+
+});
+
+
+});
+
+</script>
+
+{% endblock %}

@@ -25,7 +25,7 @@
 
 
 
-    		 <a href="{% url 'profile_info' status.username.profile.slug %}">{{status.username.profile.fname}}</a>  {{status.title}}
+    		 <a href="{% url 'profile_info' status.username.profile %}">{{status.username.profile.fname}}</a>  {{status.title}}
 			 {%if status.gid%}
 				<a href="{%url 'GroupsHomepage' status.gid.id%}" >{{status.gid.gname}}</a>
 			 {%endif%}
@@ -71,7 +71,7 @@
     	</div>
 
       <div class="comments" style="display:none">
-        <form role="form" method="post" action="" onsubmit="return false">
+        <form role="form" class="newcomment" method="post" action="" onsubmit="return false">
           {% csrf_token %}
           <input type="hidden" name="Status" value="{{status.id }}">
           <input type="text" autocomplete="off" class="form-control input-sm" placeholder="Write a comment..." name="post" maxlength="255">

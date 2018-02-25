@@ -7,6 +7,10 @@ color: white;
 float: right;
 }
 
+a{
+	text-decoration: none !important;
+}
+
 .group_input_fields{
 	display: block;
     width: 50%;
