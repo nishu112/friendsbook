@@ -5,6 +5,7 @@ from channels.sessions import channel_session
 from friendsbook.models import Message,LoggedInUser,Profile
 from django.contrib.auth.models import User
 import getpass
+import time
 
 @channel_session_user_from_http
 def ws_connect(message):
@@ -35,22 +36,27 @@ def ws_receive(message):
     text=val['text']
     user_obj=User.objects.get(username=user)
     fuser_obj=User.objects.get(username=fuser)
-    obj=Message.objects.create(username=user_obj,fusername=fuser_obj,text=text)
+    print('reached')
+    time.sleep(2)
+    print('dispatch')
+    obj=Message.objects.filter(username=user_obj,fusername=fuser_obj).order_by('-time')[0]
+    print(obj)
+    print('really')
     Group(user).send({
         'text': json.dumps({
             'type':'message',
-            'text':text,
-            'user':user,
-            'fuser':fuser,
+            'text':str(obj.text),
+            'user':str(obj.username),
+            'fuser':str(obj.fusername),
             'time':str(obj.time)
         })
     })
     Group(fuser).send({
         'text': json.dumps({
             'type':'message',
-            'text':text,
-            'user':user,
-            'fuser':user,
+            'text':str(obj.text),
+            'user':str(obj.username),
+            'fuser':str(obj.username),
             'time':str(obj.time)
         })
     })

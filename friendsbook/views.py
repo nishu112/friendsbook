@@ -48,8 +48,10 @@ def Check_user_online(request,user):
 	obj2=User.objects.filter(id__in=obj2)
 	obj=obj1 | obj2
 	chatusers=obj
-	for user in chatusers:
-		user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
+	for x in chatusers:
+		x.status = 'Online' if hasattr(x, 'logged_in_user') else 'Offline'
+		x.noOf_unread=int(Message.objects.filter(username=x,fusername=user,is_read=False).count())
+		print(x, user,x.noOf_unread)
 	return chatusers
 
 def group_list(request):
@@ -1068,17 +1070,16 @@ def Messenger_Chatting(request,slug1,slug2):
 	friendship=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj,confirm_request=2,blocked_status=0) |Q(username=fuser_obj,fusername=user_obj,confirm_request=2,blocked_status=0))
 	if user_obj !=profile1.username or not friendship.exists():
 		return HttpResponse("Something Fishy is going on")
-
+	print(user_obj)
+	print(fuser_obj)
+	print(Message.objects.filter(username=fuser_obj,fusername=user_obj,is_read=False))
 	read_messages=Message.objects.filter(username=fuser_obj,fusername=user_obj,is_read=False).update(is_read=True)
+	print(read_messages)
 	msg_obj=Message.objects.filter(Q(username=user_obj,fusername=fuser_obj)|Q(username=fuser_obj,fusername=user_obj)).select_related('username').select_related('fusername')
 
 	users=Check_user_online(request,request.user)
-	print(users)
-	print('hii')
 	form=ChattingForm(None)
-	print('byee')
 	return render(request,'chat/messenger.html',{'msg_obj':msg_obj,'chatusers':users,'fuser_obj':fuser_obj,'form':form})
-	return HttpResponse("hello")
 
 def Message_received(request):
 	if request.is_ajax() and request.method=='POST':
@@ -1200,12 +1201,10 @@ def get_contifications(request):
 		IndividualNotifications=Notification.objects.none()
 		for x in chatusers:
 			IndividualNotifications=IndividualNotifications|Notification.objects.filter(from_user=x,to_user=request.user,is_read=False)
-		print(IndividualNotifications)
 		PostNotification=Notification.objects.none()
 		for x in chatusers:
 			PostNotification=PostNotification|Notification.objects.filter(from_user=x,to_user__isnull=True,is_read=False)
 		notifications=((IndividualNotifications|PostNotification)|Notification.objects.filter(to_user=request.user,is_read=False))[:4]
-		print(notifications)
 		for notification in notifications:
 			notification.is_read=True
 			notification.save()
@@ -1216,13 +1215,11 @@ def get_contifications(request):
 		IndividualNotifications=Notification.objects.none()
 		for x in chatusers:
 			IndividualNotifications=IndividualNotifications|Notification.objects.filter(from_user=x,to_user=request.user)
-		print(IndividualNotifications)
 		PostNotification=Notification.objects.none()
 		for x in chatusers:
 			PostNotification=PostNotification|Notification.objects.filter(from_user=x,to_user__isnull=True)
 
 		notifications=(IndividualNotifications|PostNotification|Notification.objects.filter(to_user=request.user,is_read=False)).select_related('from_user')
-		print(notifications)
 		return render(request,"notification/notifications.html",{'notifications':notifications})
 
 	return JsonResponse(1,safe=False)
@@ -1234,7 +1231,6 @@ def check_contification(request):
 		IndividualNotifications=Notification.objects.none()
 		for x in chatusers:
 			IndividualNotifications=IndividualNotifications|Notification.objects.filter(from_user=x,to_user=request.user,is_read=False)
-		print(IndividualNotifications)
 		PostNotification=Notification.objects.none()
 		for x in chatusers:
 			PostNotification=PostNotification|Notification.objects.filter(from_user=x,to_user__isnull=True,is_read=False)

@@ -65,10 +65,11 @@ $('[data-toggle="tooltip"]').tooltip();
 	  //did this logic to satisfy condition
 	  //so that message will recieve only if
 	  //we clicked on the link
+		var online_user=$('.users-list a div').filter(function(){
+		return $(this).data('username')==user;
+		});
 	  if(type=='online'){
-		  var online_user=$('.users-list a div').filter(function(){
-		  return $(this).data('username')==user;
-		  });
+
 		  var fname=data['fname'];
 		  var lname=data['lname'];
 		  if(lname){}
@@ -79,23 +80,31 @@ $('[data-toggle="tooltip"]').tooltip();
 		  online_user.html('');
 		  return;
 	  }
+		selected_user='{{fuser_obj}}';
 	  var text = data['text'];
 	  var fuser = data['fuser'];
-		if('{{user.username}}'!=user)
-	  	{
+		console.log(user)
+		console.log(selected_user)
+			if( selected_user==user)
+		  	{
+				$('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+data['time']+'"> <p class="text-left list-group-item">' +data['text'] + '</p></span>')
 
-			$('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+data['time']+'"> <p class="text-left list-group-item">' +data['text'] + '</p></span>')
-
-		  $('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
+			  $('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
+				}
+			else{
+				Messages=$('.users-list a span').filter(function(){
+				return $(this).data('messages_from')==user;
+				});
+				console.log(Messages)
+				unread=$(Messages).html()
+				$(Messages).html(parseInt(unread)+1);
 			}
-
-
     };
     if (socket.readyState == WebSocket.OPEN) {
       socket.onopen();
     }
 
-	
+
   </script>
 
 	  {% block javascript %}
