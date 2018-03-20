@@ -17,6 +17,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import get_object_or_404
 from django.template.context_processors import csrf
 from django.contrib.auth import update_session_auth_hash
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+
 
 from django.http import JsonResponse
 from django.db.models import Q
@@ -51,8 +53,17 @@ def Check_user_online(request,user):
 	for x in chatusers:
 		x.status = 'Online' if hasattr(x, 'logged_in_user') else 'Offline'
 		x.noOf_unread=int(Message.objects.filter(username=x,fusername=user,is_read=False).count())
-		print(x, user,x.noOf_unread)
+		#print(x, user,x.noOf_unread)
 	return chatusers
+
+def Check_user_Username(request,user):
+	obj1=FriendsWith.objects.filter(username=user,confirm_request=2,blocked_status=0).select_related('fusername').values('fusername')
+	obj1=User.objects.filter(id__in=obj1).values('username')
+	obj2=FriendsWith.objects.filter(fusername=user,confirm_request=2,blocked_status=0).select_related('username').values('username')
+	obj2=User.objects.filter(id__in=obj2).values('username')
+	obj=obj1 | obj2
+	return obj
+
 
 def group_list(request):
 	groups=ConsistOf.objects.filter(username=request.user,confirm=1).select_related('gid')
@@ -214,7 +225,7 @@ def logout(request):
 #        'profile_form': profile_form
 #    })
 
-
+POSTS_NUM_PAGES = 4
 
 def GetUserPosts(request):
 	chatusers=Check_user_online(request,request.user)
@@ -226,9 +237,9 @@ def GetUserPosts(request):
 
 	friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=friendsAndMe)
 	friendsPostWithoutGroup=Status.objects.filter(username__in=chatusers,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')##friends Posts
-	tempfriendsPostWithGroupPrivacyOpen=Status.objects.filter(username__in=chatusers,gid__isnull=False).exclude(privacy='CL').select_related('username').order_by('-time')
+	tempfriendsPostWithGroupPrivacyOpen=Status.objects.filter(username__in=chatusers,gid__isnull=False).select_related('username').order_by('-time')
 	friendsPostWithGroupPrivacyOpen=Status.objects.none()
-	UserPartOfGroup=ConsistOf.objects.filter(username=request.user).values('gid')
+	UserPartOfGroup=ConsistOf.objects.filter(username=request.user,confirm=1).values('gid')
 	PostOfUserPartOfGroup=Status.objects.filter(gid__in=UserPartOfGroup)
 	for x in tempfriendsPostWithGroupPrivacyOpen:
 		if x.gid.privacy=='OP':
@@ -236,9 +247,152 @@ def GetUserPosts(request):
 	myPosts=Status.objects.filter(username=request.user).select_related('username').order_by('-time')
 	friendsOfFriendsPosts=Status.objects.filter(username__in=friends_suggestion,gid__isnull=True).exclude(privacy='Me').exclude(privacy='fs').select_related('username').order_by('-time')
 	posts=friendsPostWithoutGroup|friendsPostWithGroupPrivacyOpen|myPosts|friendsOfFriendsPosts|PostOfUserPartOfGroup
+    #from_feed = -1
+    #if allposts:
+    #    from_feed = feeds[0].id
 	return posts
 
+#load on timeline posts for ajax call
 
+def GetUserPostsByAjax(request):
+	page = request.GET.get('page')
+	group=request.GET.get('groupid')
+
+	user=request.GET.get('requestuser')
+	print(page)
+	print('came here')
+	#check validations that requested user is connected to a group or not
+	print(group)
+	print(user)
+	if user:
+		print('ok')
+		print(user)
+		user=get_object_or_404(User, username=user)
+
+
+		print('got user')
+		try:
+			profile=Profile.objects.get(username=user)
+		except ObjectDoesNotExist:
+			return JsonResponse(0,safe=False)
+		print('came')
+		chatusers=Check_user_online(request,profile.username)
+		friends_suggestion=FriendsOfFriends(request,profile.username)
+		tempuser=User.objects.filter(username=profile.username)
+
+		y=friendship(request.user,profile.username)
+		privacy='NoConnection'
+		#LoggedInUser=User.objects.get(username=request.user.username)
+		print(type(request.user))
+		print(type(profile.username))
+		print(chatusers)
+		for x in chatusers:
+			if str(request.user.username)==str(x.username):
+				privacy='fs'
+				print('fs')
+		friends_suggestion=friends_suggestion.exclude(username=User.objects.get(username=profile.username))
+		#queryset.exclude(lugar="Quito")
+		print(friends_suggestion)
+		if request.user ==profile.username:
+			posts=user_post(request,request.user,GetUserPosts(request))
+			print(posts)
+			privacy='NoNeed'
+		elif request.user in friends_suggestion and privacy!='fs':
+			privacy='fsofs'
+		#check all conditions for all privacy
+		print(privacy)
+		print('checking')
+		print('checking')
+		PusersFriends=Check_user_online(request,profile.username)
+		LoggedInUserFriends=Check_user_online(request,request.user)
+		#print(chatusers)
+		print(profile.username)
+		if privacy=='fsofs':
+			#chatusers=Check_user_online(request,profile.username)
+			commonFriends=PusersFriends.intersection(LoggedInUserFriends)
+			print(PusersFriends)
+			print(LoggedInUserFriends)
+			print(commonFriends)
+
+			CommonFriendsPosts=Status.objects.filter(Q(username__in=commonFriends,gid__isnull=True)).exclude(privacy='me').exclude(privacy='')
+			print('1')
+			#print(CommonFriendsPosts)
+			UserPostWithPrivacyPublic=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs')
+			print('2')
+			LoggedInUserPosts=Status.objects.filter(username=request.user,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs')
+			print('3')
+			PuserFriendsWithoutCommon=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='pbc')
+			print('4')
+			posts=CommonFriendsPosts
+			print('5')
+			print(posts)
+
+
+		elif privacy=='fs':
+
+			#chatusers=Check_user_online(request,profile.username)
+			friends_suggestion=FriendsOfFriends(request,profile.username)
+
+			usersPost=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')
+			friendsPostWithoutGroup=Status.objects.filter(username__in=PusersFriends,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')##friends Posts
+			tempfriendsPostWithGroupPrivacyOpen=Status.objects.filter(username__in=PusersFriends,gid__isnull=False).exclude(privacy='CL').select_related('username').order_by('-time')
+			friendsPostWithGroupPrivacyOpen=Status.objects.none()
+			for x in tempfriendsPostWithGroupPrivacyOpen:
+				if x.gid.privacy=='OP':
+					friendsPostWithGroupPrivacyOpen=friendsPostWithGroupPrivacyOpen|Status.objects.filter(id=x.id)
+			posts=usersPost|friendsPostWithoutGroup|friendsPostWithGroupPrivacyOpen
+		elif privacy=='NoConnection':
+			#define some post methods here
+			userposts=Status.objects.filter(username=profile.username,gid__isnull=True,privacy='Pbc').select_related('username').order_by('time')
+			friendsPostWithoutGroup=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='pbc').select_related('username').order_by('-time')##friends Posts
+			posts=userposts|friendsPostWithoutGroup	
+
+
+
+
+		#code to load post and using the privacy features
+	elif group is None:
+		print("doesn't exists")
+		postsOfUserExcludingGroupPosts=GetUserPosts(request)
+		print('begin')
+		#print(chatusers)
+		UserPartOfGroup=ConsistOf.objects.filter(username=request.user,confirm=1).values('gid')
+		print(postsOfUserExcludingGroupPosts)
+		print('done')
+		GroupFeeds=Status.objects.filter(gid__in=UserPartOfGroup).order_by('-time')
+		print(GroupFeeds)
+		posts=postsOfUserExcludingGroupPosts|GroupFeeds
+		posts=user_post(request,request.user,posts)
+		print(posts)
+
+	else:
+		print('exists ')
+		UserPartOfGroup=ConsistOf.objects.filter(username=request.user,confirm=1).values('gid')
+		print(UserPartOfGroup)
+		GroupFeeds=Status.objects.filter(gid__in=UserPartOfGroup).order_by('-time')
+		print(GroupFeeds)
+		posts=postsOfUserExcludingGroupPosts|GroupFeeds
+		posts=user_post(request,request.user,posts)
+
+	#print(page," ok")
+
+	#print('here')
+	all_posts = posts
+	paginator = Paginator(all_posts, POSTS_NUM_PAGES)
+	try:
+		posts = paginator.page(page)
+	except PageNotAnInteger:
+		return HttpResponseBadRequest()
+	except EmptyPage:
+		posts = []
+	if(len(posts)==0):
+		return JsonResponse(0,safe=False)
+	#print('done ',posts)
+	#posts = paginator.page(page)
+	ajax_posts=render_to_string('uposts/partials/ajax_only_post.html', {'posts':posts},request)
+	#print('contents')
+	#print(ajax_posts)
+	return JsonResponse(ajax_posts,safe=False)
 
 def home(request):
 	chatusers=Check_user_online(request,request.user)
@@ -247,12 +401,26 @@ def home(request):
 	friends_suggestion=FriendsOfFriends(request,request.user)
 	friendsAndMe=chatusers|user
 	friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=friendsAndMe)
-	posts=user_post(request,request.user,GetUserPosts(request))
+	postsOfUserExcludingGroupPosts=GetUserPosts(request)
+	print('begin')
+	print(chatusers)
+	UserPartOfGroup=ConsistOf.objects.filter(username=request.user,confirm=1).values('gid')
+	print(postsOfUserExcludingGroupPosts)
+	GroupFeeds=Status.objects.filter(gid__in=UserPartOfGroup).order_by('-time')
+	print(GroupFeeds)
+	posts=postsOfUserExcludingGroupPosts|GroupFeeds
+	posts=user_post(request,request.user,posts)
+	print(posts)
+
+
+	all_posts = posts
+	paginator = Paginator(all_posts, POSTS_NUM_PAGES)
+	posts = paginator.page(1)
 	groups=group_list(request)
-	return render(request,"home/index.html",{'posts':posts,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion,'newGroupForm':CreateGroup(None)})
+	return render(request,"home/index.html",{'posts':posts,'page':1,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion,'newGroupForm':CreateGroup(None)})
 
 def PostDetailView(request,slug):
-	print('hii')
+	#print('hii')
 	status=Status.objects.get(slug=slug)
 	chatusers=Check_user_online(request,request.user)
 	user=User.objects.filter(username=request.user)
@@ -270,7 +438,6 @@ def PostDetailView(request,slug):
 
 def AboutGroup(request,pk):
 	group=get_object_or_404(Groups, id=pk)
-
 	try:
 	    result=ConsistOf.objects.get(username=request.user,gid=group)
 	except ObjectDoesNotExist:
@@ -303,7 +470,6 @@ def AboutGroup(request,pk):
 
 def grouphome(request,pk):
 	group=get_object_or_404(Groups, id=pk)
-
 	try:
 	    result=ConsistOf.objects.get(username=request.user,gid=group)
 	except ObjectDoesNotExist:
@@ -341,13 +507,17 @@ def grouphome(request,pk):
 		#only then user able to access this method
 		posts=Status.objects.filter(gid=group).select_related('username').order_by('-time')
 		posts=user_post(request,request.user,posts)
+		all_posts = posts
+		paginator = Paginator(all_posts, POSTS_NUM_PAGES)
+		posts = paginator.page(1)
+
 		chatusers=Check_user_online(request,request.user)
 		try:
 		    group_consist=ConsistOf.objects.get(gid=group,username=request.user,confirm=1)
 		except ObjectDoesNotExist:
 		    group_consist=None
 
-		return render(request,"groups/index.html",{'posts':posts,'group':group,'form':form,'chatusers':chatusers,'group_consist':group_consist})
+		return render(request,"groups/index.html",{'posts':posts,'page':1,'group':group,'form':form,'chatusers':chatusers,'group_consist':group_consist})
 
 def groupMembers(request,pk):
 	group=get_object_or_404(Groups, id=pk)
@@ -382,11 +552,9 @@ def groupMembers(request,pk):
 	print(group_consist)
 	return render(request,"groups/partial/group_members.html",{'group_members':members,'group':group,'chatusers':chatusers,'admins':admins,'group_consist':group_consist,'group_consist':group_consist})
 
-
-
 def GroupsPhotos(request,pk):
 	group=get_object_or_404(Groups, id=pk)
-
+	#use paginartor to show all photos
 	try:
 	    result=ConsistOf.objects.get(username=request.user,gid=group)
 	except ObjectDoesNotExist:
@@ -834,6 +1002,7 @@ class FriendsView(generic.ListView):  ##print friendlist of user here
 	context_object_name='data'
 
 	def get_queryset(self):
+		print('heresbfifb')
 		if self.request.method=="GET" :
 			fname = self.request.GET.get('search_user')
 			return Profile.objects.filter(Q(fname__istartswith=fname) | Q(lname__istartswith=fname)).select_related('username').select_related('sid')
@@ -849,41 +1018,69 @@ class FriendsView(generic.ListView):  ##print friendlist of user here
 def UserProfile(request,slug):
 	profile=Profile.objects.get(slug=slug)
 	chatusers=Check_user_online(request,profile.username)
-	friends_suggestion=FriendsOfFriends(request,request.user)
+	friends_suggestion=FriendsOfFriends(request,profile.username)
 	tempuser=User.objects.filter(username=profile.username)
 	for x in tempuser:
 		x.status = 'Online' if hasattr(tempuser, 'logged_in_user') else 'Offline'
+
+
+
 	y=friendship(request.user,profile.username)
 	privacy='NoConnection'
+	#LoggedInUser=User.objects.get(username=request.user.username)
+	print(type(request.user))
+	print(type(profile.username))
+	print(chatusers)
+	for x in chatusers:
+		if str(request.user.username)==str(x.username):
+			privacy='fs'
+			print('fs')
+	friends_suggestion=friends_suggestion.exclude(username=User.objects.get(username=profile.username))
+	#queryset.exclude(lugar="Quito")
+	print(friends_suggestion)
 	if request.user ==profile.username:
 		posts=user_post(request,request.user,GetUserPosts(request))
 		print(posts)
 		privacy='NoNeed'
-	elif profile.username in chatusers:
-		privacy='fs'
-	elif profile.username in friends_suggestion:
+	elif request.user in friends_suggestion and privacy!='fs':
 		privacy='fsofs'
 	#check all conditions for all privacy
-
+	print(privacy)
+	print('checking')
+	print('checking')
+	PusersFriends=Check_user_online(request,profile.username)
+	LoggedInUserFriends=Check_user_online(request,request.user)
+	#print(chatusers)
+	print(profile.username)
 	if privacy=='fsofs':
-		chatusers=Check_user_online(request,profile.username)
-		friends_suggestion=FriendsOfFriends(request,profile.username)
-		loggedInUserFriendsSuggestion=FriendsOfFriends(request,request.user)
-		user=User.objects.filter(username=profile.username)
-		user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
-		UserPostWithPrivacyPublic=Status.objects.filter(username=profile.username,privacy='pbc')
+		#chatusers=Check_user_online(request,profile.username)
+		commonFriends=PusersFriends.intersection(LoggedInUserFriends)
+		print(PusersFriends)
+		print(LoggedInUserFriends)
+		print(commonFriends)
 
+		CommonFriendsPosts=Status.objects.filter(Q(username__in=commonFriends,gid__isnull=True)).exclude(privacy='me').exclude(privacy='')
+		print('1')
+		#print(CommonFriendsPosts)
+		UserPostWithPrivacyPublic=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs')
+		print('2')
+		LoggedInUserPosts=Status.objects.filter(username=request.user,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs')
+		print('3')
+		PuserFriendsWithoutCommon=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='pbc')
+		print('4')
+		posts=CommonFriendsPosts
+		print('5')
+		print(posts)
 
-		posts=Status.objects.filter(username__in=friends_suggestion,gid__isnull=True).exclude(privacy='Me').exclude(privacy='fs').select_related('username').order_by('-time')
 
 	elif privacy=='fs':
 
-		chatusers=Check_user_online(request,profile.username)
+		#chatusers=Check_user_online(request,profile.username)
 		friends_suggestion=FriendsOfFriends(request,profile.username)
 
 		usersPost=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')
-		friendsPostWithoutGroup=Status.objects.filter(username__in=chatusers,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')##friends Posts
-		tempfriendsPostWithGroupPrivacyOpen=Status.objects.filter(username__in=chatusers,gid__isnull=False).exclude(privacy='CL').select_related('username').order_by('-time')
+		friendsPostWithoutGroup=Status.objects.filter(username__in=PusersFriends,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')##friends Posts
+		tempfriendsPostWithGroupPrivacyOpen=Status.objects.filter(username__in=PusersFriends,gid__isnull=False).exclude(privacy='CL').select_related('username').order_by('-time')
 		friendsPostWithGroupPrivacyOpen=Status.objects.none()
 		for x in tempfriendsPostWithGroupPrivacyOpen:
 			if x.gid.privacy=='OP':
@@ -891,15 +1088,19 @@ def UserProfile(request,slug):
 		posts=usersPost|friendsPostWithoutGroup|friendsPostWithGroupPrivacyOpen
 	elif privacy=='NoConnection':
 		#define some post methods here
-		chatusers=Check_user_online(request,profile.username)
-		userposts=Status.objects.filter(username=profile.username,privacy='pbc').select_related('username').order_by('time')
-		friendsPostWithoutGroup=Status.objects.filter(username__in=chatusers,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')##friends Posts
+		userposts=Status.objects.filter(username=profile.username,gid__isnull=True,privacy='Pbc').select_related('username').order_by('time')
+		friendsPostWithoutGroup=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='pbc').select_related('username').order_by('-time')##friends Posts
 		posts=userposts|friendsPostWithoutGroup
+
+	#paginator
+	all_posts = posts
+	paginator = Paginator(all_posts, POSTS_NUM_PAGES)
+	posts = paginator.page(1)
 
 
 	chatusers=Check_user_online(request,request.user)# define herebecause it was giving me searched user chatmembers
 	posts=user_post(request,profile.username,posts)
-	return render(request,'user/profile.html',{'User':profile,'posts':posts,'y':y,'chatusers':chatusers})
+	return render(request,'user/profile.html',{'User':profile,'page':1,'posts':posts,'y':y,'chatusers':chatusers})
 
 
 def UserFriendsList(request,slug):

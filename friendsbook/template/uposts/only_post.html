@@ -1,8 +1,57 @@
 <ul style="list-style-type:none" class="mainposts">
+
+	<div class="firstPagePosts">
 	{% for status in posts%}
 
 		{%include "uposts/posts.html" %}
 		{%empty%}
 		<h2>No posts to show</h2>
 	{%endfor%}
+</div>
+	<div class="load" syle="position:center;">
+			 <img src="/static/img/loading.gif">
+	</div>
+	<form method="get" action="" id="load_feed" autocomplete="off">{%csrf_token%}
+		<input type="hidden" name="page" value="{{ page }}">
+		{%if group%}
+		<input type="hidden" name="groupid" value="{{ group.id }}">
+		{%endif%}
+		{%ifnotequal User.username.username user.username%}
+			{%if not group%}
+				<input type="hidden" name="requestuser" value="{{ User.username }}">
+			{%endif%}
+		{%endifnotequal%}
+	</form>
 <ul>
+
+	<script>
+	var load_timeline_posts = function () {
+    if (!$("#load_feed").hasClass("no-more-feeds")) {
+      var page = $("#load_feed input[name='page']").val();
+      var next_page = parseInt($("#load_feed input[name='page']").val()) + 1;
+      $("#load_feed input[name='page']").val(next_page);
+      $.ajax({
+        url: "{%url 'LoadPostForTimeline' %}",
+        data: $("#load_feed").serialize(),
+        cache: false,
+        beforeSend: function () {
+          $(".load").show();
+        },
+        success: function (data) {
+					console.log(data);
+          if (data.length > 0) {
+            $(".firstPagePosts").append(data)
+          }
+          else {
+            $("#load_feed").addClass("no-more-feeds");
+          }
+        },
+        complete: function () {
+          $(".load").hide();
+        }
+      });
+    }
+  };
+
+  $("#load_feed").bind("enterviewport", load_timeline_posts).bullseye();
+	</script>

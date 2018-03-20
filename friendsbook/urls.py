@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^ajax/UpdateCover/$',login_required(views.UploadCover.as_view()),name='UpdateCover'),
     url(r'^ajax/groupUpdateCover/$',login_required(views.UploadGroupCover),name='groupUpdateCover'),
     url(r'^ajax/CreateGroup/$', login_required(views.NewGroup), name='NewGroup'),
+    url(r'^ajax/feeds/load/', login_required(views.GetUserPostsByAjax), name='LoadPostForTimeline'),
     url(r'^chat-room/$', login_required(views.user_list), name='user_list'),
     url(r'^chat-room/(?P<slug1>[\w.@+-]+)__Messages__(?P<slug2>[\w.@+-]+)/$', login_required(views.Messenger_Chatting), name='Messenger'),
     url(r'^groups/(?P<pk>\d+)/$', login_required(views.grouphome), name='GroupsHomepage'),

@@ -207,6 +207,9 @@ $(document).on("keydown", ".comments .newcomment input[name='post']", function (
 	 if (keyCode == 13) {
 		 var form = $(this).closest("form");
 		 var container = $(this).closest(".comments");
+		 text=$(form).children("input[name='post']")
+		 console.log(text.val())
+		 if(text.val()=="")	return;
 		 var input = $(this);
 		 $.ajax({
 			 url: '/ajax/loadcomment/',

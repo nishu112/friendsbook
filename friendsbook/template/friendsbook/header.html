@@ -10,23 +10,23 @@
       <a class="navbar-brand " href="/"><font size="3">Friendsbook</font></a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
-				<form class="navbar-form navbar-left" id="searchform" action="{% url 'profiles' %}" method="GET" >
-					<div class="input-group">
-						<input type="text" autocomplete="off" id="livesearch" size="30" class="form-control" placeholder="Search" name="search_user">
-							<div class="input-group-btn">
-								<button class="btn btn-default" type="submit">
-									<i class="glyphicon glyphicon-search"></i>
-								</button>
-							</div>
-							<!--
+      <form class="navbar-form navbar-left" id="searchform" action="{% url 'profiles' %}" method="GET" >
+        <div class="input-group">
+          <input type="text" autocomplete="off" id="livesearch" size="30" class="form-control" placeholder="Search" name="search_user">
+            <div class="input-group-btn">
+              <button class="btn btn-default" type="submit">
+                <i class="glyphicon glyphicon-search"></i>
+              </button>
+            </div>
+            <!--
 
-							show results are not working
-							correct this
-							<div style="display: block; margin-left: -305px; margin-top:35px;border: 0px;width:500px;" id="liveSearchResult" class="liveSearchResult">
-							</div>
-							-->
-					</div>
-				</form>
+            show results are not working
+            correct this
+            <div style="display: block; margin-left: -305px; margin-top:35px;border: 0px;width:500px;" id="liveSearchResult" class="liveSearchResult">
+            </div>
+            -->
+        </div>
+      </form>
 
 
 	      <ul class="mynav_content nav navbar-nav navbar-right ">
@@ -53,6 +53,7 @@ margin-top: 50px; border: 0px; width: 270px; background-color: white;" id="liveS
 (function( $ ){
 
   $('#searchform').on('keyup', '#livesearch', function(){
+
 
     var str=$("#livesearch").val();
 
@@ -96,7 +97,7 @@ margin-top: 50px; border: 0px; width: 270px; background-color: white;" id="liveS
               $("#notifications").popover('hide');
             }
             else {
-              
+
               $("#notifications").popover('show');
               $.ajax({
                 url: '/notifications/',
