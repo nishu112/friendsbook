@@ -425,7 +425,9 @@ def home(request):
 	paginator = Paginator(all_posts, POSTS_NUM_PAGES)
 	posts = paginator.page(1)
 	groups=group_list(request)
-	return render(request,"home/index.html",{'posts':posts,'page':1,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion,'newGroupForm':CreateGroup(None)})
+	print(friends_suggestion)
+	print(friends_suggestion[0:1])
+	return render(request,"home/index.html",{'posts':posts,'page':1,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion[0:10],'newGroupForm':CreateGroup(None)})
 
 def PostDetailView(request,slug):
 	#print('hii')
@@ -1115,7 +1117,7 @@ def UserProfile(request,slug):
 	all_posts = posts
 	paginator = Paginator(all_posts, POSTS_NUM_PAGES)
 	posts = paginator.page(1)
-	
+
 	posts=user_post(request,profile.username,posts)
 
 
