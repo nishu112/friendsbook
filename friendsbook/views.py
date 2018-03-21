@@ -1299,7 +1299,7 @@ def Messenger_Chatting(request,slug1,slug2):
 	print(Message.objects.filter(username=fuser_obj,fusername=user_obj,is_read=False))
 	read_messages=Message.objects.filter(username=fuser_obj,fusername=user_obj,is_read=False).update(is_read=True)
 	print(read_messages)
-	msg_obj=Message.objects.filter(Q(username=user_obj,fusername=fuser_obj)|Q(username=fuser_obj,fusername=user_obj)).select_related('username').select_related('fusername')
+	msg_obj=Message.objects.filter(Q(username=user_obj,fusername=fuser_obj)|Q(username=fuser_obj,fusername=user_obj)).select_related('username').select_related('fusername').order_by('time')
 
 	users=Check_user_online(request,request.user)
 	form=ChattingForm(None)
