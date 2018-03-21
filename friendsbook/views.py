@@ -236,7 +236,7 @@ def GetUserPosts(request):
 
 
 	friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=friendsAndMe)
-	friendsPostWithoutGroup=Status.objects.filter(username__in=chatusers,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')##friends Posts
+	friendsPostWithoutGroup=Status.objects.filter(username__in=chatusers,gid__isnull=True).exclude(privacy='me').select_related('username').order_by('-time')##friends Posts
 	tempfriendsPostWithGroupPrivacyOpen=Status.objects.filter(username__in=chatusers,gid__isnull=False).select_related('username').order_by('-time')
 	friendsPostWithGroupPrivacyOpen=Status.objects.none()
 	UserPartOfGroup=ConsistOf.objects.filter(username=request.user,confirm=1).values('gid')
@@ -245,7 +245,7 @@ def GetUserPosts(request):
 		if x.gid.privacy=='OP':
 			friendsPostWithGroupPrivacyOpen=friendsPostWithGroupPrivacyOpen|Status.objects.filter(id=x.id)
 	myPosts=Status.objects.filter(username=request.user).select_related('username').order_by('-time')
-	friendsOfFriendsPosts=Status.objects.filter(username__in=friends_suggestion,gid__isnull=True).exclude(privacy='Me').exclude(privacy='fs').select_related('username').order_by('-time')
+	friendsOfFriendsPosts=Status.objects.filter(username__in=friends_suggestion,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs').select_related('username').order_by('-time')
 	posts=friendsPostWithoutGroup|friendsPostWithGroupPrivacyOpen|myPosts|friendsOfFriendsPosts|PostOfUserPartOfGroup
     #from_feed = -1
     #if allposts:
@@ -309,45 +309,53 @@ def GetUserPostsByAjax(request):
 		print(profile.username)
 		if privacy=='fsofs':
 			#chatusers=Check_user_online(request,profile.username)
-			commonFriends=PusersFriends.intersection(LoggedInUserFriends)
+			commonFriends=PusersFriends&LoggedInUserFriends
 			print(PusersFriends)
 			print(LoggedInUserFriends)
 			print(commonFriends)
+			#userExceptCommonFriends=PusersFriends-commonFriends
 
-			CommonFriendsPosts=Status.objects.filter(Q(username__in=commonFriends,gid__isnull=True)).exclude(privacy='me').exclude(privacy='')
-			print('1')
+			CommonFriendsPosts=Status.objects.filter(Q(username__in=commonFriends,gid__isnull=True)).exclude(privacy='me').exclude(privacy='fs')
+			#PostsOfUserFriendsExcludeCommonFriends=Status.objects.filter(Q(username__in=PusersFriends,gid__isnull=True)).exclude(username__in=commonFriends)
+			#update
 			#print(CommonFriendsPosts)
 			UserPostWithPrivacyPublic=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs')
-			print('2')
 			LoggedInUserPosts=Status.objects.filter(username=request.user,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs')
-			print('3')
-			PuserFriendsWithoutCommon=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='pbc')
-			print('4')
-			posts=CommonFriendsPosts
-			print('5')
-			print(posts)
+			PuserFriendsWithoutCommon=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='Pbc')
+			posts=CommonFriendsPosts|PuserFriendsWithoutCommon|LoggedInUserPosts|UserPostWithPrivacyPublic
 
 
 		elif privacy=='fs':
 
 			#chatusers=Check_user_online(request,profile.username)
-			friends_suggestion=FriendsOfFriends(request,profile.username)
+			commonFriends=PusersFriends&LoggedInUserFriends
+			mutualFriendsPosts=Status.objects.filter(username__in=commonFriends,gid__isnull=True).exclude(privacy='me').order_by('-time')
+			PuserFriendsPosts=Status.objects.filter(username__in=PusersFriends,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs').order_by('-time')
+			LoggedInUserPosts=Status.objects.filter(username=request.user,gid__isnull=True).exclude(privacy='me').order_by('-time')
 
-			usersPost=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')
-			friendsPostWithoutGroup=Status.objects.filter(username__in=PusersFriends,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')##friends Posts
-			tempfriendsPostWithGroupPrivacyOpen=Status.objects.filter(username__in=PusersFriends,gid__isnull=False).exclude(privacy='CL').select_related('username').order_by('-time')
-			friendsPostWithGroupPrivacyOpen=Status.objects.none()
-			for x in tempfriendsPostWithGroupPrivacyOpen:
-				if x.gid.privacy=='OP':
-					friendsPostWithGroupPrivacyOpen=friendsPostWithGroupPrivacyOpen|Status.objects.filter(id=x.id)
-			posts=usersPost|friendsPostWithoutGroup|friendsPostWithGroupPrivacyOpen
+			PuserPosts=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='me')
+
+			posts=LoggedInUserPosts|PuserFriendsPosts|mutualFriendsPosts|PuserPosts
 		elif privacy=='NoConnection':
 			#define some post methods here
 			userposts=Status.objects.filter(username=profile.username,gid__isnull=True,privacy='Pbc').select_related('username').order_by('time')
-			friendsPostWithoutGroup=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='pbc').select_related('username').order_by('-time')##friends Posts
-			posts=userposts|friendsPostWithoutGroup	
+			FriendsPostsWithPublicPrivacy=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='Pbc')
+			posts=userposts|FriendsPostsWithPublicPrivacy
 
+		#group posts a users can see on anyone profile
+		#common groups
+		PuserGroupPostWithClosedPrivacy=ConsistOf.objects.filter(username=profile.username).select_related('gid').values('gid')
+		LoggedInUserGroupsWithClosedPrivacy=ConsistOf.objects.filter(username=request.user).select_related('gid').values('gid')
+		commonGroups=PuserGroupPostWithClosedPrivacy&LoggedInUserGroupsWithClosedPrivacy
+		PuserGroupPost=Status.objects.filter(gid__in=commonGroups,username=profile.username).order_by('-time')
+		#PuserGroupWithOpenPrivacy=ConsistOf.objects.filter(username=profile.username)
+		#PuserGroupWithOpenPrivacy=ConsistOf.objects.none().select_related('gid').values('gid')
+		print(commonGroups)
+		print('commonthzhfghxfh')
+		PuserGroupsWithOpenPrivacy=Groups.objects.filter(id__in=PuserGroupPostWithClosedPrivacy,privacy='OP').values('id')
 
+		PuserGroupPostWithOpenPrivacy=Status.objects.filter(username=profile.username,gid__in=PuserGroupsWithOpenPrivacy).order_by('-time')
+		posts=posts|PuserGroupPost|PuserGroupPostWithOpenPrivacy
 
 
 		#code to load post and using the privacy features
@@ -1054,52 +1062,65 @@ def UserProfile(request,slug):
 	print(profile.username)
 	if privacy=='fsofs':
 		#chatusers=Check_user_online(request,profile.username)
-		commonFriends=PusersFriends.intersection(LoggedInUserFriends)
+		commonFriends=PusersFriends&LoggedInUserFriends
 		print(PusersFriends)
 		print(LoggedInUserFriends)
 		print(commonFriends)
+		#userExceptCommonFriends=PusersFriends-commonFriends
 
-		CommonFriendsPosts=Status.objects.filter(Q(username__in=commonFriends,gid__isnull=True)).exclude(privacy='me').exclude(privacy='')
-		print('1')
+		CommonFriendsPosts=Status.objects.filter(Q(username__in=commonFriends,gid__isnull=True)).exclude(privacy='me').exclude(privacy='fs')
+		#PostsOfUserFriendsExcludeCommonFriends=Status.objects.filter(Q(username__in=PusersFriends,gid__isnull=True)).exclude(username__in=commonFriends)
+		#update
 		#print(CommonFriendsPosts)
 		UserPostWithPrivacyPublic=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs')
-		print('2')
 		LoggedInUserPosts=Status.objects.filter(username=request.user,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs')
-		print('3')
-		PuserFriendsWithoutCommon=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='pbc')
-		print('4')
-		posts=CommonFriendsPosts
-		print('5')
-		print(posts)
+		PuserFriendsWithoutCommon=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='Pbc')
+		posts=CommonFriendsPosts|PuserFriendsWithoutCommon|LoggedInUserPosts|UserPostWithPrivacyPublic
 
 
 	elif privacy=='fs':
 
 		#chatusers=Check_user_online(request,profile.username)
-		friends_suggestion=FriendsOfFriends(request,profile.username)
-
-		usersPost=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')
-		friendsPostWithoutGroup=Status.objects.filter(username__in=PusersFriends,gid__isnull=True).exclude(privacy='Me').select_related('username').order_by('-time')##friends Posts
-		tempfriendsPostWithGroupPrivacyOpen=Status.objects.filter(username__in=PusersFriends,gid__isnull=False).exclude(privacy='CL').select_related('username').order_by('-time')
-		friendsPostWithGroupPrivacyOpen=Status.objects.none()
-		for x in tempfriendsPostWithGroupPrivacyOpen:
-			if x.gid.privacy=='OP':
-				friendsPostWithGroupPrivacyOpen=friendsPostWithGroupPrivacyOpen|Status.objects.filter(id=x.id)
-		posts=usersPost|friendsPostWithoutGroup|friendsPostWithGroupPrivacyOpen
+		commonFriends=PusersFriends&LoggedInUserFriends
+		print('common friends')
+		print(commonFriends)
+		mutualFriendsPosts=Status.objects.filter(username__in=commonFriends,gid__isnull=True).exclude(privacy='me').order_by('-time')
+		PuserFriendsPosts=Status.objects.filter(username__in=PusersFriends,gid__isnull=True).exclude(privacy='me').exclude(privacy='fs').order_by('-time')
+		LoggedInUserPosts=Status.objects.filter(username=request.user,gid__isnull=True).exclude(privacy='me').order_by('-time')
+		PuserPosts=Status.objects.filter(username=profile.username,gid__isnull=True).exclude(privacy='me')
+		posts=LoggedInUserPosts|PuserFriendsPosts|mutualFriendsPosts|PuserPosts
 	elif privacy=='NoConnection':
 		#define some post methods here
 		userposts=Status.objects.filter(username=profile.username,gid__isnull=True,privacy='Pbc').select_related('username').order_by('time')
-		friendsPostWithoutGroup=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='pbc').select_related('username').order_by('-time')##friends Posts
-		posts=userposts|friendsPostWithoutGroup
+		FriendsPostsWithPublicPrivacy=Status.objects.filter(username__in=PusersFriends,gid__isnull=True,privacy='Pbc')
+		posts=userposts|FriendsPostsWithPublicPrivacy
 
+	#group posts a users can see on anyone profile
+	#common groups
+	PuserGroupPostWithClosedPrivacy=ConsistOf.objects.filter(username=profile.username,confirm=1).values('gid')
+	LoggedInUserGroupsWithClosedPrivacy=ConsistOf.objects.filter(username=request.user,confirm=1).values('gid')
+	commonGroups=PuserGroupPostWithClosedPrivacy & LoggedInUserGroupsWithClosedPrivacy
+	print(LoggedInUserGroupsWithClosedPrivacy)
+	print(PuserGroupPostWithClosedPrivacy)
+	print(commonGroups)
+	print('hello')
+	PuserGroupPost=Status.objects.filter(gid__in=commonGroups,username=profile.username).order_by('-time')
+	#PuserGroupWithOpenPrivacy=ConsistOf.objects.filter(username=profile.username)
+	#PuserGroupWithOpenPrivacy=ConsistOf.objects.none().select_related('gid').values('gid')
+	PuserGroupsWithOpenPrivacy=Groups.objects.filter(id__in=PuserGroupPostWithClosedPrivacy,privacy='OP').values('id')
+
+	PuserGroupPostWithOpenPrivacy=Status.objects.filter(username=profile.username,gid__in=PuserGroupsWithOpenPrivacy).order_by('-time')
+	posts=posts|PuserGroupPost|PuserGroupPostWithOpenPrivacy
 	#paginator
 	all_posts = posts
 	paginator = Paginator(all_posts, POSTS_NUM_PAGES)
 	posts = paginator.page(1)
+	
+	posts=user_post(request,profile.username,posts)
 
 
 	chatusers=Check_user_online(request,request.user)# define herebecause it was giving me searched user chatmembers
-	posts=user_post(request,profile.username,posts)
+
 	return render(request,'user/profile.html',{'User':profile,'page':1,'posts':posts,'y':y,'chatusers':chatusers})
 
 

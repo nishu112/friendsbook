@@ -226,11 +226,11 @@ class Notification(models.Model):
         (POSTED_GROUP ,'Posted in Group')
         )
 
-    _POST_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> Post an status: <a href="/post/{2}/">{2}</a>'  # noqa: E501
-    _LIKED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> liked your post: <a href="/post/{2}/">{2}</a>'  # noqa: E501
-    _COMMENTED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> commented on your post: <a href="/post/{2}/">{2}</a>'  # noqa: E501
-    _EDITED_POST_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> edited Post: <a href="/post/{2}/">{2}</a>'  # noqa: E501
-    _ALSO_COMMENTED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> also commentend on the post: <a href="/post/{2}/">{2}</a>'  # noqa: E501
+    _POST_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> Post an  <a href="/post/{2}/">status</a>'  # noqa: E501
+    _LIKED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> liked your  <a href="/post/{2}/">post</a>'  # noqa: E501
+    _COMMENTED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> commented on your  <a href="/post/{2}/">post</a>'  # noqa: E501
+    _EDITED_POST_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> edited  <a href="/post/{2}/">Post</a>'  # noqa: E501
+    _ALSO_COMMENTED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> also commentend on the : <a href="/post/{2}/">Post</a>'  # noqa: E501
     _USER_SEND_REQUEST = '<a href="/users/profile/{0}/">{1}</a> Send a friend request '  # noqa: E501
     _USER_ACCEPTED_REQUEST = '<a href="/users/profile/{0}/">{1}</a> Accepted your friend request '  # noqa: E501
     _USER_GROUP_POST = '<a href="/users/profile/{0}/">{1}</a>Post an Status in <a href="/groups/{2}/">{3}</a> '  # noqa: E501
