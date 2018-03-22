@@ -1,7 +1,9 @@
 {% extends "friendsbook/structure.html" %}
+{% load humanize %}
 {% load static %}
 {% block head %}
 	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
+	<link href="{% static 'css/chat.css' %}" rel="stylesheet">
 {% endblock head %}
 {% block content %}
 {%if chatusers%}
@@ -9,56 +11,64 @@
 			<h3> &nbsp&nbsp&nbsp   Messenger</h3>
 		</div>
 		<div class="row">
-			<div class="col-sm-3">
+			<div class="col-sm-2">
 			 <!-- Great, til you resize. -->
 				{%include "chat/online_user_list.html"%}
 			<!--<div class="well bs-sidebar affix" id="sidebar" style="background-color:#fff">-->
 			</div>
-			<div class="col-sm-6">
-			<div id="msg_container" class='container-fluid msg_container' style="background-color:#fff ">
 
-					<div id ="msg-list" class="msg-list">
+				<div class="col-sm-8 frame" style="height:85vh">
+            <ul id="msg-list">
+							{%for x in msg_obj%}
 
-						{%for x in msg_obj%}
-								{%if user == x.username %}
-
-										<p class=" text-right list-group-item">
-											<span data-placement="left" data-toggle="tooltip" title={{x.time}} >
-													{{x.text}}
-											</span>
-										</p>
-
-								{%else%}
-								<p class=" text-left list-group-item">
-									<span data-placement="right" data-toggle="tooltip" title={{x.time}}>{{x.text}}
-									</span>
-								</p>
-								{%endif%}
-
-						{%empty%}
-									<h4>This is the begining of a great new conversation.</h4>
-									<p>Let's get started now!</p>
-						{%endfor%}
+			<li style="width:100%">
+				<div {%if userProfile.username == x.username %} class="msj-rta macro" {%else%}  class="msj macro"{%endif%}>
+					<div class="avatar">
+						<img class="img-circle"  width="42" height="42"
+						{%if x.username.profile.sid%}
+							{%if x.username.profile.sid.image%}
+								 src={{ x.username.profile.sid.image.url}}
+							{%endif%}
+						{%else%}
+								src="/static/img/profile_pic.png"
+						{%endif%}>
 					</div>
-					<form id="chatform" method="POST" action="" onsubmit="return false">{%csrf_token%}
-						<input type="hidden" name="fusername" value="{{fuser_obj}}" required="" id="id_fusername">
-						<div id="chat-bottom" class="input-group">
-							<input type="text" autocomplete="off" name="text" class="form-control" required="" id="id_text">
-							<span class="input-group-btn">
-								<input class="btn btn-default" id="send" type="submit" value="Send"/>
-							</span>
-						</div>
-					</form>
+				<div class="text text-l"><p>
+					{{x.text}}
+				</p><p><small>{{x.time|naturaltime}}</small></p>
+				</div>
+				</div>
+		  </li>
+			{%empty%}
+						<h4>This is the begining of a great new conversation.</h4>
+						<p>Let's get started now!</p>
+			{%endfor%}
+			</ul>
+            <div>
+                <div class="msj-rta macro">
+                    <div class="text text-r" style="background:whitesmoke !important">
+
+											<form id="chatform" method="POST" >{%csrf_token%}
+											<input type="hidden" name="fusername" value="{{fuser_obj}}" required="" id="id_fusername">
+											<div id="chat-bottom" class="input-group">
+												<input type="text" autocomplete="off" name="text" class="form-control" placeholder="Type Messsage" required="" id="id_text">
+												<span class="input-group-btn">
+													<input class="btn btn-default" id="send" type="submit" value="Send"/>
+												</span>
+											</div>
+										</form>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
 
 
-
-			</div>
-			</div>
 
 
 		</div>
-{%else%}<br><br><br><br>
-	<h1>Make Some new Friends and Then Come to this Page</h1>
+
 {%endif%}
 
 {% endblock content %}
@@ -66,10 +76,12 @@
 
 {% block javascript%}
 <script>
+
 (function( $ ){
 	$('[data-toggle="tooltip"]').tooltip();
 	$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
 	$("#chatform").on("submit", function() {
+		console.log('submit')
 		form=$(this).closest('form')
 		values=$(form).serialize()
 	fuser=jQuery('input[name="fusername"]').val();
@@ -83,7 +95,9 @@
 	dataType: 'json',
 	success: function (data) {
 		console.log(data)
-		$('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+'WAIT'+'"> <p class=" text-right list-group-item">' +text + '</p></span>')
+		$('#msg-list').append(data)
+		console.log('recieved')
+
 		$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
 		$('#id_text').val('')
 	}
@@ -98,4 +112,9 @@
 })( jQuery );
 
 </script>
+
+<!--
+<script src="{% static 'js/js/chat.js' %}"></script>
+-->
+
  {%endblock%}

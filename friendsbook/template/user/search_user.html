@@ -54,6 +54,7 @@
 			</div>
 			<div class="col-sm-2">
 				{%block chatuser%}
+				{%include "chat/online_user_list.html"%}
 				{%endblock chatuser%}
 			</div>
 
@@ -61,4 +62,36 @@
 {% endblock %}
 {% block javascript%}
 <script src="{% static 'js/addfriends/friendrequest.js' %}"></script>
+<script>
+/*var load_friends_list = function () {
+    if (!$("#load_feed").hasClass("no-more-feeds")) {
+      var page = $("#load_feed input[name='page']").val();
+      var next_page = parseInt($("#load_feed input[name='page']").val()) + 1;
+      $("#load_feed input[name='page']").val(next_page);
+      $.ajax({
+        url: "/ajax/feeds/load/",
+        data: $("#load_feed").serialize(),
+        cache: false,
+        beforeSend: function () {
+          $(".load").show();
+        },
+        success: function (data) {
+					console.log(data);
+          if (data.length > 0) {
+            $(".firstPagePosts").append(data)
+          }
+          else {
+            $("#load_feed").addClass("no-more-feeds");
+          }
+        },
+        complete: function () {
+          $(".load").hide();
+        }
+      });
+    }
+  };
+
+  $("#load_feed").bind("enterviewport", load_timeline_posts).bullseye();
+*/
+</script>
 {%endblock %}

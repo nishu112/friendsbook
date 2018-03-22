@@ -4,6 +4,7 @@ from channels.auth import channel_session_user, channel_session_user_from_http
 from channels.sessions import channel_session
 from friendsbook.models import Message,LoggedInUser,Profile
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
 import getpass
 import time
 
@@ -42,13 +43,16 @@ def ws_receive(message):
     obj=Message.objects.filter(username=user_obj,fusername=fuser_obj).order_by('-time')[0]
     print(obj)
     print('really')
+
+    content=render_to_string('chat/partials/single_message.html',{'x':obj,'user':fuser})
     Group(user).send({
         'text': json.dumps({
             'type':'message',
             'text':str(obj.text),
             'user':str(obj.username),
             'fuser':str(obj.fusername),
-            'time':str(obj.time)
+            'time':str(obj.time),
+            'content':str(content)
         })
     })
     Group(fuser).send({
@@ -57,7 +61,8 @@ def ws_receive(message):
             'text':str(obj.text),
             'user':str(obj.username),
             'fuser':str(obj.username),
-            'time':str(obj.time)
+            'time':str(obj.time),
+            'content':str(content)
         })
     })
 

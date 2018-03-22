@@ -49,16 +49,16 @@
 
 
            {% if status.is_like %}
-             <a href="#" style="text-decoration: none;" class="like unlike" type="post_like">
+             <a href="#" style="text-decoration: none;" data-placement="left" data-toggle="tooltip" title="Loading.." class="like unlike" type="post_like">
                <span class="glyphicon glyphicon-thumbs-up"></span>
-               <span class="text">Unlike</span>
-               (<span class="like-count">{%if status.likes %}{{status.likes}}{%endif%} </span>)
+               <span class="text" >Unlike</span>
+               (<span class="like-count"  >{%if status.likes %}{{status.likes}}{%endif%} </span>)
              </a>
            {% else %}
-             <a href="#" style="text-decoration: none;" class="like" type="post_like">
+             <a href="#" style="text-decoration: none;"  data-placement="left" data-toggle="tooltip" title="Loading.." class="like" type="post_like">
                <span class="glyphicon glyphicon-thumbs-up"></span>
-               <span class="text">Like</span>
-               (<span class="like-count">{{status.likes}} </span>)
+               <span class="text" >Like</span>
+               (<span class="like-count"  >{{status.likes}} </span>)
              </a>
            {% endif %}
            &nbsp;&nbsp;

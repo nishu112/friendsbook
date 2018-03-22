@@ -10,13 +10,13 @@
 										<img class="conversation-portrait" src="/static/img/user.png" alt="My image" width="42" height="42"/>
 										{%endif%}
 
-					  {{ user_obj.profile.fname}}{%if user_obj.profile.lname%} {{user_obj.profile.lname}} {%endif%} <span data-messages_from="{{ user_obj|escape }}" class="noOfUnread">{%if user_obj.noOfUnread is  not 0%}{{user_obj.noOf_unread}}{%endif%}</span>
+					  {{ user_obj.profile.fname}}{%if user_obj.profile.lname%} {{user_obj.profile.lname}} {%endif%} <span data-messages_from="{{ user_obj|escape }}" class="noOfUnread">{%if user_obj.noOfUnread|slugify is not '0'%}{{user_obj.noOf_unread}}{%endif%}</span>
 						<div data-username="{{ user_obj|escape }}" class="online">
 
 										{%ifequal user_obj.status|slugify "online"%}
 										<span style="background: rgb(66, 183, 42); border-radius: 50%; float:right; height: 6px;display: inline-block; margin-left: 4px;margin-top: 17px; width: 6px;"></span>
 										{% endifequal %}
-									</div>
+						</div>
 					</a>
 						{%endif%}
 				  {% endfor %}

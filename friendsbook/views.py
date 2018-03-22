@@ -1007,6 +1007,44 @@ def create_post(request):
 		form=CreatePost(None)
 	return render(request,"uposts/post_create.html",{'form':form})
 
+Friends_Per_Page=5
+
+def LoadFriendsListViaAjax(request):
+	page = request.GET.get('page')
+	fname=request.GET.get('search_user')
+	#Profile.objects.filter(Q(fname__istartswith=fname) | Q(lname__istartswith=fname)).select_related('username').select_related('sid')
+
+	all_friends=Profile.objects.filter(Q(fname__istartswith=fname) | Q(lname__istartswith=fname)).select_related('username').select_related('sid')
+	context=friends_list(self.request,self.request.user.username,context)
+
+	addfriends_list=list()
+	searched_by=self.request.user.username
+	for x in all_friends:
+		if str(x.username)==searched_by:
+			addfriends_list.append(-1)
+		else:
+			user=searched_by
+			fuser=x.username
+			user_obj=User.objects.get(username=user)
+			fuser_obj=User.objects.get(username=fuser)
+			addfriends_list.append(friendship(user_obj,fuser_obj))
+	all_friends=zip(all_friends,addfriends_list)
+	paginator = Paginator(all_friends, Friends_Per_Page)
+
+	try:
+		friends = paginator.page(page)
+	except PageNotAnInteger:
+		return HttpResponseBadRequest()
+	except EmptyPage:
+		friends = []
+	if(len(friends)==0):
+		return JsonResponse(0,safe=False)
+
+	content=render_to_string('Ajax_load_SearchFriendList.html', {'data': friends},request)
+	print(content)
+	return JsonResponse(content,safe=False)
+
+
 class FriendsView(generic.ListView):  ##print friendlist of user here
 	template_name='user/search_user.html'
 	context_object_name='data'
@@ -1020,6 +1058,20 @@ class FriendsView(generic.ListView):  ##print friendlist of user here
 	def get_context_data(self,**kwargs):
 		context=super(FriendsView,self).get_context_data(**kwargs)
 		context['chatusers']=Check_user_online(self.request,self.request.user)
+		print(context['chatusers'])
+		#print(posts)
+		#all_friends=context['data']
+		#paginator = Paginator(all_friends, Friends_Per_Page)
+		#friends = paginator.page(1)
+		#context['data']=friends
+		#context['page']
+		#print(context['data'])
+
+
+		context['newGroupForm']=CreateGroup(None)
+
+		context['groups']=group_list(self.request)
+
 		context=friends_list(self.request,self.request.user.username,context)
 		return context
 
@@ -1303,7 +1355,9 @@ def Messenger_Chatting(request,slug1,slug2):
 
 	users=Check_user_online(request,request.user)
 	form=ChattingForm(None)
-	return render(request,'chat/messenger.html',{'msg_obj':msg_obj,'chatusers':users,'fuser_obj':fuser_obj,'form':form})
+	return render(request,'chat/messenger.html',{'msg_obj':msg_obj,'chatusers':users,'userProfile':profile1,'fuser_obj':fuser_obj,'form':form})
+
+
 
 def Message_received(request):
 	if request.is_ajax() and request.method=='POST':
@@ -1314,9 +1368,11 @@ def Message_received(request):
 		text=request.POST['text']
 		friendship=FriendsWith.objects.filter(Q(username=user_obj,fusername=fuser_obj,confirm_request=2,blocked_status=0) |Q(username=fuser_obj,fusername=user_obj,confirm_request=2,blocked_status=0))
 		if friendship.exists():
-			Message.objects.create(username=request.user,fusername=fuser_obj,text=text)
+			obj=Message.objects.create(username=request.user,fusername=fuser_obj,text=text)
 			print('done')
-			return JsonResponse(10,safe=False)
+			print(obj)
+			content=render_to_string('chat/partials/single_message.html',{'x':obj,'user':request.user},request)
+			return JsonResponse(content,safe=False)
 		print('nope')
 	return JsonResponse(0,safe=False)
 
@@ -1393,7 +1449,7 @@ def Comments(request):
 			jsonobj=render_to_string('uposts/partials/comments.html', {'comments': comments},request)
 			return JsonResponse(jsonobj,safe=False)
 			#below methods are not working? because of some unknown issues
-			return render(request, 'uposts/partials/comments.html',{'comments': comments})
+			#return render(request, 'uposts/partials/comments.html',{'comments': comments})
 	return fishy(request)
 
 def EditComments(request):
@@ -1462,3 +1518,26 @@ def check_contification(request):
 		notifications=(IndividualNotifications|PostNotification)|Notification.objects.filter(to_user=request.user,is_read=False)
 		data=len(notifications)
 		return JsonResponse(data,safe=False)
+
+
+def WhoLikedStatus(request):
+	if request.is_ajax():
+		id=request.GET.get('id')
+		print(id)
+		PersonNames=StatusLikes.objects.filter(sid=Status.objects.get(id=id))
+		for x in PersonNames:
+			print(x)
+		content=render_to_string('uposts/partials/PersonLikedPosts.html',{'PersonLikedPosts':PersonNames},request)
+		print(content)
+		return JsonResponse(content,safe=False)
+
+def WhoLikedComment(request):
+	if request.is_ajax():
+		id=request.GET.get('id')
+		print(id)
+		PersonNames=CommentLikes.objects.filter(cid=Comment.objects.get(id=id))
+		for x in PersonNames:
+			print(x)
+		content=render_to_string('uposts/partials/PersonLikedPosts.html',{'PersonLikedPosts':PersonNames},request)
+		print(content)
+		return JsonResponse(content,safe=False)

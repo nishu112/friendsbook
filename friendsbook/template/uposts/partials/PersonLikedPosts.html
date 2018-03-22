@@ -1,0 +1,3 @@
+{%for x in PersonLikedPosts%}
+	{{x.username.profile.fname}} {%if x.username.profile.lname%}	{{x.username.profile.lname}}{%endif%}
+{%endfor%}

@@ -1,0 +1,35 @@
+				{% for profile,y in data%}
+				<div class="well particularuser" user={{profile.username}} csrf={{csrf_token}}>
+					<div class="add_friendbutton" >
+						{%if profile.sid%}
+							{%if profile.sid.image%}
+								<img class="img-rounded" src="{{ profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+							{%endif%}
+						{%else%}
+								<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+						{%endif%}
+						<a href={% url 'profile_info' profile.slug %}>{{profile.username.profile.fname}} {%if profile.username.profile.lname%} {{profile.username.profile.lname}} {%endif%}</a>
+						{%if user.username  !=  profile.username.username %}
+								{%if y is 0 or y is 1 or y is 2%}
+										<button class="btn btn-default type1" actiontype="type1" type="button" performaction="{%if y is 0%}Send{%elif y is 1%}Cancel{%elif y is 2%}Confirm{%endif%}" onclick="return false"  >
+										{%if y is 0%} Send request {%elif y is 1%} Cancel request{%elif y is 2%}Confirm Request{%endif%}
+										</button>
+								{%endif%}
+								{%if y is 2 or y is 3%}
+								<button class="btn btn-default type2" actiontype="type2" performaction="{%if y is 2%}Delete{%elif y is 3 %}Unfriend{%endif%}" type="button">
+									{%if y is 2%}Delete Request{%elif y is 3 %}Unfriend{%endif%}
+								</button>
+								{%endif%}
+						{%endif%}
+					</div>
+					<br>
+					{%if profie.lname%}
+						{{profile.lname}}</br>
+					{%endif%}
+					{{profile.emailid}}</br>
+					{{profile.gender}}
+				</div>
+					<br>
+
+					{%endfor%}
+			

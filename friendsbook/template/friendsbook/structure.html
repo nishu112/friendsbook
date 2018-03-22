@@ -12,9 +12,11 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" />
 
-<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+<!--
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+-->
 <script  src="{% static 'js/posts/jquery.bullseye-1.0-min.js' %}"></script>
 	{% block head %}
 
@@ -47,13 +49,22 @@
 
 
   <script>
-(function( $ ){
-$('[data-toggle="tooltip"]').tooltip();
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
 });
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/users/');
 	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/{{user.username}}/');
+	socket.onclose = function(){
+	        // Try to reconnect in 5 seconds
+	        setTimeout(function(){
+						console.log('trying to connect')
+						var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/users/');
+						var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/{{user.username}}/');
 
+					}, 5000);
+	    };
     socket.onopen = function open() {
 
       console.log('WebSockets connection created.');
@@ -88,7 +99,9 @@ $('[data-toggle="tooltip"]').tooltip();
 		console.log(selected_user)
 			if( selected_user==user)
 		  	{
-				$('#msg-list').append('<span data-placement="right" data-toggle="tooltip" title="'+data['time']+'"> <p class="text-left list-group-item">' +data['text'] + '</p></span>')
+				content=data['content'];
+				console.log(content)
+				$('#msg-list').append(content)
 
 			  $('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
 				}

@@ -1,0 +1,19 @@
+{% load humanize %}
+<li style="width:100%">
+				<div {%if user == x.username %} class="msj-rta macro" {%else%}  class="msj macro"{%endif%}>
+					<div class="avatar">
+						<img class="img-circle"  width="42" height="42"
+						{%if x.username.profile.sid%}
+							{%if x.username.profile.sid.image%}
+								 src={{ x.username.profile.sid.image.url}}
+							{%endif%}
+						{%else%}
+								src="/static/img/profile_pic.png"
+						{%endif%}>
+					</div>
+				<div class="text text-l"><p>
+					{{x.text}}
+				</p><p><small>{{x.time|naturaltime}}</small></p>
+				</div>
+				</div>
+</li>
