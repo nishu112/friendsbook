@@ -429,6 +429,24 @@ def home(request):
 	print(friends_suggestion[0:1])
 	return render(request,"home/index.html",{'posts':posts,'page':1,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion[0:10],'newGroupForm':CreateGroup(None)})
 
+def getSinglePost(request):
+	if request.is_ajax():
+		id=request.GET.get('id')
+
+		status=Status.objects.get(id=id)
+		#chatusers=Check_user_online(request,request.user)
+		#user=User.objects.filter(username=request.user)
+		#user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
+		#friends_suggestion=FriendsOfFriends(request,request.user)
+		#friendsAndMe=chatusers|user
+		#friends_suggestion=User.objects.filter(id__in=friends_suggestion).exclude(id__in=friendsAndMe)
+		status.likes=StatusLikes.objects.filter(sid=status).count()
+		status.comments=Comment.objects.filter(sid=status).count()
+		status.is_like=StatusLikes.objects.filter(username=request.user,sid=status).count()
+		content=render_to_string('uposts/posts.html',{'status':status},request)
+		return JsonResponse(content,safe=False)
+
+
 def PostDetailView(request,slug):
 	#print('hii')
 	status=Status.objects.get(slug=slug)

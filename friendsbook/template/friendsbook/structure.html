@@ -28,6 +28,7 @@
 
 {%include "friendsbook/header.html"%}
 <main>
+	{%include "friendsbook/emptyModalForPosts.html"%}
 <div class="container-fluid">
 {%include "groups/create_groups.html"%}
 		{% block content %}
@@ -68,11 +69,22 @@ $(document).ready(function(){
     socket.onopen = function open() {
 
       console.log('WebSockets connection created.');
+
+			type='read_messages';
+			user='{{fuser_obj}}'
+			fuser='{{request.user}}'
+			if(user!="" && fuser!=""){
+			var message ={
+				user,type,fuser
+			};
+			socket.send(JSON.stringify(message));
+		}
     };
 
     socket.onmessage = function message(event) {
     var data = JSON.parse(event.data);
 	  var type = data['type'];
+
 	  var user = data['user'];
 	  //did this logic to satisfy condition
 	  //so that message will recieve only if
@@ -97,13 +109,38 @@ $(document).ready(function(){
 	  var fuser = data['fuser'];
 		console.log(user)
 		console.log(selected_user)
+		console.log(type)
+		if(type=="read_messages" && selected_user==user)
+			{
+				console.log('done123')
+			$('.is_read').html('✔✔');
+			type='update'
+			var message ={
+				user,type,fuser
+			};
+			console.log(message)
+			console.log('update in database')
+			socket.send(JSON.stringify(message));
+			return;
+			}
+		if(type=="read_messages" && selected_user!=user)	return;
 			if( selected_user==user)
 		  	{
 				content=data['content'];
 				console.log(content)
+				console.log('content reached')
 				$('#msg-list').append(content)
 
 			  $('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
+				type='read_messages';
+				fuser='{{request.user}}'
+				var message ={
+					user,type,fuser
+				};
+				console.log(message)
+				console.log('sending message acknowledgement')
+				socket.send(JSON.stringify(message));
+
 				}
 			else{
 				Messages=$('.users-list a span').filter(function(){
@@ -117,7 +154,21 @@ $(document).ready(function(){
     if (socket.readyState == WebSocket.OPEN) {
       socket.onopen();
     }
-
+$(document).on("click",".displayPopUp",function(){
+	console.log("really ok")
+	console.log($(this).attr('getFrom'))
+	id=$(this).attr('getFrom')
+	$.ajax({
+		url:"{%url 'getSinglePost' %}",
+		data:{'id':id},
+		success: function (data) {
+				 console.log(data)
+				 $('.postsContent').html(data);
+				 $('#showPostsAfterClickOnImages').modal('show');
+			 }
+	});
+	//getFrom={{status.id}}
+});
 
   </script>
 

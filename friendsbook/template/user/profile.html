@@ -7,7 +7,7 @@
 	<link href="{% static 'css/pages/cover.css' %}" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet">
 	{%block contentFromSettings%}
-	
+
 	{%endblock contentFromSettings%}
 
 {%endblock head%}
@@ -18,9 +18,9 @@
 			<div class="row profile " profilefor="{{User.username}}">
 				<div class="background_pic_design">
 					{%if User.profileCover.image%}
-						<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("{{User.profileCover.image.url}}");'>
+						<div class="cover_background displayPopUp" getFrom={{User.profileCover.id}} id="cover_background" title="Cover" style='background-image: url("{{User.profileCover.image.url}}");'>
 					{%else%}
-						<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
+						<div class="cover_background" getFrom="None" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
 					{%endif%}
 					<span class="btn btn-default button1"><a href="timeline">Timeline</a></span>
 					<span class="btn btn-default button2"><a href="">About</a></span>
@@ -76,7 +76,7 @@
 						<div class="pic" >
 						{%if User.sid%}
 									{%if User.sid.image%}
-										<img class="img-rounded" id="my_profile_pic"  src="{{ User.sid.image.url}}" alt="My image" width="200" height="200"/>
+										<img class="img-rounded displayPopUp" getFrom={{User.sid}} id="my_profile_pic"  src="{{ User.sid.image.url}}" alt="My image" width="200" height="200"/>
 									{%endif%}
 						{%else%}
 							<img class="img-rounded" id="my_profile_pic" src="/static/img/profile_pic.png" alt="My image" width="200" height="200"/>

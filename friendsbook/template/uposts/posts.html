@@ -1,5 +1,5 @@
 {% load humanize %}
- <li class='container-fluid post_style_box'  post-id={{status.id}} csrf="{{ csrf_token }}">
+ <li class='container-fluid post_style_box' style="list-style-type: none;"  post-id={{status.id}} csrf="{{ csrf_token }}">
    <div class="Status">
     	<div class="upper_post">
         {% ifequal status.username.username user.username  %}
@@ -17,15 +17,15 @@
         {% endifequal %}
     		{%if status.username.profile.sid%}
     			{%if status.username.profile.sid.image%}
-    				<img class="img-rounded"  src="{{ status.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+    				<img class="img-rounded "  src="{{ status.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
     			{%endif%}
     		{%else%}
-    				<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+    				<img class="img-rounded"  src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
     		{%endif%}
 
 
 
-    		 <a href="{% url 'profile_info' status.username.profile %}">{{status.username.profile.fname}}</a>  {{status.title}}
+    		 <a  href="{% url 'profile_info' status.username.profile %}">{{status.username.profile.fname}}</a>  {{status.title}}
 			 {%if status.gid%}
 				<a href="{%url 'GroupsHomepage' status.gid.id%}" >{{status.gid.gname}}</a>
 			 {%endif%}
@@ -37,10 +37,11 @@
     		 {% endif %}
     		 {% if status.image  %}<br>
     			{% if ".jpg" in status.image.url or ".jpeg" in status.image.url or ".tif" in status.image.url or   ".png" in status.image.url or ".gif" in status.image.url %}
-          <a href="#"  data-toggle="modal" data-target="#status-{{status.id}}" ><img class="img-rounded"  src="{{ status.image.url}}" alt="My image" width="100%"/></a>
+          <a href="#"  data-toggle="modal" data-target="#status-{{status.id}}" >
+            <img class="img-rounded displayPopUp" getFrom={{status.id}} src="{{ status.image.url}}" alt="My image" width="100%"/></a>
 
     			{% else %}
-    				<video  controls class="video-js vjs-default-skin vjs-big-play-centered" width="100%"
+    				<video  controls class="video-js vjs-default-skin vjs-big-play-centered displayPopUp" width="100%" getFrom={{status.id}}
     				height="360" >
     				<source src="{{ status.image.url}}" type="video/mp4"></video>
     			{% endif %}

@@ -1,9 +1,9 @@
 	<div class="row">
 							<div class="background_pic_design" style="height:280px">
 								{%if group.cover.image%}
-									<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("{{group.cover.image.url}}");'>
+									<div class="cover_background displayPopUp" getFrom={{group.cover.id}} id="cover_background" title="Cover" style='background-image: url("{{group.cover.image.url}}");'>
 								{%else%}
-									<div class="cover_background" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
+									<div class="cover_background" getFrom="None" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
 								{%endif%}
 								</div>
 								{%if group.new is 0%}

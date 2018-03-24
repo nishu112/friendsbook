@@ -33,9 +33,19 @@
 								src="/static/img/profile_pic.png"
 						{%endif%}>
 					</div>
-				<div class="text text-l"><p>
+				<div class="text text-l">
+					<div class="msg-text" style="float: left;">
 					{{x.text}}
-				</p><p><small>{{x.time|naturaltime}}</small></p>
+				</div>
+				{%if userProfile.username == x.username%}
+				<div class="is_read" style="float:right; text-align: right;" >✔{%if x.is_read%}✔{%endif%}
+
+				</div>
+				{%endif%}
+
+				<p><small>{{x.time|naturaltime}}</small></p>
+
+
 				</div>
 				</div>
 		  </li>
@@ -51,8 +61,8 @@
 											<form id="chatform" method="POST" >{%csrf_token%}
 											<input type="hidden" name="fusername" value="{{fuser_obj}}" required="" id="id_fusername">
 											<div id="chat-bottom" class="input-group">
-												<input type="text" autocomplete="off" name="text" class="form-control" placeholder="Type Messsage" required="" id="id_text">
-												<span class="input-group-btn">
+												<input style="width: 150%;" type="text" autocomplete="off" name="text" class="form-control" placeholder="Type Messsage" required="" id="id_text">
+												<span class="input-group-btn" >
 													<input class="btn btn-default" id="send" type="submit" value="Send"/>
 												</span>
 											</div>
@@ -79,6 +89,8 @@
 
 (function( $ ){
 	$('[data-toggle="tooltip"]').tooltip();
+
+
 	$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
 	$("#chatform").on("submit", function() {
 		console.log('submit')
@@ -96,14 +108,20 @@
 	success: function (data) {
 		console.log(data)
 		$('#msg-list').append(data)
+	//	$('.is_read').append('✔')
+
+	console.log('know');
+		 $(".is_read:last").html("✔");
+
 		console.log('recieved')
 
 		$('#msg-list').scrollTop(document.getElementById("msg-list").scrollHeight);
 		$('#id_text').val('')
 	}
 	});
+	type='message'
 	var message ={
-		text,fuser,user
+		text,fuser,user,type
 	};
 			socket.send(JSON.stringify(message));
 			return false;

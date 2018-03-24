@@ -22,16 +22,16 @@
 						</div>
 						{%endifequal%}
 						</div>
-						<div class="Status_comments row" data-placement="left" data-toggle="tooltip" title="Loading..">
+						<div class="Status_comments row" >
 						<small>
 						{% if comment.is_like %}
-						 <a href="javascript:void(0)" style="text-decoration: none;" class="like unlike" type="Comment_like">
+						 <a href="javascript:void(0)" style="text-decoration: none;" data-placement="left" data-toggle="tooltip" title="Loading.." class="like unlike" type="Comment_like">
 						   <span class="glyphicon glyphicon-thumbs-up"></span>
 						   <span class="text">Unlike</span>
 						   (<span class="like-count">{{comment.likes}}</span>)
 						 </a>
 					   {% else %}
-						 <a href="javascript:void(0)" style="text-decoration: none;" class="like" type="Comment_like">
+						 <a href="javascript:void(0)" style="text-decoration: none;" data-placement="left" data-toggle="tooltip" title="Loading.." class="like" type="Comment_like">
 						   <span class="glyphicon glyphicon-thumbs-up"></span>
 						   <span class="text">Like</span>
 						   (<span class="like-count">{{comment.likes}} </span>)

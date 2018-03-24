@@ -60,6 +60,7 @@ urlpatterns = [
     url(r'^ajax/SendMessages/$', login_required(views.Message_received), name='Message_received'),
     url(r'^ajax/SeeLikedPostsUsers/$', login_required(views.WhoLikedStatus), name='StatusLikesNames'),
     url(r'^ajax/SeeLikedCommentUsers/$', login_required(views.WhoLikedComment), name='SeeLikedCommentUsers'),
+    url(r'^ajax/getPostsForModal/$', login_required(views.getSinglePost), name='getSinglePost'),
     url(r'^notifications/$', login_required(views.get_contifications), name='notifications'),
     url(r'^notifications/check/$', login_required(views.check_contification), name='check_notification'),
     url(r'^groups/$', login_required(views.grouphome), name='GroupsHome'),

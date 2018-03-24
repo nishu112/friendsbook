@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 import getpass
 import time
+from .models import *
 
 @channel_session_user_from_http
 def ws_connect(message):
@@ -32,11 +33,35 @@ def ws_connect(message):
 @channel_session_user_from_http
 def ws_receive(message):
     val=json.loads(message.content['text'])
+    print(val)
+    print('donewhat??')
+    type=val['type']
+    print('ok')
+    print(type)
     user=val['user']
     fuser=val['fuser']
-    text=val['text']
     user_obj=User.objects.get(username=user)
     fuser_obj=User.objects.get(username=fuser)
+    if type=='read_messages':
+        print('done ')
+        #Message.objects.filter(username=fuser_obj,fusername=user_obj,is_read=False).update(is_read=True)
+        Group(user).send({
+            'text': json.dumps({
+                'type':'read_messages',
+                'user':str(fuser),
+                'fuser':str(user),
+            })
+        })
+        return ;
+    if type=='update':
+        print(fuser_obj.username)
+        print(user_obj.username)
+        print('updated')
+        print(Message.objects.filter(username=user_obj,fusername=fuser_obj,is_read=False))
+        Message.objects.filter(username=fuser_obj,fusername=user_obj,is_read=False).update(is_read=True)
+        return ;
+
+    text=val['text']
     print('reached')
     time.sleep(2)
     print('dispatch')

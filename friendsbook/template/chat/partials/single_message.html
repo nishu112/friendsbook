@@ -1,5 +1,5 @@
 {% load humanize %}
-<li style="width:100%">
+<li style="width:100% ;">
 				<div {%if user == x.username %} class="msj-rta macro" {%else%}  class="msj macro"{%endif%}>
 					<div class="avatar">
 						<img class="img-circle"  width="42" height="42"
@@ -11,9 +11,19 @@
 								src="/static/img/profile_pic.png"
 						{%endif%}>
 					</div>
-				<div class="text text-l"><p>
-					{{x.text}}
-				</p><p><small>{{x.time|naturaltime}}</small></p>
-				</div>
+					<div class="text text-l">
+						<div class="msg-text" style="float: left;">
+						{{x.text}}
+					</div>
+
+					<div class="is_read" style="float:right; text-align: right;" >
+
+					</div>
+
+
+					<p><small>{{x.time|naturaltime}}</small></p>
+
+
+					</div>
 				</div>
 </li>
