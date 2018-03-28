@@ -10,6 +10,9 @@
 			</div>
 			<div class="col-sm-1"></div>
 			<div class="col-sm-5">
+				<div class="row">
+							<h1>  <strong>People </strong></h1>
+				</div>
 
 
 				{% for profile,y in data%}
@@ -49,6 +52,20 @@
 				{%if not data %}
 					<h1>No user Found</h1>
 				{%endif%}
+				<div class="row">
+							<h1>  <strong>Groups</strong></h1>
+				</div>
+				{% for group in sgroups %}
+					<li>
+						<a data-group="{{ group|escape }}" href="{%url 'GroupsHomepage' group.gid.id%}">
+						<div class="group_detail">
+							<div class="detail">
+								{{group.gid.gname}}
+							</div>
+						</div>
+						</a>
+					</li>
+					{% endfor %}
 			</div>
 			<div class="col-sm-2">
 			</div>

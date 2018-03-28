@@ -17,11 +17,26 @@ class SignUpForm(ModelForm):
 		widget=forms.PasswordInput(attrs={'class':'form-control'}),
 		max_length=35,
 		required=True)
+
 	class Meta:
 		model=User
 		fields = ["username","password","password"]
 
 class ProfileForm(ModelForm):
+	Male = 'M'
+	FeMale = 'F'
+	GENDER_CHOICES = (
+		(Male, 'Male'),
+		(FeMale, 'Female'),
+	)
+	gender=forms.ChoiceField(widget =forms.RadioSelect(),
+                     choices=GENDER_CHOICES, initial='M', required = True)
+	fname=forms.CharField(widget=forms.TextInput(),label="First Name")
+	lname=forms.CharField(widget=forms.TextInput(),label="Last Name")
+	emailid = forms.EmailField(
+	widget=forms.EmailInput(attrs={'class': 'form-control'}),
+	label="Emailid",
+	)
 	class Meta:
 		model=Profile
 		fields= ["fname","lname","emailid","gender"]
