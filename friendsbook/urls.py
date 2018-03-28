@@ -28,7 +28,7 @@ urlpatterns = [
 
     path('ajax/AddFriend/', login_required(views.AddFriend), name='add_friend'),
     path('query/', views.query, name='query'),
-    url(r'^ajax/validate_username/$', login_required(views.validate_username), name='validate_username'),
+    url(r'^ajax/validate_username/$', views.validate_username, name='validate_username'),
     url(r'^ajax/liveSearch/$', login_required(views.liveSearch), name='liveSearch'),
     url(r'^ajax/like_post/$', login_required(views.like), name='post_like'),
     url(r'^ajax/messages/$', login_required(views.user_messages), name='user_messages'),

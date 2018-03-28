@@ -152,7 +152,7 @@ class RegistrationView(View):
 	def post(self,request):
 		user_form=self.user_class(request.POST)
 		profile_form=self.profile_class(request.POST)
-		if ( user_form.is_valid() and profile_form.is_valid ):
+		if ( user_form.is_valid() and profile_form.is_valid() ):
 			user=user_form.save(commit=False)
 			username = user_form.cleaned_data['username']
 			raw_password = user_form.cleaned_data['password']
@@ -377,9 +377,10 @@ def GetUserPostsByAjax(request):
 		#print('exists ')
 		UserPartOfGroup=ConsistOf.objects.filter(username=request.user,confirm=1).values('gid')
 		##print(UserPartOfGroup)
-		GroupFeeds=Status.objects.filter(gid__in=UserPartOfGroup).order_by('-time')
+		GroupFeeds=Status.objects.filter(gid=group).order_by('-time')
 		#print(GroupFeeds)
-		posts=postsOfUserExcludingGroupPosts|GroupFeeds
+		print('done')
+		posts=GroupFeeds
 		posts=user_post(request,request.user,posts)
 
 	##print(page," ok")
@@ -689,6 +690,8 @@ def GroupsSettings(request,pk):
 		if form.is_valid():
 			#print('dnoe')
 			form.save()
+		else:
+			return render(request,"groups/partial/settings.html",{'group':group,'chatusers':chatusers,'group_consist':group_consist,'form':form})
 		return redirect('AboutGroup',group.id)
 	else:
 		#print('ok till here')
@@ -886,7 +889,10 @@ def UploadGroupCover(request):
 			cover.gid=group
 			##correct this behavior right now only changing cover for a specific group
 			cover.save()
-			Notification.objects.create(from_user=request.user,gid=group,notification_type='PG')
+			groupMembers=ConsistOf.objects.filter(gid=group,confirm=1).exclude(username=request.user).select_related('username').values('username')
+			for x in groupMembers:
+				Notification.objects.create(from_user=request.user,to_user_id=x['username'],gid=group,notification_type='PG')
+			#Notification.objects.create(from_user=request.user,gid=group,notification_type='PG')
 			sid=Status.objects.get(id=cover.id)
 			Groups.objects.filter(id=gid).update(cover=sid)
 			gid=Groups.objects.get(id=gid)
@@ -956,8 +962,15 @@ class UploadProfile(View):
 			ProfileForm.username=User.objects.get(username=self.request.user.username)
 			ProfileForm.title="Updated Profile"
 			ProfileForm.privacy='fs'
-			ProfileForm.save()
-			Notification.objects.create(from_user=request.user,sid=status.objects.get(id=ProfileForm.id),notification_type='P')
+			status=ProfileForm.save()
+			print(ProfileForm)
+			print(ProfileForm.id)
+			sid=ProfileForm
+			friends=giveFriendsUsername(request,request.user)
+			#print('done2')
+			for x in friends:
+				Notification.objects.create(from_user=request.user,to_user=x,sid=sid,notification_type='P')
+			#Notification.objects.create(from_user=request.user,sid=Status.objects.get(id=ProfileForm.id),notification_type='P')
 			Profile.objects.filter(username=self.request.user).update(sid=Status.objects.get(id=ProfileForm.id))
 			obj=Status.objects.get(id=ProfileForm.id)
 			data = {'is_valid': True,'url':obj.image.url}
@@ -1084,11 +1097,13 @@ def LoadFriendsListViaAjax(request):
 	#print(content)
 	return JsonResponse(content,safe=False)
 
+def SearchGroup(request,val):
+	print(val)
+	return Groups.objects.filter(Q(gname__istartswith=val))
 
 class FriendsView(generic.ListView):  ###print friendlist of user here
 	template_name='user/search_user.html'
 	context_object_name='data'
-	searchVal=""
 
 	def get_queryset(self):
 		#print('heresbfifb')
@@ -1103,6 +1118,13 @@ class FriendsView(generic.ListView):  ###print friendlist of user here
 		context=super(FriendsView,self).get_context_data(**kwargs)
 		#print(self.request.GET.get('search_user'))
 		#print('no')
+		print(self.request.method)
+		print(self.request.GET.get('search_user'))
+		print('doneljsfljn')
+		context['sgroups']=SearchGroup(self.request,self.request.GET.get('search_user'))
+		print(context['sgroups'])
+
+
 		context['chatusers']=Check_user_online(self.request,self.request.user)
 		#print(context['chatusers'])
 		##print(posts)
@@ -1278,6 +1300,8 @@ def UserProfileEdit(request,slug):
 			form.save()
 			#print('do some checks')
 			return HttpResponseRedirect(request.path_info)
+		else:
+			return render(request,'user/partial/settings.html',{'User':profile,'y':y,'chatusers':chatusers,'form':form})
 	else:
 		form=EditProfileForm(instance=request.user.profile)
 		#print(chatusers)
@@ -1307,6 +1331,8 @@ def UserChangePassword(request,slug):
 			user.save()
 			update_session_auth_hash(request, user)
 			return HttpResponseRedirect(request.path_info)
+		else:
+			return render(request,'user/partial/password.html',{'User':profile,'y':y,'chatusers':chatusers,'form':form})
 
 	else:
 
@@ -1322,10 +1348,12 @@ def liveSearch(request):
 		return JsonResponse(data,safe=False)
 
 def validate_username(request):
+	print('got this')
 	username = request.GET.get('username', None)
 	data = {
 		'is_taken': User.objects.filter(username__iexact=username).exists()
 	}
+	print(data)
 	return JsonResponse(data)
 
 #using ajax to like a post
@@ -1337,15 +1365,21 @@ def like(request):
 		if type=="post_like":
 			check=StatusLikes.objects.filter(username=User.objects.get(username=username)).filter(sid=Status.objects.get(id=id))
 			likes=Status.objects.get(id=id).likes
+			status=Status.objects.get(id=id)
 			if not check.exists():
 				##print("inside")
 				likes=likes+1
 				Status.objects.filter(id=id).update(likes=likes)
+				if status.username != request.user:
+					print('yes')
+					Notification.objects.create(from_user=request.user,to_user=status.username,sid=status,notification_type='L')
 				like=StatusLikes(username=User.objects.get(username=username),sid=Status.objects.get(id=id))
 				like.save()
 			else:
 				likes=likes-1
 				Status.objects.filter(id=id).update(likes=likes)
+				if status.username!=request.user:
+					Notification.objects.get(from_user=request.user,to_user=status.username,sid=status,notification_type='L').delete()
 				StatusLikes.objects.filter(username=User.objects.get(username=username),sid=Status.objects.get(id=id)).delete()
 			return HttpResponse(likes)
 		if type=="Comment_like":
@@ -1481,6 +1515,23 @@ def Comments(request):
 			text=request.POST['post']
 			sid=Status.objects.get(id=sid)
 			comment=Comment.objects.create(username=user,text=text,sid=sid)
+			print('nope')
+			print(sid)
+			print(type(sid.username))
+			print(type(request.user))
+			#return
+			if request.user is not sid.username:
+				print('yes')
+				LoggedInUser=get_object_or_404(User,pk=request.user.pk)
+				print(LoggedInUser)
+				friends_obj=get_object_or_404(User,pk=sid.username.pk)
+				print(friends_obj)
+				print(sid)
+				print(type(sid))
+				#Notification.objects.create(from_user=request.user,to_user=friends_obj,sid=sid,notification_type='P')
+				Notification.objects.create(from_user=request.user, to_user=friends_obj,sid=sid, notification_type='C')
+				#Notification.objects.create(from_user=LoggedInUser,to_user_id=sid.username,notification_type='C')
+			print('exit')
 			noOflikesonComment=CommentLikes.objects.filter(cid=comment.id)
 			likes=noOflikesonComment.count()
 			jsonobj=render_to_string('uposts/partials/comment.html', {'comment': comment,'likes':likes},request)

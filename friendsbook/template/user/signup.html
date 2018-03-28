@@ -15,6 +15,8 @@
           if (data.is_taken) {
             alert("A user with this username already exists.");
           }
+          console.log(data)
+          console.log('ok')
         }
       });
 
@@ -27,8 +29,8 @@
 ul li {list-style:none}
 </style>
 <form action="" method="POST">{%csrf_token%}
-	{{user_form}}
-	{{profile_form}}
+	{{user_form.as_p}}
+	{{profile_form.as_p}}
 	<div class="submit-row">
     <label>&nbsp;</label><input type="submit" value="Sign Up" />
   </div>

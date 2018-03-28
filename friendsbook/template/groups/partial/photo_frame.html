@@ -56,7 +56,7 @@
 										<h1>  <strong>Photo Album : </strong></h1>
 							</div>
 							<div class="row">
-							{% for photo in photo_albums%}							
+							{% for photo in photo_albums%}
 						<!-- comments and numberOfComments are not used-->
 								{%if photo.image %}
 									{% if ".jpg" in photo.image.url or ".jpeg" in photo.image.url or ".tif" in photo.image.url or   ".png" in photo.image.url or ".gif" in photo.image.url %}
@@ -250,24 +250,7 @@ $(function () {
 	}
 	});
 
-$(document).on("click", ".membersearch input[type='submit']", function (event){
-	form=$(this).closest('form')
-	addMembersToGroup=$(this).closest('#addMembersToGroup')
-	close=$('.close',addMembersToGroup)
-	$($(this).closest('.close')).click();
-	$.ajax({
-		url: "{%url 'addgroupmember' %}",
-		data:$(form).serialize(),
-		type:'POST',
-		dataType: 'json',
-		success: function (data) {
-			console.log('back');
-			console.log(data)
-			$(close).click();
-		}
-	});
-
-});
+ 
 
 
 });

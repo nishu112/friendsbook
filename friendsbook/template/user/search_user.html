@@ -1,6 +1,7 @@
 {% extends "friendsbook/structure.html" %}
 {%load static%}
 {% block content %}
+{% load humanize %}
 		<div class="row"><br><br><br><br><br>
 			<div class="col-sm-2">
 
@@ -43,30 +44,43 @@
 					{%if profie.lname%}
 						{{profile.lname}}</br>
 					{%endif%}
+					{%if profile.state%}
+						from {{profile.state}}</br>
+					{%endif%}
 					{{profile.emailid}}</br>
 					{{profile.gender}}
 				</div>
 					<br>
-
-					{%endfor%}
-				{%if not data %}
+				{%empty%}
 					<h1>No user Found</h1>
-				{%endif%}
+					{%endfor%}
 				<div class="row">
 							<h1>  <strong>Groups</strong></h1>
 				</div>
+
 				{% for group in sgroups %}
-					<li>
-						<a data-group="{{ group|escape }}" href="{%url 'GroupsHomepage' group.gid.id%}">
-						<div class="group_detail">
-							<div class="detail">
-								{{group.gid.gname}}
-							</div>
-						</div>
-						</a>
-					</li>
+				<div class="well particularuser"  csrf={{csrf_token}}>
+					<div class="add_friendbutton" >
+						{%if group.cover%}
+							{%if group.cover.image%}
+								<img class="img-rounded" src="{{ group.cover.image.url}}" alt="My image" width="42" height="42"/>
+							{%endif%}
+						{%else%}
+								<img class="img-rounded" src="/static/img/cover.jpg" alt="My image" width="42" height="42"/>
+						{%endif%}
+
+					<a href="{%url 'GroupsHomepage' group.id%}">	{{group.gname}} </a>
+					</div>
+
+
+					created {{group.time|naturaltime}} with {{group.privacy}} privacy
+					{%if group.about%}
+					<br>
+						{{group.about}}
+					{%endif%}
+				</div>
 					{% endfor %}
-			</div>
+
 			<div class="col-sm-2">
 			</div>
 			<div class="col-sm-2">

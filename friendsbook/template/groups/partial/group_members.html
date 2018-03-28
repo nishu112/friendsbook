@@ -203,7 +203,7 @@ console.log(button)
 				console.log('back')
 				if (action=='Make him admin')
 					{
-						
+
 						$('.admins').append(data)
 
 					$(particularuser).fadeOut(400, function () {
@@ -229,25 +229,7 @@ console.log(button)
 		});
 });
 
-
-$(document).on("click", ".membersearch input[type='submit']", function (event){
-	form=$(this).closest('form')
-	addMembersToGroup=$(this).closest('#addMembersToGroup')
-	close=$('.close',addMembersToGroup)
-	$($(this).closest('.close')).click();
-	$.ajax({
-		url: "{%url 'addgroupmember' %}",
-		data:$(form).serialize(),
-		type:'POST',
-		dataType: 'json',
-		success: function (data) {
-			console.log('back');
-			console.log(data)
-			$(close).click();
-		}
-	});
-
-});
+ 
 
 
 });

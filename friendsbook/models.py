@@ -19,8 +19,6 @@ class LoggedInUser(models.Model):
 
 
 class Status(models.Model):
-
-
     FriendsOfFriends = 'fsofs'
     PUBLIC= 'Pbc'
     Friends='fs'
@@ -236,9 +234,10 @@ class Notification(models.Model):
     _USER_GROUP_POST = '<a href="/users/profile/{0}/">{1}</a>Post an Status in <a href="/groups/{2}/">{3}</a> '  # noqa: E501
 
     from_user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='+')
-    to_user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='+',null=True,blank=True)
+    to_user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='+')
     date = models.DateTimeField(auto_now_add=True)
     sid = models.ForeignKey(Status,on_delete=models.CASCADE, null=True, blank=True)
+    cid = models.ForeignKey(Comment,on_delete=models.CASCADE, null=True, blank=True)
     notification_type = models.CharField(max_length=2,
                                          choices=NOTIFICATION_TYPES)
     gid=models.ForeignKey(Groups,on_delete=models.CASCADE,null=True,blank=True)
