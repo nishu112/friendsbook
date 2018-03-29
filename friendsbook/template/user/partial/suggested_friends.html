@@ -11,6 +11,7 @@
 	</ul>
 	<br>
 	<br>
+	{%if pending_request%}
 	<h4>Pending friend requests</h4>
 	<ul>
 		{%for x in pending_request%}
@@ -19,4 +20,5 @@
 		</li>
 		{%endfor%}
 	<ul>
+		{%endif%}
 </div>

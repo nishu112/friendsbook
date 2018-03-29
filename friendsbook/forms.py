@@ -186,7 +186,7 @@ class EditProfileForm(ModelForm):
 
 	class Meta:
 		model=Profile
-		fields= ["fname","lname","emailid","dob","phone_no","city","state"]
+		fields= ["fname","lname","emailid","dob","phone_no","state","city"]
 
 	def clean(self):
 		super(EditProfileForm, self).clean()

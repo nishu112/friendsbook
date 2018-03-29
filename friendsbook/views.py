@@ -1243,8 +1243,10 @@ def UserProfile(request,slug):
 
 
 	chatusers=Check_user_online(request,request.user)# define herebecause it was giving me searched user chatmembers
-
-	return render(request,'user/profile.html',{'User':profile,'page':1,'posts':posts,'y':y,'chatusers':chatusers})
+	userPartOfGroups=ConsistOf.objects.filter(username=profile.username,confirm=1)
+	print(userPartOfGroups)
+	print('okkk')
+	return render(request,'user/profile.html',{'User':profile,'page':1,'posts':posts,'y':y,'chatusers':chatusers,'userPartOfGroups':userPartOfGroups})
 
 
 def UserFriendsList(request,slug):

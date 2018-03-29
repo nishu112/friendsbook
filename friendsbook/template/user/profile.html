@@ -108,7 +108,7 @@
 
 			<div id="profileonclickbuttons" style="display:block";class="row">
 							<div class="col-sm-3">
-								<div class ="intro" >
+								<div class ="" >
 									<h4><img src="/static/img/introicon.png" width="25px" height="25px"><strong>&nbsp&nbspIntro </strong></h4>
 									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudying at </p>
 									{%if User.state%}
@@ -120,6 +120,21 @@
 									{%if User.dob%}
 									<p><img src="/static/img/born.png" width="20px" height="20px">&nbsp&nbsp Born in {{User.dob}}</p>
 									{%endif%}
+
+								</div>
+								<div class="userPartOfGroups">
+									{%if userPartOfGroups%}
+									<br>
+									<br>
+									 Member of these groups
+									<ul>
+										{%for x in userPartOfGroups%}
+										<li>
+											<a href="{%url 'GroupsHomepage' x.gid.id%}"> {{x.gid.gname}}</a>
+										</li>
+										{%endfor%}
+									<ul>
+										{%endif%}
 								</div>
 							</div>
 							<div class="col-sm-9">
