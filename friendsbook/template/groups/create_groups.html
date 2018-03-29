@@ -44,7 +44,7 @@ $(document).on("click", ".create-new-group input[type='submit'] ", function () {
 			console.log(json)
 			console.log(json['gname'])
 			$("#Groups").prepend(
-			'<li><a data-group="{{ group|escape }}" href="javascript:void(0)"><div class="group_detail">	<div class="detail">' + json['gname']+'</div>	</div>	</a> </li>')
+			'<li><a data-group="{{ group|escape }}" href='+"/groups/"+json['gid']+'><div class="group_detail">	<div class="detail">' + json['gname']+'</div>	</div>	</a> </li>')
                 console.log(json);
             },
 			error : function(xhr,errmsg,err) {

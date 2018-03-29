@@ -208,6 +208,7 @@ class Notification(models.Model):
     POSTED = 'P'
     LIKED = 'L'
     COMMENTED = 'C'
+    COMMENTED_LIKE = 'CL'
     EDITED_POST = 'E'
     ALSO_COMMENTED = 'S'
     SEND_REQUEST = 'SR'
@@ -217,6 +218,7 @@ class Notification(models.Model):
         (POSTED, 'Posted'),
         (LIKED, 'Liked'),
         (COMMENTED, 'Commented'),
+        (COMMENTED_LIKE, 'Comment Like'),
         (EDITED_POST, 'Edited Post'),
         (ALSO_COMMENTED, 'Also Commented'),
         (SEND_REQUEST, 'Send Request'),
@@ -227,6 +229,7 @@ class Notification(models.Model):
     _POST_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> Post an  <a href="/post/{2}/">status</a>'  # noqa: E501
     _LIKED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> liked your  <a href="/post/{2}/">post</a>'  # noqa: E501
     _COMMENTED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> commented on your  <a href="/post/{2}/">post</a>'  # noqa: E501
+    _COMMENTED_LIKE_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> Liked your  Comment on <a href="/post/{2}/">Post</a>'  # noqa: E501
     _EDITED_POST_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> edited  <a href="/post/{2}/">Post</a>'  # noqa: E501
     _ALSO_COMMENTED_TEMPLATE = '<a href="/users/profile/{0}/">{1}</a> also commentend on the : <a href="/post/{2}/">Post</a>'  # noqa: E501
     _USER_SEND_REQUEST = '<a href="/users/profile/{0}/">{1}</a> Send a friend request '  # noqa: E501
@@ -257,6 +260,11 @@ class Notification(models.Model):
                 self.sid.slug)
         elif self.notification_type == self.POSTED:
             return self._POST_TEMPLATE.format(
+                escape(profile),
+                escape(self.from_user.profile.fname),
+                self.sid.slug)
+        elif self.notification_type == self.COMMENTED_LIKE:
+            return self._COMMENTED_LIKE_TEMPLATE.format(
                 escape(profile),
                 escape(self.from_user.profile.fname),
                 self.sid.slug)

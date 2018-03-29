@@ -9,15 +9,27 @@
 <link rel="stylesheet" type="text/css" href="/static/admin/css/login.css" />
 <link rel="stylesheet" href="{% static 'css/home.css' %}" type = "text/css"/>
  <link rel="stylesheet" type="text/css" href="/static/admin/css/responsive.css" />
- 
+
  	<link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
- 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" />
+
+<!--
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+-->
+
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet">
+
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
+
  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    
+
 
 <meta name="robots" content="NONE,NOARCHIVE" />
 </head>
@@ -29,32 +41,32 @@
 <!-- Container -->
 <div id="container">
 
-    
+
     <!-- Header -->
     <div id="header">
         <div id="branding">
-        
+
 <h1 id="site-name"><a href="/">Friendsbook</a></h1>
 
         </div>
-        
-        
+
+
     </div>
-    <!-- END Header -->     
+    <!-- END Header -->
 
     <!-- Content -->
     <div id="content" class="colM">
-        
+
 <div id="content-main">
 
 
 {% block content %}
 
 {% endblock %}
- 
+
 </div>
 
-        
+
         <br class="clear" />
     </div>
     <!-- END Content -->
@@ -62,8 +74,7 @@
     <div id="footer"></div>
 </div>
 <!-- END Container -->
-<script  src="https://code.jquery.com/jquery-2.2.4.js"  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
-  crossorigin="anonymous"></script>
+
     {% block javascript %}{% endblock %}
 </body>
 </html>

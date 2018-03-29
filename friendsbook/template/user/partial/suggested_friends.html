@@ -3,10 +3,20 @@
 	<ul>
 		{%for x in friends_suggestion%}
 		<li>
-		<a href="{%url 'profile_info' x.profile.slug%}">{{x.profile.fname}}</a>
+		<a href="{%url 'profile_info' x.profile.slug%}">{{x.profile.fname}}{%if x.profile.lname%} {{x.profile.lname}}{%endif%}</a>
 		</li>
 		{%empty%}
 		No suggestions right Now
 		{%endfor%}
 	</ul>
+	<br>
+	<br>
+	<h4>Pending friend requests</h4>
+	<ul>
+		{%for x in pending_request%}
+		<li>
+			<a href="{%url 'profile_info' x.username.profile.slug%}"> {{x.username.profile.fname}}{%if x.username.profile.lname%} {{x.username.profile.lname}}{%endif%}</a>
+		</li>
+		{%endfor%}
+	<ul>
 </div>

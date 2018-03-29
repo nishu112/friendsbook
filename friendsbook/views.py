@@ -428,7 +428,8 @@ def home(request):
 	groups=group_list(request)
 	#print(friends_suggestion)
 	#print(friends_suggestion[0:1])
-	return render(request,"home/index.html",{'posts':posts,'page':1,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion[0:10],'newGroupForm':CreateGroup(None)})
+	pending_request=FriendsWith.objects.filter(fusername=request.user,confirm_request=1)
+	return render(request,"home/index.html",{'posts':posts,'page':1,'chatusers':chatusers,'groups':groups,'friends_suggestion':friends_suggestion[0:10],'pending_request':pending_request[0:10],'newGroupForm':CreateGroup(None)})
 
 def getSinglePost(request):
 	if request.is_ajax():
@@ -1386,15 +1387,24 @@ def like(request):
 			check=CommentLikes.objects.filter(username=User.objects.get(username=username)).filter(cid=Comment.objects.get(id=id))
 			likes=Comment.objects.get(id=id).likes
 			#print('calculated')
+			comment=Comment.objects.get(id=id)
 			if not check.exists():
 				##print("inside")
 				likes=likes+1
 				Comment.objects.filter(id=id).update(likes=likes)
+				if request.user!=comment.username:
+					print('done')
+					Notification.objects.create(from_user=request.user,to_user=comment.username,sid=comment.sid,notification_type='CL')
 				like=CommentLikes(username=User.objects.get(username=username),cid=Comment.objects.get(id=id))
+
 				like.save()
 			else:
 				likes=likes-1
 				Comment.objects.filter(id=id).update(likes=likes)
+
+				if request.user!=comment.username:
+					print('undone')
+					Notification.objects.create(from_user=request.user,to_user=comment.username,sid=comment.sid,notification_type='CL').delete()
 				CommentLikes.objects.filter(username=User.objects.get(username=username),cid=Comment.objects.get(id=id)).delete()
 			#print(likes)
 			#print('check')
@@ -1529,7 +1539,8 @@ def Comments(request):
 				print(sid)
 				print(type(sid))
 				#Notification.objects.create(from_user=request.user,to_user=friends_obj,sid=sid,notification_type='P')
-				Notification.objects.create(from_user=request.user, to_user=friends_obj,sid=sid, notification_type='C')
+				if request.user!=friends_obj:
+					Notification.objects.create(from_user=request.user, to_user=friends_obj,sid=sid, notification_type='C')
 				#Notification.objects.create(from_user=LoggedInUser,to_user_id=sid.username,notification_type='C')
 			print('exit')
 			noOflikesonComment=CommentLikes.objects.filter(cid=comment.id)
@@ -1638,3 +1649,8 @@ def WhoLikedComment(request):
 		content=render_to_string('uposts/partials/PersonLikedPosts.html',{'PersonLikedPosts':PersonNames},request)
 		#print(content)
 		return JsonResponse(content,safe=False)
+
+def autocompleteforGroup(request):
+	if request.is_ajax():
+		search=request.GET.get('val')
+		return JsonResponse(0,safe=False)

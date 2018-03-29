@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^groups/(?P<pk>\d+)/manage/$', login_required(views.ManageGroupMember), name='GroupManage'),
     url(r'^groups/(?P<pk>\d+)/EditAboutGroup/$', login_required(views.EditAboutGroupInfo), name='EditAboutGroup'),
     url(r'^groups/(?P<pk>\d+)/settings/$', login_required(views.GroupsSettings), name='Groupsettings'),
+    url(r'^ajax/groups/autocomplete/$', login_required(views.autocompleteforGroup), name='autocomplete'),
     url(r'^ajax/groups/joinrequest$', login_required(views.joinrequest), name='joinrequest'),
     url(r'^ajax/groups/Leave$', login_required(views.LeaveGroup), name='LeaveGroup'),
     url(r'^ajax/groups/addnewMembertoGroup/$', login_required(views.AddMembers), name='addgroupmember'),

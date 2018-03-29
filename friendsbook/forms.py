@@ -63,9 +63,15 @@ class ProfileForm(ModelForm):
 	widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Enter Your email'}),
 	label="Email",required=True,
 	)
+	dob=forms.DateField(widget=forms.TextInput(attrs=
+                                {
+                                    'class':'datepicker form-control',
+									'placeholder':'Enter your date of birth'
+                                }),label="Date of Birth",
+								required = True)
 	class Meta:
 		model=Profile
-		fields= ["fname","lname","emailid","gender"]
+		fields= ["fname","lname","dob","emailid","gender"]
 
 	def clean(self):
 		super(ProfileForm, self).clean()
@@ -165,7 +171,7 @@ class EditProfileForm(ModelForm):
                                 {
                                     'class':'datepicker form-control',
                                 }),label="Date of Birth",
-								required = False)
+								required = True)
 
 	phone_no = forms.RegexField(regex=r'^\+?1?\d{9,15}$',widget=forms.TextInput(attrs={'class':'form-control'}))
 
@@ -254,7 +260,7 @@ class CreateGroup(ModelForm):
 		cleaned_data = super(CreateGroup, self).clean()
 		gname = cleaned_data.get('gname')
 		privacy = cleaned_data.get('privacy')
-		if len(gname)<5:
+		if len(gname)<4:
 			self._errors['gname'] = self.error_class([
 			'Group Name Should be at least 5 characters'])
 		return self.cleaned_data
