@@ -148,7 +148,10 @@ $(document).ready(function(){
 				});
 				console.log(Messages)
 				unread=$(Messages).html()
-				$(Messages).html(parseInt(unread)+1);
+				if(unread=="")	$(Messages).html(1);
+				else {
+				$(Messages).html(parseInt(unread)+1);	
+				}
 			}
     };
     if (socket.readyState == WebSocket.OPEN) {

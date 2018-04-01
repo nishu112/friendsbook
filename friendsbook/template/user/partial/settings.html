@@ -1,4 +1,6 @@
 {%extends "user/profile.html"%}
+{% load bootstrap3 %}
+
 <!--
 
 -->
@@ -24,12 +26,12 @@
                 </div>
 
             <form class="ProfileForm" role="form" class="form-horizontal" method="post" >{%csrf_token%}
-              {{form.as_p}}
-              <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                  <button type="submit" class="btn btn-primary"> Save</button>
-                </div>
-              </div>
+              {% bootstrap_form form %}
+                {% buttons %}
+                  <button type="submit" class="btn btn-primary">
+                    {% bootstrap_icon "star" %} Submit
+                  </button>
+                {% endbuttons %}
             </form>
           </div>
           </div>

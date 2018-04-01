@@ -10,7 +10,7 @@
 										<img class="conversation-portrait" src="/static/img/user.png" alt="My image" width="42" height="42"/>
 										{%endif%}
 
-					  {{ user_obj.profile.fname}}{%if user_obj.profile.lname%} {{user_obj.profile.lname}} {%endif%} <span data-messages_from="{{ user_obj|escape }}" class="noOfUnread">{%if user_obj.noOfUnread|slugify is not '0'%}{{user_obj.noOf_unread}}{%endif%}</span>
+					  {{ user_obj.profile.fname}}{%if user_obj.profile.lname%} {{user_obj.profile.lname}} {%endif%} <span data-messages_from="{{ user_obj|escape }}" class="noOfUnread">{%if user_obj.noOf_unread > 0 %}{{user_obj.noOf_unread}}{%endif%}</span>
 						<div data-username="{{ user_obj|escape }}" class="online">
 
 										{%ifequal user_obj.status|slugify "online"%}

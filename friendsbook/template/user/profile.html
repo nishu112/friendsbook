@@ -110,7 +110,21 @@
 							<div class="col-sm-3">
 								<div class ="" >
 									<h4><img src="/static/img/introicon.png" width="25px" height="25px"><strong>&nbsp&nbspIntro </strong></h4>
-									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudying at </p>
+									{%if workprofile%}
+
+									{%for x in workprofile%}
+									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspWorking at {{x.organisation}}</p>
+									{%endfor%}
+									{%endif%}
+									{%if educationprofile%}
+									{%for x in educationprofile%}
+									{%if workprofile%}
+									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudied {{x.course_class}} from {{x.institute_name}}  in {{x.date}}</p>
+									{%else%}
+									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudying {{x.course_class}} from {{x.institute_name}} in {{x.date}}</p>
+									{%endif%}
+									{%endfor%}
+									{%endif%}
 									{%if User.state%}
 									<p><img src="/static/img/images.png" width="20px" height="20px">&nbsp&nbspLives in {{User.state}}</p>
 									{%endif%}

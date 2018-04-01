@@ -302,3 +302,27 @@ class Notification(models.Model):
         class Meta:
             db_table='notification'
             verbose_name_plural = "notification"
+
+
+class Education(models.Model):
+    username=models.ForeignKey(User,on_delete=models.CASCADE)
+    institute_name = models.CharField(max_length=40)  # Field name made lowercase.
+    course_class = models.CharField(max_length=20, blank=True, null=True)
+    #type = models.CharField(max_length=20)
+    date = models.CharField(max_length=4, blank=True, null=True)
+
+    class Meta:
+        db_table = 'education'
+        verbose_name_plural = "education"
+
+class Working(models.Model):
+    username=models.ForeignKey(User,on_delete=models.CASCADE)
+    organisation = models.CharField(max_length=40)  # Field name made lowercase.
+    location = models.CharField(max_length=20, blank=True, null=True)
+    profile = models.CharField(max_length=20, blank=True, null=True)
+    #type = models.CharField(max_length=20)
+    WorkingFrom = models.CharField(max_length=4, blank=True, null=True)
+
+    class Meta:
+        db_table = 'working'
+        verbose_name_plural = "working"

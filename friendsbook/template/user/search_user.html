@@ -1,12 +1,27 @@
 {% extends "friendsbook/structure.html" %}
 {%load static%}
+{% load bootstrap3 %}
 {% block content %}
 {% load humanize %}
 		<div class="row"><br><br><br><br><br>
 			<div class="col-sm-2">
 
 			 {% block sidebar %}
-			 {%include "groups/group_list.html"%}
+			 {% bootstrap_messages %}
+			 <form action="" method="post"><input type='hidden'  />{%csrf_token %}
+			 {%bootstrap_form educationForm%}
+			 {%bootstrap_form workingForm%}
+
+
+
+			   <div class="form-group">
+			         <button type="submit" class="btn btn-default ">
+			           Search
+			         </button>
+
+			       </div>
+
+			 </form>
 			{%endblock sidebar%}
 			</div>
 			<div class="col-sm-1"></div>
@@ -84,7 +99,7 @@
 			<div class="col-sm-2">
 			</div>
 			<div class="col-sm-2">
-	
+
 			</div>
 
 		</div>

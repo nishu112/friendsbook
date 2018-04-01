@@ -13,6 +13,8 @@ admin.site.register(Groups)
 admin.site.register(CommentLikes)
 admin.site.register(ConsistOf)
 admin.site.register(Notification)
+admin.site.register(Education)
+admin.site.register(Working)
 
 #admin.site.register(Gender)
 

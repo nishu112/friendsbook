@@ -1,4 +1,5 @@
 {% extends "user/base.html" %}
+{% load bootstrap3 %}
 {% block javascript %}
 <script>
 
@@ -18,25 +19,37 @@ $(datepicker).datepicker({
 });
 });
 
-});
-    $("#id_username").change(function () {
+
+
+    $(document).on("change","#id_username",function(){
+console.log('ennter')
+obj=$(this);
 	console.log( $(this).val() );
       var username=$(this).val();
+      if(username.length<5) return;
 
 	    $.ajax({
         url: '{%url "validate_username"%}',
+        cache: false,
         data: {
           'username': username
         },
+
         dataType: 'json',
         success: function (data) {
+
           if (data.is_taken) {
             alert("A user with this username already exists.");
+            obj.val("");
+            $('#id_username').focus()
           }
+
           console.log(data)
           console.log('ok')
         }
       });
+
+    });
 
     });
   </script>
@@ -46,9 +59,11 @@ $(datepicker).datepicker({
 <style>
 ul li {list-style:none}
 </style>
+
 <form action="" method="POST">{%csrf_token%}
-	{{user_form.as_p}}
-	{{profile_form.as_p}}
+  {% bootstrap_form user_form %}
+  {% bootstrap_form profile_form %}
+
 	<div class="submit-row">
     <label>&nbsp;</label><input type="submit" value="Sign Up" />
   </div>

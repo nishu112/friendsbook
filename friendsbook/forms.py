@@ -11,6 +11,32 @@ from django.core.exceptions import ValidationError
 from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import ObjectDoesNotExist
 
+class educationSearch(ModelForm):
+
+	class Meta:
+		model=Education
+		exclude=["username","date"]
+
+class workingSearch(ModelForm):
+
+	class Meta:
+		model=Working
+		exclude=["username","WorkingFrom"]
+
+class EducationDetails(ModelForm):
+	CHOICES = [(i,i) for i in range(1950,2019)]
+	date=forms.ChoiceField(widget =forms.Select(),choices=CHOICES, label="Year",initial='2018', required = True)
+	class Meta:
+		model=Education
+		exclude=["username"]
+
+class WorkingFor(ModelForm):
+	CHOICES = [(i,i) for i in range(1950,2019)]
+	WorkingFrom=forms.ChoiceField(widget =forms.Select(),choices=CHOICES, label="Year",initial='2018', required = True)
+	organisation=forms.CharField(required=False)
+	class Meta:
+		model=Working
+		exclude=["username"]
 
 
 class SignUpForm(ModelForm):
@@ -88,7 +114,7 @@ class ProfileForm(ModelForm):
 		if  len(fname)<4:
 			self._errors['fname'] = self.error_class([
 				'Minimum 4 characters required'])
-		if len(lname)<5:
+		if len(lname)<4:
 			self._errors['lname'] = self.error_class([
 				'Minimum 4 characters required'])
 		print(email)
@@ -142,9 +168,11 @@ class ChangePasswordForm(forms.ModelForm):
 		super(ChangePasswordForm, self).clean()
 		old_password = self.cleaned_data.get('old_password')
 		new_password = self.cleaned_data.get('new_password')
-		password = self.cleaned_data.get('password')
-		if len(new_password) < self.MIN_LENGTH:
-			self._errors['password'] = self.error_class([
+		password = self.cleaned_data.get('confirm_password')
+		print(new_password)
+		print(password)
+		if len(password) < self.MIN_LENGTH:
+			self._errors['new_password'] = self.error_class([
 				'Minimum 8 characters required'])
 		confirm_password = self.cleaned_data.get('confirm_password')
 		id = self.cleaned_data.get('id')
@@ -152,8 +180,8 @@ class ChangePasswordForm(forms.ModelForm):
 		if not user.check_password(old_password):
 			self._errors['old_password'] = self.error_class([
 				'Old password don\'t match'])
-		if new_password and new_password != confirm_password:
-			self._errors['new_password'] = self.error_class([
+		if password and new_password != confirm_password:
+			self._errors['confirm_password'] = self.error_class([
 				'Passwords don\'t match'])
 		return self.cleaned_data
 
