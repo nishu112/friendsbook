@@ -1147,6 +1147,56 @@ def SearchGroup(request,val):
 	print(val)
 	return Groups.objects.filter(Q(gname__istartswith=val))
 
+
+def combineFriendshipDetailwithUsers(request,users):
+	addfriends_list=list()
+	searched_by=request.user.username
+	for x in users:
+		if str(x.username)==searched_by:
+			addfriends_list.append(-1)
+		else:
+			user=searched_by
+			fuser=x.username
+			user_obj=User.objects.get(username=user)
+			fuser_obj=User.objects.get(username=fuser)
+			addfriends_list.append(friendship(user_obj,fuser_obj))
+	return zip(users,addfriends_list)
+
+def advanceSearch(request):
+	if request.method=='GET':
+		form=advanceSearchForm(request.GET)
+		if form.is_valid():
+			print('got here')
+			name=request.GET.get('name')
+			#InstituteName=request.GET.get('InstituteName')
+			InstituteName=request.GET.get('InstituteName')
+			print(InstituteName,end=' dgdfg')
+			courseName=request.GET.get('courseName')
+			profile=request.GET.get('profile')
+			location=request.GET.get('location')
+			print(name)
+			print(InstituteName)
+			print(courseName)
+			print(profile)
+			print(location)
+			users=Profile.objects.filter(Q(fname__istartswith=name) | Q(lname__istartswith=name)).select_related('username').select_related('sid')
+			usernamesEducation=Education.objects.filter(Q(institute_name__istartswith=InstituteName) & Q(course_class__istartswith=courseName)).values('username')
+			users1=Profile.objects.filter(username__in=usernamesEducation)
+			usernamesWorking=Working.objects.filter(Q(profile__istartswith=profile) &Q(location__istartswith=location) ).values('username')
+			print('before')
+			users2=Profile.objects.filter(username__in=usernamesWorking)
+			username=users1 & users2
+			print('After')
+			users=users & username
+			#users=users & Profile.objects.filter(username__in=username)
+			#users=Profile.objects.all()
+
+			users=combineFriendshipDetailwithUsers(request,users)
+			groups=SearchGroup(request,name)
+
+			return render(request,'user/advance_search_user.html',{'data':users,'sgroups':groups})
+		return render(request,'user/advance_search_user.html')
+
 class FriendsView(generic.ListView):  ###print friendlist of user here
 	template_name='user/search_user.html'
 	context_object_name='data'
@@ -1185,9 +1235,8 @@ class FriendsView(generic.ListView):  ###print friendlist of user here
 		context['newGroupForm']=CreateGroup(None)
 
 		context['groups']=group_list(self.request)
-		context['educationForm']=educationSearch()
-		context['workingForm']=workingSearch()
-		print(context['workingForm'])
+		context['advanceSearchForm']=advanceSearchForm()
+
 		context=friends_list(self.request,self.request.user.username,context)
 		return context
 

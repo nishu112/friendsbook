@@ -11,17 +11,38 @@ from django.core.exceptions import ValidationError
 from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import ObjectDoesNotExist
 
-class educationSearch(ModelForm):
+class advanceSearchForm(forms.Form):
+	name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Name'}),label='Name',
+		max_length=30,required=False)
+	InstituteName=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Institute Name'}),label='Institute',
+		max_length=30,required=False)
+	courseName=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Course/Class Name'}),label='Course/Class',
+		max_length=30,required=False)
+	Organisation=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Organisation Name'}),label='Organisation/Working',
+		max_length=30,required=False)
+	profile=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Job Profile'}),label='Job Profile',
+		max_length=30,required=False)
+	location=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Job Location'}),label='Location',
+		max_length=30,required=False)
 
-	class Meta:
-		model=Education
-		exclude=["username","date"]
+	def clean(self):
+		super(advanceSearchForm, self).clean()
+		name=self.cleaned_data.get('name')
+		InstituteName=self.cleaned_data.get('InstituteName')
+		courseName=self.cleaned_data.get('courseName')
+		Organisation=self.cleaned_data.get('Organisation')
+		profile=self.cleaned_data.get('profile')
+		location=self.cleaned_data.get('location')
+		print('inside form clean')
+		print(InstituteName)
+		if name=="" and InstituteName=="" and courseName=="" and Organisation=="" and profile==""  and location=="":
+			print('hey')
+			raise forms.ValidationError("Don't submit empty")
+		if not name and not InstituteName and not courseName and not Organisation and not profile  and not location:
+			raise forms.ValidationError("something went wrong")
+		return self.cleaned_data
 
-class workingSearch(ModelForm):
 
-	class Meta:
-		model=Working
-		exclude=["username","WorkingFrom"]
 
 class EducationDetails(ModelForm):
 	CHOICES = [(i,i) for i in range(1950,2019)]

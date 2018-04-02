@@ -19,6 +19,8 @@ urlpatterns = [
     url(r'^post/create_post/$',login_required(views.create_post),name='new_post'),
     url(r'^post/(?P<slug>[\w+-]+)/$', login_required(views.PostDetailView), name='postdetail'),
 	path('findfriends/', login_required(views.FriendsView.as_view()), name='profiles'),
+	path('findfriends/advanceSearch', login_required(views.advanceSearch), name='advanceSearch'),
+
     url(r'^users/profile/(?P<slug>[\w.@+-]+)/$', login_required(views.UserProfile), name='profile_info'),
     url(r'^users/profile/(?P<slug>[\w.@+-]+)/timeline$', login_required(views.UserProfile), name='profileTimeline'),
     url(r'^users/profile/(?P<slug>[\w.@+-]+)/friends$', login_required(views.UserFriendsList), name='profileFriends'),
