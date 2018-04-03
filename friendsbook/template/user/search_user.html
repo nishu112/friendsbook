@@ -8,6 +8,7 @@
 
 			 {% block sidebar %}
 			 {% bootstrap_messages %}
+			 <br>
 			 <form action="{%url 'advanceSearch'%}" method="GET"><input type='hidden'  />{%csrf_token %}
 
 			 {%bootstrap_form advanceSearchForm%}
