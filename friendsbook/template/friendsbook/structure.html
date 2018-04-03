@@ -24,7 +24,7 @@
 
 </head>
 
-<body  style="">
+<body  style="padding-top: 60px;">
 
 {%include "friendsbook/header.html"%}
 <main>
@@ -150,7 +150,7 @@ $(document).ready(function(){
 				unread=$(Messages).html()
 				if(unread=="")	$(Messages).html(1);
 				else {
-				$(Messages).html(parseInt(unread)+1);	
+				$(Messages).html(parseInt(unread)+1);
 				}
 			}
     };
