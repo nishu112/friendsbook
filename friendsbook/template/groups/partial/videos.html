@@ -39,36 +39,55 @@
 		</div>
 
 
-	<div class="row">
-		<div class="col-sm-10">
-			<div class="row ">
+		<div class="col-sm-2">
+
 
 
 				{%include "groups/group_navigation.html"  with active='video'%}
+</div>
+			  <div class="col-sm-8">
 
-			  <div class="col-sm-10">
-					<div class="row">
 					{%include "groups/partial/group_cover.html"%}
 						<!-- Example single danger button -->
 
 
-							<div class="row">
+							<br><br>
 										<h1>  <strong>Videos : </strong></h1>
-							</div>
-							<div class="row">
-							{% for photo in photo_albums%}
 
-							{%empty%}
-								<h2>No Videos to show</h2>
-							{%endfor%}
-							</div>
-					</div>
+										{% for status in posts%}
 
-				</div>
+										{% if status.image  %}
+
+					     			{% if ".ogg" in status.image.url or ".mp4" in status.image.url or ".MP4" in status.image.url or  ".MKV" in status.image.url or   ".mkv" in status.image.url%}
 
 
-			</div>
-		</div>
+											<div class="col-sm-6">
+					               <video id="my-video" class="video-js" controls preload="auto" width="450"               data-setup="{}">
+					                 <source src="{{ status.image.url}}" type='video/mp4'>
+					                 <source src="{{ status.image.url}}" type='video/webm'>
+					                 <p class="vjs-no-js">
+					                   To view this video please enable JavaScript, and consider upgrading to a web browser that
+					                   <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+					                 </p>
+					               </video>
+											 </div>
+					             {%else%}
+
+					     			{% endif %}
+					     		 {% endif %}
+
+
+
+
+										{%empty%}
+											<h2>No Videos to show</h2>
+										{%endfor%}
+
+</div>
+
+
+
+
 
 		<div class="col-sm-2">
 

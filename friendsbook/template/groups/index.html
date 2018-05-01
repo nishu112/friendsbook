@@ -1,6 +1,7 @@
 {% extends "friendsbook/structure.html" %}
 {% block content %}
 {% load static %}
+{% load bootstrap3 %}
 {%block head%}
 	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
 	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
@@ -38,16 +39,13 @@
 	     </div>
 		</div>
 
-
-	<div class="row">
-		<div class="col-sm-10">
-			<div class="row ">
-
-
+<div class="row">
+		<div class="col-sm-2">
 				{%include "groups/group_navigation.html"  with active='discussion'%}
+			</div>
 
-			  <div class="col-sm-10">
-					<div class="row">
+			  <div class="col-sm-8">
+
 
 
 
@@ -59,7 +57,7 @@
 						<div class="row" style="margin-top:10px;">
 
 							<div class="col-sm-8 maincontainer">
-								<h2>Posts</h2>
+								<h2>Group Discussions:</h2>
 								{%if group.new is 0 %}
 								<br>
 								<button type="button" class="btn btn-default btn-sm  pull-right btn-compose" >
@@ -72,19 +70,13 @@
 								<div class="well grouppostform" style="background-color:#fff ;display:none;">
 
 									<form action="" method="post" enctype='multipart/form-data'>{%csrf_token %}
-										<div class="form-group">
-										  <label for="id_text">Text:</label>
-										  <textarea class="form-control" rows="5" name="text"  id="id_text" style="margin: 0px 161.578px 0px 0px; width: 382px; height: 123px;"></textarea>
+										{%bootstrap_form form%}
+
+
+										<div class="post_status">
+											<input class="btn btn-primary" type="submit" value="Post"/>
 										</div>
 
-									<div class="post">
-										<div class="status_image">
-											<input type="file" name="image" id="id_image">
-										</div>
-										<div class="post_status">
-											<input  type="submit" value="Post"/>
-										</div>
-									</div>
 									</form>
 								</div>
 								{%endif%}
@@ -101,21 +93,13 @@
 
 			  </div>
 
-		</div>
-
-
-		</div>
-	</div>
 		<div class="col-sm-2">
 
 			{%include "chat/online_user_list.html"%}
 		</div>
-	</div>
+	</div>	</div>
 
 
-</div>
-
-</div>
 <script>
 $(document).on("click", ".membersearch input[type='submit']", function (event){
 	form=$(this).closest('form')

@@ -1,5 +1,5 @@
 <div class="particularuser col-sm-6" user={{member.username.profile.username}} csrf={{csrf_token}} id={{group.id}}>
-	<div class="well add_friendbutton " >
+	<div class="well add_friendbutton "style="height:100px" >
 		{%if member.username.profile.sid%}
 			{%if  member.username.profile.sid.image%}
 				<img class="img-rounded"  src="{{  member.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>

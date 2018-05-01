@@ -1,0 +1,87 @@
+.mikes-modal {
+z-index: 10001;
+position: fixed;
+background-color: white;
+left: 50%;
+top: 50%;
+display: none;
+}
+.mikes-modal a {
+text-decoration: none;
+}
+.mikes-modal img {
+float: left;
+}
+.mikes-modal .description {
+width: 300px;
+float: right;
+text-align: left;
+padding: 10px 30px;
+overflow-y: auto;
+}
+.mikes-modal .close {
+position: absolute;
+right: 10px;
+cursor: pointer;
+opacity: 0.7;
+}
+
+#loading-modal {
+
+position: absolute;
+
+z-index: 10000;
+
+width: 220px;
+height: 220px;
+top: 50%;
+left: 50%;
+margin-top: -110px;
+margin-left: -110px;
+background-color: #333;
+border-radius: 20px;
+}
+#the-lights {
+background-color: #000;
+height: 100%;
+width: 100%;
+position: fixed;
+opacity: 0.9;
+top: 0;
+left: 0;
+z-index: 10000;
+}
+ @media all and (max-width: 700px) {
+.mikes-modal {
+left: 0%;
+margin-left: 0px !important;
+position: absolute;
+
+}
+
+.mikes-modal .description {
+clear: both;
+width: 95% !important;
+float: left;
+padding: 2.5%;
+background-color: white;
+}
+.mikes-modal .close {
+color: white;
+top: 0px;
+}
+
+.mikes-modal img {
+
+max-width: 100% !important;
+max-height: 100% !important;
+}
+.mikes-modal #comments {
+margin-top: 20px;
+}
+#comments-area .new-comment {
+position: inherit;
+width: 100%;
+background-color: black;
+}
+}

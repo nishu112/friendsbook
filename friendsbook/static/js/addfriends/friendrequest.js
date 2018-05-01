@@ -2,12 +2,14 @@ $(function () {
 	$(document).on("click", ".add_friendbutton button", function () {
 	particularuser=$(this).closest('.particularuser')
 	console.log(particularuser)
+	console.log($(this))
 	csrf=$(particularuser).attr('csrf')
 	console.log(csrf)
 	user=$(particularuser).attr('user')
 	performaction=$(this).attr('performaction')
 	actiontype=$(this).attr('actiontype')
 	prev=this
+	console.log(performaction)
 	$.ajax({
         url: '/ajax/AddFriend/',
         data:{
@@ -25,8 +27,11 @@ $(function () {
 						{$(prev).html("Cancel Request")
 						 $(prev).attr("performaction","Cancel");}
 					else if(performaction=='Cancel')
-						{$(prev).html("Send Request")
-						$(prev).attr("performaction","Send");}
+						{
+							console.log('1')
+							$(prev).html("Send Request")
+						$(prev).attr("performaction","Send");
+					}
 					else if(performaction=='Confirm')
 						{$(prev).html("Unfriend")
 						$(prev).attr("performaction","Unfriend")
@@ -41,13 +46,27 @@ $(function () {
 					else if( performaction=='Delete')
 						{
 							button=$('.type1')
+							console.log('2')
 							$(button).html("Send Request")
 							$(button).attr("performaction","Send")
 							$(prev).remove()
 						}
-					else if(performaction='Unfriend'){
+					else if(performaction=='Unfriend'){
+						console.log('3')
 						$(prev).html("Send Request")
 						$(prev).attr("performaction","Send")
+					}
+					else if(performaction=='Block')
+					{
+						console.log('4')
+						console.log('blocking sucess')
+						$(prev).html("UnBlock");
+						$(prev).attr("performaction","UnBlock")
+					}
+					else if (performaction=='UnBlock') {
+						console.log('5')
+						$(prev).html("Block");
+						$(prev).attr("performaction","Block")
 					}
         }
       });

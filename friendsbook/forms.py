@@ -10,6 +10,10 @@ from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import ObjectDoesNotExist
+from captcha.fields import CaptchaField
+from datetime import date
+
+
 
 class advanceSearchForm(forms.Form):
 	name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Name'}),label='Name',
@@ -47,6 +51,7 @@ class advanceSearchForm(forms.Form):
 class EducationDetails(ModelForm):
 	CHOICES = [(i,i) for i in range(1950,2019)]
 	date=forms.ChoiceField(widget =forms.Select(),choices=CHOICES, label="Year",initial='2018', required = True)
+	course_class=forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Enter Course or class standard'}),label="Course/Class")
 	class Meta:
 		model=Education
 		exclude=["username"]
@@ -61,6 +66,7 @@ class WorkingFor(ModelForm):
 
 
 class SignUpForm(ModelForm):
+
 	MIN_LENGTH = 8
 	username=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':"Enter Unique Username"}),help_text='Required. Minimum 5 characters . Letters, digits and @/./+/-/_ only.',label="Username",required=True)
 	password = forms.CharField(
@@ -97,8 +103,8 @@ class SignUpForm(ModelForm):
 
 
 class ProfileForm(ModelForm):
-	Male = 'M'
-	FeMale = 'F'
+	Male = 'Male'
+	FeMale = 'Female'
 	GENDER_CHOICES = (
 		(Male, 'Male'),
 		(FeMale, 'Female'),
@@ -116,6 +122,7 @@ class ProfileForm(ModelForm):
 									'placeholder':'Enter your date of birth'
                                 }),label="Date of Birth",
 								required = True)
+	captcha = CaptchaField()
 	class Meta:
 		model=Profile
 		fields= ["fname","lname","dob","emailid","gender"]
@@ -125,19 +132,31 @@ class ProfileForm(ModelForm):
 		email=self.cleaned_data.get('emailid')
 		fname=self.cleaned_data.get('fname')
 		lname=self.cleaned_data.get('lname')
+		date=self.cleaned_data.get('dob')
 		if not fname.isalpha():
 			self._errors['fname'] = self.error_class([
 				'Only alphabets allowed'])
-		if not lname.isalpha():
+		if not lname.isalpha() and len(lname)!=0:
 			self._errors['lname'] = self.error_class([
 				'Only alphabets allowed'])
 		print(email)
 		if  len(fname)<4:
 			self._errors['fname'] = self.error_class([
 				'Minimum 4 characters required'])
-		if len(lname)<4:
+		if len(lname)<4 and len(lname)!=0:
 			self._errors['lname'] = self.error_class([
 				'Minimum 4 characters required'])
+		today=date.today()
+		print(date.year)
+
+		print(today.year-date.year)
+		epsilon=today.year-date.year
+		print(type(epsilon))
+		if epsilon <14:
+			self._errors['dob']=self.error_class([
+			'Minimum Age Required is 14'
+			])
+		print(epsilon)
 		print(email)
 		return self.cleaned_data
 
@@ -145,7 +164,7 @@ class ProfileForm(ModelForm):
 class EditAboutGroup(ModelForm):
 
 	about=forms.CharField(
-	widget=forms.Textarea(attrs={'class':'form-control','placeholder':"Write Something about Group "}),
+	widget=forms.Textarea(attrs={'class':'form-control','placeholder':"Write Something about Group ",'style':'margin: 0px 2.42188px 0px 0px; width: 487px; height: 109px;'}),
 	label="",required=True)
 
 	class Meta:
@@ -159,10 +178,6 @@ class ChattingForm(ModelForm):
 	class Meta:
 		model=Message
 		fields=["fusername","text"]
-
-
-
-
 
 class ChangePasswordForm(forms.ModelForm):
 	MIN_LENGTH=8
@@ -242,6 +257,7 @@ class EditProfileForm(ModelForm):
 		fname=self.cleaned_data.get('fname')
 		lname=self.cleaned_data.get('lname')
 		phone=self.cleaned_data.get('phone_no')
+		dob=self.cleaned_data.get('dob')
 		if not fname.isalpha():
 			self._errors['fname'] = self.error_class([
 				'Only alphabets allowed'])
@@ -259,9 +275,33 @@ class EditProfileForm(ModelForm):
 		if not phone:
 			self._errors['phone_no']=self.error_class([
 			'Wrong format of phone number'])
+		today=date.today()
+		print(date.year)
+
+		print(today.year-date.year)
+		epsilon=today.year-date.year
+		print(type(epsilon))
+		if epsilon <14:
+			self._errors['dob']=self.error_class([
+			'Minimum Age Required is 14'
+			])
 		return self.cleaned_data
 
 class CreatePost(ModelForm):
+	image = forms.FileField(label="Select File",required=False)
+	text=forms.CharField(widget=forms.Textarea(attrs={'placeholder':'Write some story','style':'margin: 0px -2.84375px 0px 0px; width: 501px; height: 144px;'}),required=False)
+	FriendsOfFriends = 'fsofs'
+	PUBLIC= 'Pbc'
+	Friends='fs'
+	OnlyMe='me'
+	PRIVACY_CHOICES = (
+		(Friends ,'Friends'),
+	    (FriendsOfFriends, 'Friends Of Friends'),
+	    (PUBLIC ,'Public'),
+	    (OnlyMe ,'OnlyMe'),
+	)
+	privacy=forms.ChoiceField(widget = forms.Select(attrs={'class':'form-control'}),
+                     choices=PRIVACY_CHOICES, initial='CL', required = True)
 	class Meta:
 		model=Status
 		fields = ["text","image","privacy"]
@@ -275,6 +315,8 @@ class CreatePost(ModelForm):
 
 
 class CreateGroupPost(ModelForm):
+	image = forms.FileField(label="Select File",required=False)
+	text=forms.CharField(widget=forms.Textarea(attrs={'placeholder':'Write some story','style':'margin: 0px -2.84375px 0px 0px; width: 501px; height: 144px;'}),required=False)
 	class Meta:
 		model=Status
 		fields = ["text","image"]

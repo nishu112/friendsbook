@@ -1,10 +1,10 @@
 .button1{
 	font-size:15px;
 	top:270px;
-	right:30px;
+	
 	position:absolute;
 	margin-right:456px;
-	
+
 }
 .button2{
 	font-size:15px;
@@ -25,15 +25,15 @@
 	top:270px;
 	right:30px;
 	position:absolute;
-	margin-right:270px;	
+	margin-right:270px;
 }
 .button5{
-	
+
 	font-size:15px;
 	top:270px;
 	right:30px;
 	position:absolute;
-	margin-right:219px;	
+	margin-right:219px;
 }
 
 .button6 {
@@ -42,15 +42,15 @@
 	right:0px;
 	margin-right:10px;
 	position:absolute;
-	
+
 }
 
 .button7{
-	
+
 	margin-top: -39px;
 	position:absolute;
 	margin-right:560px;
-	
+
     color: white;
 	width:200px;
 	height:40px;

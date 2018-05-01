@@ -6,6 +6,7 @@
 	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
 	<link href="{% static 'css/pages/cover.css' %}" rel="stylesheet">
 	<link href="{% static 'css/pages/group/navigation.css' %}" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Hi+Melody" rel="stylesheet">
 	<style>
 	.maincontainer ul{
 		margin-left:-40px;
@@ -39,43 +40,76 @@
 		</div>
 
 
-	<div class="row">
-		<div class="col-sm-10">
-			<div class="row ">
+<div class="row">
+		<div class="col-sm-2">
+
 
 
 				{%include "groups/group_navigation.html"  with active='about'%}
+</div>
+			  <div class="col-sm-8">
 
-			  <div class="col-sm-10">
-					<div class="row">
 					{%include "groups/partial/group_cover.html"%}
 						<!-- Example single danger button -->
 
+							<br>
 
-							<div class="row">
 										<h1>  <strong>About Group : </strong></h1>
-							</div>
-							{%if group.new is 0%}
-							<a class="btn btn-primary" href="{%url 'EditAboutGroup' group.id%}">Edit</a>
-							{%endif%}
-							{%if group.about%}
-							<div class="well">
-								{{group.about}}
-							</div>
-							{%else%}
-							<div class="row">
 
-								<h2>Nothing Here yet</h2>
+						<div class="col-sm-8 col-sm-offset-1">
 
-							</div>
-							{%endif%}
-					</div>
 
-				</div>
+
+
+
+									<div style="padding:20px;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12) ;background-color:white;" >
+																{%if group.about%}
+
+
+																	<h1>
+																		Group Intro
+																	</h1>
+																	{%if group.new is 0%}
+																	<a style="margin-top:-156px;margin-left:458px"  href="{%url 'EditAboutGroup' group.id%}"> <span class="glyphicon glyphicon-edit" > </span> </a>
+																	{%endif%}
+																	<div class="container-fluid" style="font-family: 'Hi Melody', cursive;font-size:1.8em">
+																		{{group.about}}
+																	</div>
+
+
+																{%else%}
+
+
+
+																	<h2>Nothing To show about Group</h2>
+																	{%if group.new is 0%}
+																	<a style="margin-top:-156px;margin-left:458px"  data-placement="right" data-toggle="tooltip" title="Edit About Group" href="{%url 'EditAboutGroup' group.id%}"> <span class="glyphicon glyphicon-edit" > </span> </a>
+																	{%endif%}
+
+																{%endif%}
+
+																</div>
+
+
+																<div style="padding:20px;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12) ;background-color:white;" >
+																	<p>Total Members :{{group.members}}</p>
+																	<p>Group Created by <a href={%url 'profile_info' group.createdBy.profile.slug %}>{{group.createdBy.profile.fname}}</a> on {{group.createdOn}}</p>
+
+																</div>
+
+
+
+
+					  </div>
+						<div class="col-sm-6">
+						</div>
+
+
+
 
 
 			</div>
-		</div>
+
 
 		<div class="col-sm-2">
 
@@ -83,7 +117,7 @@
 		</div>
 
 
-</div>
+</div></div>
 <script>
 
 

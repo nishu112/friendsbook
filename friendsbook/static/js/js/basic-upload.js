@@ -7,16 +7,13 @@ $(function () {
   $("#mypic").click(function () {
     $("#fileupload2").click();
   });
-  
+
   $("#fileupload1").fileupload({
     dataType: 'json',
     done: function (e, data) {
-      if (data.result.is_valid) {
-		  var str='url("'+data.result.url+'")'
-		  console.log("NOpe")
-		  console.log(str)
-        document.getElementById("cover_background").style.backgroundImage=str;
-      }
+      if (data.result.is_valid) 
+        document.getElementById("cover_background_image").src=data.result.url;
+      else console.log('having some problem')
         /*$("#gallery tbody").prepend(
           "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>"
         )*/
@@ -34,8 +31,8 @@ $(function () {
       }
     }
   });
-  
-  
+
+
   $("#groupCoverPhoto").fileupload({
     dataType: 'json',
     done: function (e, data) {
@@ -45,11 +42,11 @@ $(function () {
 		}
       }
   });
-  
-  
+
+
   $('#groupcover').click(function() {
 	  console.log('done')
 	  $('#groupCoverPhoto').click();
-	  
+
   });
 });

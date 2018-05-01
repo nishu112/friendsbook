@@ -1,4 +1,4 @@
-	<div class="row">
+
 							<div class="background_pic_design" style="height:280px ;box-shadow: 0px 0px 20px 0px #8d8080;">
 								{%if group.cover.image%}
 									<div class="cover_background displayPopUp" getFrom={{group.cover.id}} id="cover_background" title="Cover" style='background-image: url("{{group.cover.image.url}}");'>
@@ -34,7 +34,7 @@
 									    <span class="caret"></span></button>
 									    <ul class="dropdown-menu">
 									      <li><a href="#" data-toggle="modal" data-target="#addMembersToGroup">Add Member</a></li>
-									      <li><a href="#">Group setting</a></li>
+									      <li><a href="{%url 'Groupsettings' group.id%}">Group setting</a></li>   
 									    </ul>
 									  </div>
 								</div>
@@ -47,7 +47,7 @@
 								{%endif%}
 
 						  </div>
-					</div>
+
 					<script>
 					$(function () {
 
@@ -65,6 +65,8 @@
 								dataType: 'json',
 								success: function (data) {
 									console.log('removed')
+									console.log(data)
+									document.location.reload(true);
 
 								}
 							});

@@ -39,35 +39,37 @@
 		</div>
 
 
-	<div class="row">
-		<div class="col-sm-10">
-			<div class="row ">
+<div class="col-sm-2">
 
 
 				{%include "groups/group_navigation.html"  with active='settings'%}
-
-			  <div class="col-sm-10">
-					<div class="row">
+</div>
+			  <div class="col-sm-8">
 					{%include "groups/partial/group_cover.html"%}
 						<!-- Example single danger button -->
 
 
-							<div class="row">
-										<h1>  <strong>Setting : </strong></h1>
-							</div>
-							<div class="well">
+							<br>
+										<h1> Settings :</h1>
+
+							<div class="col-sm-6 col-sm-offset-2" style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);background-color:#fff;padding-top:10px;">
+
 								<form method="POST">{%csrf_token%}
 									{{form.as_p}}
-									<button class="btn btn-primary" type="submit">Save</button>
+									<div class="form-group">
+									<button class="btn btn-primary" style="padding-bottom:5px;" type="submit">Save</button>
+								</div>
 								</form>
+
 							</div>
-					</div>
+							<div class="co-sm-2">
 
-				</div>
+							</div>
+							<br>
+							<br><br><br>
 
-
-			</div>
-		</div>
+					<br><br>
+</div>
 
 		<div class="col-sm-2">
 

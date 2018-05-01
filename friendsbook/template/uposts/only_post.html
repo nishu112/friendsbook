@@ -13,6 +13,7 @@
 	</div>
 	<form method="get" action="" id="load_feed" autocomplete="off">{%csrf_token%}
 		<input type="hidden" name="page" value="{{ page }}">
+
 		{%if group%}
 		<input type="hidden" name="groupid" value="{{ group.id }}">
 		{%endif%}
@@ -38,9 +39,11 @@
           $(".load").show();
         },
         success: function (data) {
-					console.log(data);
+
+
           if (data.length > 0) {
             $(".firstPagePosts").append(data)
+
           }
           else {
             $("#load_feed").addClass("no-more-feeds");
@@ -48,6 +51,11 @@
         },
         complete: function () {
           $(".load").hide();
+					var massVideo = $('.video-js');
+for(var i = 0; i < massVideo.length; i++){
+  videojs(massVideo[i]).ready(function(){});
+}
+					console.log('done')
         }
       });
     }

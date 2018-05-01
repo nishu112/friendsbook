@@ -15,27 +15,29 @@
 <div class="container-fluid">
 	<div class="row ">
 		<div class="col-sm-9">
-			<div class="row profile " profilefor="{{User.username}}">
+			<div class="row profile" profilefor="{{User.username}}">
 				<div class="background_pic_design"style="box-shadow: 0px 0px 20px 0px #8d8080;">
 					{%if User.profileCover.image%}
-						<div class="cover_background displayPopUp" getFrom={{User.profileCover.id}} id="cover_background" title="Cover" style='background-image: url("{{User.profileCover.image.url}}");'>
+						<div class="cover_background displayPopUp" style="overflow: hidden;width:100%;"getFrom={{User.profileCover.id}} id="cover_background" title="Cover">
+							<img id='cover_background_image' style="width:100%;"src="{{User.profileCover.image.url}}">
+						</div>
 					{%else%}
-						<div class="cover_background" getFrom="None" id="cover_background" title="Cover" style='background-image: url("/static/img/cover.jpg");"'>
+						<div class="cover_background"style="overflow: hidden;width:100%" getFrom="None" id="cover_background" title="Cover">
+							<img id='cover_background_image' style="width:100%"src="/static/img/cover.jpg">
+						</div>
 					{%endif%}
-					<span class="btn btn-default button1"><a href="timeline">Timeline</a></span>
-					<span class="btn btn-default button2"><a href="">About</a></span>
-					<span class="btn btn-default button3"><a href="friends">Friends</a></span>
-					<span class="btn btn-default button4"><a href="photos">Photos</a></span>
-					{%ifequal User.username.username user.username%}
-					<div class="dropdown button5">
-						<button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">More
-						<span class="caret"></span></button>
-						<ul class="dropdown-menu">
-							<li><a href="ChaneProfileInfo">Setting</a></li>
+					<div class="buttonPositionProfile">
+								<div class="btn-group btn-group-justified button1" style="width:29%;float:right;">
+								  <a href="timeline" class="btn btn-primary">Timeline</a>
 
-						</ul>
-					</div>
-					{%endifequal%}
+								  <a href="friends" class="btn btn-primary">Friends</a>
+								  <a href="photos" class="btn btn-primary">Photos</a>
+
+								</div>
+
+				</div>
+
+
 					{% ifequal User.username.username user.username  %}
 					<div class="btn button6" style="margin-bottom: 20px;">
 						<button type="button" class="btn btn-primary js-upload-photos" id="mycover">
@@ -51,12 +53,12 @@
 					{%endifequal%}
 					<div  class="name">
 						<div class="row">
-							<div class="col-sm-6">
+							<div class="col-sm-5">
 								{{User.username.profile.fname}} {%if User.username.profile.lname%}{{User.username.profile.lname}}{%endif%}
 							</div>
 							{% ifnotequal User.username.username user.username  %}
 							<div class="particularuser" user={{User.username}} csrf={{csrf_token}}>
-								<div class="col-sm-6 add_friendbutton" >
+								<div class="col-sm-7 add_friendbutton" >
  	 								{%if y is 0 or y is 1 or y is 2%}
  	 										<button class="btn btn-default type1" actiontype="type1" type="button" performaction="{%if y is 0%}Send{%elif y is 1%}Cancel{%elif y is 2%}Confirm{%endif%}" onclick="return false"  >
  	 										{%if y is 0%} Send request {%elif y is 1%} Cancel request{%elif y is 2%}Confirm Request{%endif%}
@@ -66,8 +68,22 @@
  	 								<button class="btn btn-default type2" actiontype="type2" performaction="{%if y is 2%}Delete{%elif y is 3 %}Unfriend{%endif%}" type="button">
  	 									{%if y is 2%}Delete Request{%elif y is 3 %}Unfriend{%endif%}
  	 								</button>
+									{%if y is 3%}
+									
+
+											{%ifequal block_status  "0"%}
+											<button class="btn btn-default type3" actiontype="type3" performaction="Block">
+												Block
+											</button>
+											{%endifequal%}
+											{%ifequal block_status  "1"%}
+											<button class="btn btn-default type3" actiontype="type4" performaction="UnBlock">
+												UnBlock
+											</button>
+											{%endifequal%}
+									{%endif%}
  	 								{%endif%}
-							</div>
+							  </div>
 						</div>
 						{%endifnotequal%}
 					</div>
@@ -76,7 +92,7 @@
 						<div class="pic" >
 						{%if User.sid%}
 									{%if User.sid.image%}
-										<img class="img-rounded displayPopUp" getFrom={{User.sid}} id="my_profile_pic"  src="{{ User.sid.image.url}}" alt="My image" width="200" height="200"/>
+										<img class="img-rounded displayPopUp" getFrom={{User.sid.id}} id="my_profile_pic"  src="{{ User.sid.image.url}}" alt="My image" width="200" height="200"/>
 									{%endif%}
 						{%else%}
 							<img class="img-rounded" id="my_profile_pic" src="/static/img/profile_pic.png" alt="My image" width="200" height="200"/>
@@ -96,7 +112,7 @@
 						{%endifequal%}
 
 						</div>
-					</div>
+
 				</div>
 			</div>
 
@@ -107,22 +123,26 @@
 
 
 			<div id="profileonclickbuttons" style="display:block";class="row">
-							<div class="col-sm-3">
-								<div class ="" >
+				<div class="col-sm-4" >
+
+				{%if workprofile or educationprofile or User.state or User.country or User.state%}
+								<div class ="" style="padding:20px;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);" >
 									<h4><img src="/static/img/introicon.png" width="25px" height="25px"><strong>&nbsp&nbspIntro </strong></h4>
 									{%if workprofile%}
 
 									{%for x in workprofile%}
+
+
 									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspWorking at {{x.organisation}}</p>
 									{%endfor%}
 									{%endif%}
 									{%if educationprofile%}
 									{%for x in educationprofile%}
-									{%if workprofile%}
-									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudied {{x.course_class}} from {{x.institute_name}}  in {{x.date}}</p>
-									{%else%}
-									<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudying {{x.course_class}} from {{x.institute_name}} in {{x.date}}</p>
-									{%endif%}
+											{%if workprofile%}
+											<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudied {{x.course_class}} from {{x.institute_name}}  in {{x.date}}</p>
+											{%else%}
+											<p><img src="/static/img/read.jpg" width="20px" height="20px" >&nbsp&nbspStudying {{x.course_class}} from {{x.institute_name}} since {{x.date}}</p>
+											{%endif%}
 									{%endfor%}
 									{%endif%}
 									{%if User.state%}
@@ -136,10 +156,14 @@
 									{%endif%}
 
 								</div>
-								<div class="userPartOfGroups">
-									{%if userPartOfGroups%}
-									<br>
-									<br>
+								{%if userPartOfGroups%}
+								<div class="userPartOfGroups" style="margin-top:20px;padding:20px;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);">
+
+
+
+
+
+
 									 Member of these groups
 									<ul>
 										{%for x in userPartOfGroups%}
@@ -147,18 +171,34 @@
 											<a href="{%url 'GroupsHomepage' x.gid.id%}"> {{x.gid.gname}}</a>
 										</li>
 										{%endfor%}
-									<ul>
-										{%endif%}
+									</ul>
+
+									{%if x is not 0%}
+									<p><a data-placement="right" data-toggle="tooltip" title="Loading.." id='mutualFriends' values='{{User.username}}' href="javascript:void(0)">{{x}} </a> Mutual Friends</p>
+									{%endif%}
+
+									{%if User.username.username == request.user.username %}
+									<p><a href="{%url 'educationDetails'%}">		Add EducationDetails</a></p>
+									<p><a href="{%url 'workDetail'%}">		Add Working Profile</a></p>
+									{%endif%}
+
 								</div>
+								{%endif%}
+
+							{%else %}
+								<h2>No intro to show<h2>
+							{%endif%}
 							</div>
-							<div class="col-sm-9">
+							<div class="col-sm-8">
 
 									<div class="row">
 										<div class="col-sm-12">
+
 											{%include "uposts/only_post.html" %}<br>
 										</div>
 									</div>
 							</div>
+
 						</div>
 
 
@@ -168,12 +208,10 @@
 		-->
 			{%endblock profile_content%}
 
-			<div class="row">
-
-			</div>
 
 		</div>
 		<div class="col-sm-1">
+
 		</div>
 		<div class="col-sm-2">
 			{%include "chat/online_user_list.html"%}
@@ -186,6 +224,7 @@
 
 <script>
   $(function() {
+
 
 $('body').on('focus',".datepicker", function(){
 	datepicker=(this).closest('.datepicker')
@@ -228,6 +267,8 @@ $(function () {
 {%block javascript%}
 <script src="{% static 'js/posts/posts.js' %}"></script>
 <script src="{% static 'js/addfriends/friendrequest.js' %}"></script>
+
+
 
 
 

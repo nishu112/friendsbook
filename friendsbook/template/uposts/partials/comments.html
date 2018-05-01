@@ -11,14 +11,16 @@
 						{% ifequal comment.username.username  user.username%}
 						<div class="edit_delete" id="comment">
 							<div class="dropdown">
-							  <button type="submit" class="edit_button_icon" >
+							  <button type="submit" class="edit_button_icon"  data-toggle="dropdown">
 								<span class="glyphicon glyphicon-option-vertical"></span>
 							  </button>
-							  <div class="dropdown-content" style="min-width: 60px;">
-								<a href="javascript:void(0)" class="edit_comment" >Edit</a>
-								<a href="javascript:void(0)" class="delete_comment" >Delete</a>
-							  </div>
+								<ul class="dropdown-menu" style="min-width: 60px;">
+									<li>	<a href="javascript:void(0)" class="edit_comment">Edit</a></li>
+										<li><a href="javascript:void(0)" class="delete_comment" >Delete</a></li>
+								</ul>
+
 							</div>
+						
 						</div>
 						{%endifequal%}
 						</div>

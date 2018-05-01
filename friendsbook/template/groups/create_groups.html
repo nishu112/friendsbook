@@ -15,7 +15,7 @@
 			 <form class="create-new-group"  onsubmit="return false" method='POST' enctype="multipart/form-data" >{%csrf_token%}
 				  {{newGroupForm.as_p}}
 				  <input type="submit" class="btn btn-primary" value="Create"/>
-			</form>
+			 </form>
 
 			</div>
 		</div>
@@ -48,8 +48,9 @@ $(document).on("click", ".create-new-group input[type='submit'] ", function () {
                 console.log(json);
             },
 			error : function(xhr,errmsg,err) {
-                alert("unable to create new Group")
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                alert("unable to create new Group");
+                alert("minimum 4 Characters are required");
+                console.log(xhr.status + ": " + xhr.responseText);
             }
         });
     });

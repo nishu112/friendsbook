@@ -94,6 +94,8 @@ def ws_receive(message):
 
 @channel_session_user
 def ws_disconnect(message):
+    print(LoggedInUser.objects.filter(user=User.objects.get(username=message.user.username)))
+    print('yes')
     LoggedInUser.objects.filter(user=User.objects.get(username=message.user.username)).delete()
     profile_obj=Profile.objects.get(username=User.objects.get(username=message.user.username))
     fname=profile_obj.fname
@@ -108,4 +110,5 @@ def ws_disconnect(message):
     })
     })
     Group('users').discard(message.reply_channel)
+
     Group(message.user.username).discard(message.reply_channel)

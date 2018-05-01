@@ -1,41 +1,30 @@
 {% extends "friendsbook/structure.html" %}
+{% load bootstrap3 %}
+
 {% block content %}
 		<div class="row">
 			<div class="col-sm-2">
 			 <!-- Great, til you resize. -->
-
+     {%include "groups/group_list.html"%}
 			<!--<div class="well bs-sidebar affix" id="sidebar" style="background-color:#fff">-->
 			</div>
 			<div class="col-sm-1"></div>
 			<div class="col-sm-5">
 				<div class="well" style="background-color:#fff">
-			<p>Create a post</p>
+			<h2><strong>Create post</strong></h2>
 				<form action="" method="post" enctype='multipart/form-data'>{%csrf_token %}
-					<div class="form-group">
-					  <label for="id_text">Text:</label>
-					  <textarea class="form-control" rows="5" name="text"  id="id_text" style="margin: 0px 161.578px 0px 0px; width: 382px; height: 123px;"></textarea>
-					</div>
-				<p><label for="id_privacy">Privacy:</label>
-				<select name="privacy">
-				  <option value="fs">Friends</option>
-				  <option value="fsofs">Friends of Friends</option>
-				  <option value="Pbc">Public</option>
-				  <option value="me">OnlyMe</option>
-				</select>
-				<div class="post">
-					<div class="status_image">
-						<input type="file" name="image" id="id_image">
-					</div>
+					{%bootstrap_form createpost%}
 					<div class="post_status">
-						<input  type="submit" value="Post"/>
+						<input  class="btn btn-primary" type="submit" value="Post"/>
 					</div>
 				</div>
 				</form>
 			</div>
-			</div>
+
 			<div class="col-sm-2">
 			</div>
 			<div class="col-sm-2">
+				{%include "chat/online_user_list.html"%}
 
 			</div>
 

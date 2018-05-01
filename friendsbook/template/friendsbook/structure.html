@@ -8,28 +8,38 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
 	<link rel="stylesheet" href="{% static 'css/home.css' %}" type = "text/css"/>
+
+
 	<link rel="stylesheet" href="{% static 'css/notification.css' %}" type = "text/css"/>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" />
+<link href="http://vjs.zencdn.net/6.6.3/video-js.css" rel="stylesheet"> <!-- Plugin for videos -->
+<link href="https://fastcdn.org/Lightbox/2.8.1/css/lightbox.css" rel="stylesheet">
+<link href="https://semantic-ui.com/dist/semantic.min.css" rel="stylesheet">
+
 
 <!--
 <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
--->
+-->   
 <script  src="{% static 'js/posts/jquery.bullseye-1.0-min.js' %}"></script>
+
 	{% block head %}
 
 	{% endblock head %}
 
 </head>
 
-<body  style="padding-top: 60px;">
+<body  style="padding-top: 60px;background-color: #f5f7f8 !important;">
 
 {%include "friendsbook/header.html"%}
 <main>
 	{%include "friendsbook/emptyModalForPosts.html"%}
+	<div id="sound"></div>
 <div class="container-fluid">
+
+
 {%include "groups/create_groups.html"%}
 		{% block content %}
 		{% endblock content%}
@@ -41,18 +51,26 @@
 	<script src="{% static 'custom/home.js' %}"></script>
 	<script src="{% static 'js/profile/profile.js' %}"></script>
 	<script src="{% static 'custom/chatting.js' %}"></script>
-	  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
   <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
   <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
   <script src="{% static 'js/js/basic-upload.js' %}"></script>
   <script src="{% static 'custom/messaging.js' %}" type="text/javascript"></script>
+  <script src="http://vjs.zencdn.net/6.6.3/video.js"></script>
+	<script src="https://fastcdn.org/Lightbox/2.8.1/js/lightbox.min.js"></script>
+
 
 
 
   <script>
 
+
+
+
 $(document).ready(function(){
+
     $('[data-toggle="tooltip"]').tooltip();
+
 });
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	var socket = new WebSocket(ws_scheme+'://' + window.location.host + '/users/');
@@ -82,16 +100,22 @@ $(document).ready(function(){
     };
 
     socket.onmessage = function message(event) {
+
     var data = JSON.parse(event.data);
 	  var type = data['type'];
 
 	  var user = data['user'];
+		if(type=="update")
+			{
+				return;
+			}
 	  //did this logic to satisfy condition
 	  //so that message will recieve only if
 	  //we clicked on the link
 		var online_user=$('.users-list a div').filter(function(){
 		return $(this).data('username')==user;
 		});
+
 	  if(type=='online'){
 
 		  var fname=data['fname'];
@@ -140,12 +164,21 @@ $(document).ready(function(){
 				console.log(message)
 				console.log('sending message acknowledgement')
 				socket.send(JSON.stringify(message));
-
 				}
 			else{
+				console.log('begin')
+				console.log(type);
+				console.log(user)
+				console.log(fuser)
 				Messages=$('.users-list a span').filter(function(){
 				return $(this).data('messages_from')==user;
 				});
+				console.log('before sound')
+				console.log(user)
+				console.log(fuser)
+				if(user!='{{request.user}}')
+				document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="/static/img/notify.mp3" type="audio/mpeg" /><source src="/static/img/notify.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="static/img/notify.mp3" /></audio>';
+				console.log('done')
 				console.log(Messages)
 				unread=$(Messages).html()
 				if(unread=="")	$(Messages).html(1);

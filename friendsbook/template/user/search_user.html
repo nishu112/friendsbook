@@ -4,11 +4,13 @@
 {% block content %}
 {% load humanize %}
 		<div class="row">
+			<br><br>
 			<div class="col-sm-2">
 
 			 {% block sidebar %}
 			 {% bootstrap_messages %}
-			 <br>
+
+			 <h3> Advance Search</h3>
 			 <form action="{%url 'advanceSearch'%}" method="GET"><input type='hidden'  />{%csrf_token %}
 
 			 {%bootstrap_form advanceSearchForm%}
@@ -20,7 +22,7 @@
 			           Search
 			         </button>
 
-			       </div>
+			   </div>
 
 			 </form>
 			{%endblock sidebar%}
@@ -30,10 +32,12 @@
 				<div class="row">
 							<h1>  <strong>People </strong></h1>
 				</div>
+				<br>
 
 
 				{% for profile,y in data%}
-				<div class="well particularuser" user={{profile.username}} csrf={{csrf_token}}>
+
+				<div style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);" class="well particularuser" user={{profile.username}} csrf={{csrf_token}}>
 					<div class="add_friendbutton" >
 						{%if profile.sid%}
 							{%if profile.sid.image%}
@@ -55,7 +59,7 @@
 								</button>
 								{%endif%}
 						{%endif%}
-					</div>
+					</div   >
 					<br>
 					{%if profie.lname%}
 						{{profile.lname}}</br>
@@ -65,17 +69,23 @@
 					{%endif%}
 					{{profile.emailid}}</br>
 					{{profile.gender}}
+					{%if profile.mutalFriends is not  0%}
+					<br>
+
+							<p><a data-placement="right" data-toggle="tooltip" title="Loading.." id='mutualFriends' values='{{profile.username}}' href="javascript:void(0)">{{profile.mutalFriends}}  Mutual Friends</a></p>
+					{%endif%}
 				</div>
 					<br>
 				{%empty%}
-					<h1>No user Found</h1>
+					<h3>No user Found</h3>
 					{%endfor%}
 				<div class="row">
 							<h1>  <strong>Groups</strong></h1>
 				</div>
+				<br>
 
 				{% for group in sgroups %}
-				<div class="well particularuser"  csrf={{csrf_token}}>
+				<div style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);" class="well particularuser"  csrf={{csrf_token}}>
 					<div class="add_friendbutton" >
 						{%if group.cover%}
 							{%if group.cover.image%}
@@ -89,12 +99,14 @@
 					</div>
 
 
-					created {{group.time|naturaltime}} with {{group.privacy}} privacy
+					<p>created {{group.time|naturaltime}} with {%ifequal group.privacy  "OP"%}Open{%endifequal%}  {%ifequal group.privacy  "CL"%}Closed{%endifequal%} privacy   </p>
 					{%if group.about%}
-					<br>
-						{{group.about}}
+
+					<p>	{{group.about}}</p>
 					{%endif%}
 				</div>
+				{%empty%}
+				<h3>No Groups Found</h3>
 					{% endfor %}
 
 			<div class="col-sm-2">
@@ -108,35 +120,8 @@
 {% block javascript%}
 <script src="{% static 'js/addfriends/friendrequest.js' %}"></script>
 <script>
-/*var load_friends_list = function () {
-    if (!$("#load_feed").hasClass("no-more-feeds")) {
-      var page = $("#load_feed input[name='page']").val();
-      var next_page = parseInt($("#load_feed input[name='page']").val()) + 1;
-      $("#load_feed input[name='page']").val(next_page);
-      $.ajax({
-        url: "/ajax/feeds/load/",
-        data: $("#load_feed").serialize(),
-        cache: false,
-        beforeSend: function () {
-          $(".load").show();
-        },
-        success: function (data) {
-					console.log(data);
-          if (data.length > 0) {
-            $(".firstPagePosts").append(data)
-          }
-          else {
-            $("#load_feed").addClass("no-more-feeds");
-          }
-        },
-        complete: function () {
-          $(".load").hide();
-        }
-      });
-    }
-  };
-
-  $("#load_feed").bind("enterviewport", load_timeline_posts).bullseye();
-*/
 </script>
+<script src="/static/js/profile/profile.js"></script>
+<script src="/static/js/posts/posts.js"></script>
+
 {%endblock %}

@@ -39,24 +39,23 @@
 		</div>
 
 
-	<div class="row">
-		<div class="col-sm-10">
-			<div class="row ">
 
-
+		<div class="col-sm-2">
 				{%include "groups/group_navigation.html"  with active='members'%}
+		</div>
 
-			  <div class="col-sm-10">
-					<div class="row">
+			  <div class="col-sm-8">
+
 					{%include "groups/partial/group_cover.html"%}
 						<!-- Example single danger button -->
 
 
+
 </br></br></br>
 						<div class="well" style="background-color:#fff">
-							<div class="row" >
+
 								<h1 style="text-align:center">  <strong  >Admins: </strong></h1>
-							</div>
+
 
 							<div class="row admins">
 
@@ -65,7 +64,7 @@
 
 
 							<div class="particularuser col-sm-6" user={{admin.username}} csrf={{csrf_token}} id={{group.id}}>
-								<div class="well add_friendbutton " >
+								<div class="well add_friendbutton " style="height:100px">
 									{%if admin.username.profile.sid%}
 										{%if admin.username.profile.sid.image%}
 											<img class="img-rounded"  src="{{ admin.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
@@ -107,6 +106,7 @@
 							<div class="row" >
 								<h1 style="text-align:center">  <strong  >Members: </strong></h1>
 							</div>
+							<br>
 
 							<div class="row group_members">
 
@@ -115,7 +115,7 @@
 
 
 							<div class="particularuser col-sm-6" user={{member.username.profile.username}} csrf={{csrf_token}} id={{group.id}}>
-								<div class="well add_friendbutton " >
+								<div class="well add_friendbutton " style="height:100px">
 									{%if member.username.profile.sid%}
 										{%if  member.username.profile.sid.image%}
 											<img class="img-rounded"  src="{{  member.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
@@ -129,6 +129,7 @@
 
 										{%if group.new is 0 and group_consist.gadmin is 1%}
 																			<span>
+																			<small>
 																			<button class="btn btn-default" style="font-size:12px;"  type="button" performaction="Make him admin" onclick="return false"  >
 																			Make him admin
 																			</button>
@@ -137,6 +138,7 @@
 																			<button class="btn btn-default" style="font-size:12px;"  performaction="Remove From group" type="button">
 																				Remove From group
 																			</button>
+																		</small>
 																		</span>
 											{%endif%}
 
@@ -150,12 +152,12 @@
 						</div>
 
 
+</div>
 
-				</div>
-			</div>
 
-			</div>
-		</div>
+
+
+
 
 		<div class="col-sm-2">
 

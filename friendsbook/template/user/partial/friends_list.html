@@ -13,7 +13,7 @@
 							{%for friend in friends_list%}
 
 
-							
+
 							<div class=" particularuser col-sm-6" user={{friend.username}} csrf={{csrf_token}}>
 								<div class="well add_friendbutton " >
 									{%if friend.sid%}
@@ -24,7 +24,7 @@
 											<img class="img-rounded" src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
 									{%endif%}
 
-									<a href="{%url 'profile_info' friend.slug %}">{{friend.fname}}{%if profile.username.profile.lname%} {{profile.username.profile.lname}} {%endif%}</a>
+									<a href="{%url 'profile_info' friend.slug %}">{{friend.fname}}{%if friend.username.profile.lname%} {{friend.username.profile.lname}} {%endif%}</a>
 
 									{%if user.username  !=  friend.username.username %}
 
@@ -39,8 +39,22 @@
 											</button>
 											{%endif%}
 									{%endif%}
+
+									<br>
+
+									{%if friend.state%}
+										from {{friend.state}}</br>
+									{%endif%}
+									{{friend.emailid}}</br>
+									{{friend.gender}}
+
+									{%if friend.mutalFriends is not  0%}
+									<br>											
+											<p><a data-placement="right" data-toggle="tooltip" title="Loading.." id='mutualFriends' values='{{friend.username}}' href="javascript:void(0)">{{friend.mutalFriends}} </a> Mutual Friends</p>
+									{%endif%}
 								</div>
-								<br>
+
+
 
 							</div>
 							{%endfor%}

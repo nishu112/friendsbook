@@ -1,6 +1,6 @@
 {% load humanize %}
 <li style="width:100% ;">
-				<div {%if user == x.username %} class="msj-rta macro" {%else%}  class="msj macro"{%endif%}>
+				<div  style="position:relative;" {%if user == x.username %} class="msj-rta macro" {%else%}  class="msj macro"{%endif%}>
 					<div class="avatar">
 						<img class="img-circle"  width="42" height="42"
 						{%if x.username.profile.sid%}
@@ -12,18 +12,18 @@
 						{%endif%}>
 					</div>
 					<div class="text text-l">
-						<div class="msg-text" style="float: left;">
+						<div class="msg-text" style="float: left; padding-left:5px;margin-left:5px;padding-top:5px">
 						{{x.text}}
 					</div>
 
-					<div class="is_read" style="float:right; text-align: right;" >
-
 					</div>
+					<div style="float:right;;display: flex;    flex-direction: column;position: absolute;bottom: 0;right:0;padding:10px;">
+						<div class="is_read" style="float:right; text-align: right;" >
+
+						</div>
 
 
-					<p><small>{{x.time|naturaltime}}</small></p>
-
-
+						<p style="padding-bottom:0px"><small>{{x.time|naturaltime}}</small></p>
 					</div>
 				</div>
 </li>

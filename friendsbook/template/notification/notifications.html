@@ -12,8 +12,9 @@
   <div class="page-header">
     <h1>Notifications</h1>
   </div>
-  <ul class="all-notifications">
-
+  <div >
+  <ul style="margin-left:-20px" class="all-notifications col-sm-8 col-sm-offset-2">
+   
     {% for notification in notifications %}
       <li class="clearfix">
         <a href="{% url 'profile_info' notification.from_user.profile.slug %}"><img src="{{ notification.from_user.profile.get_picture }}" class="user-picture"></a>
@@ -26,4 +27,5 @@
       <li>You have no notification</li>
     {% endfor %}
   </ul>
+</div>
 {% endblock content %}

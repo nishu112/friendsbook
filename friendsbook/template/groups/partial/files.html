@@ -1,6 +1,7 @@
 {% extends "friendsbook/structure.html" %}
 {% block content %}
 {% load static %}
+{% load humanize %}
 {%block head%}
 	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
 	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
@@ -14,61 +15,135 @@
 {%endblock head%}
 <div class="container-fluid">
 
-	<div class="modal fade" id="addMembersToGroup" role="dialog">
-	    <div class="modal-dialog">
-
-	      <!-- Modal content-->
-	      <div class="modal-content">
-	        <div class="modal-header">
-	          <button type="button" class="close" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Add members</h4>
-	        </div>
-			<div class="container-fluid">
-				<div class="membersearch">
-					<form action="" method="post" onsubmit="return false">{%csrf_token %}
-						<input type="text" autocomplete="off" id="searchToAddMembers" size="75" placeholder="Search" name="search_user">
-						<input type="hidden" name="group_id" value="{{group.id}}"/>
-						<hr>
-						<input class="btn btn-primary pull-right" style="margin:4px" type="submit" value="Add"/>
-					</form>
-				</div>
-			</div>
-		  </div>
-
-	     </div>
-		</div>
 
 
-	<div class="row">
-		<div class="col-sm-10">
-			<div class="row ">
+
+		<div class="col-sm-2">
+
 
 
 				{%include "groups/group_navigation.html"  with active='files'%}
+</div>
+			  <div class="col-sm-8">
 
-			  <div class="col-sm-10">
-					<div class="row">
 					{%include "groups/partial/group_cover.html"%}
 						<!-- Example single danger button -->
 
+						<br><br>
 
-							<div class="row">
+
+
 										<h1>  <strong>Files : </strong></h1>
-							</div>
-							<div class="row">
-							{% for file in files%}
+										<div class="col-sm-8">
 
-							{%empty%}
-								<h2>No Files to show</h2>
-							{%endfor%}
-							</div>
-					</div>
+										{% for status in posts%}
 
-				</div>
+										{% if ".jpg" not in status.image.url and ".jpeg" not in status.image.url and ".tif" not in status.image.url and    ".png" not in status.image.url and ".gif" not  in status.image.url and ".ogg" not in status.image.url and ".MP4" not in status.image.url and ".mp4"  not in status.image.url and ".MKV" not in status.image.url and   ".mkv" not in status.image.url%}
+
+
+
+										<li class='container-fluid post_style_box' style="list-style-type: none;"  post-id={{status.id}} csrf="{{ csrf_token }}">
+											<div class="Status">
+												 <div class="upper_post">
+													 {% ifequal status.username.username user.username  %}
+													 <div class="edit_delete" id="status">
+
+
+														 <div class="dropdown">
+															 <button type="button" class="edit_button_icon" data-toggle="dropdown">
+															 <span class="glyphicon glyphicon-chevron-down"></span>
+															 </button>
+																	 <ul class="dropdown-menu" style="min-width: 60px;">
+																		 <li>	<a href="javascript:void(0)" >Edit</a></li>
+																			 <li><a href="javascript:void(0)" class="delete_status" >Delete</a></li>
+																	 </ul>
+														 </div>
+													 </div>
+													 {% endifequal %}
+													 {%if status.username.profile.sid%}
+														 {%if status.username.profile.sid.image%}
+															 <img class="img-rounded "  src="{{ status.username.profile.sid.image.url}}" alt="My image" width="42" height="42"/>
+														 {%endif%}
+													 {%else%}
+															 <img class="img-rounded"  src="/static/img/profile_pic.png" alt="My image" width="42" height="42"/>
+													 {%endif%}
+
+
+
+														<a  href="{% url 'profile_info' status.username.profile %}">{{status.username.profile.fname}}</a>  {{status.title}}
+													{%if status.gid%}
+													 <a href="{%url 'GroupsHomepage' status.gid.id%}" >{{status.gid.gname}}</a>
+													{%endif%}
+														<br>
+														{{status.time|naturaltime}}<br>
+														{% if status.text %}
+
+														 <br>{{status.text}}<br>
+														{% endif %}
+														{% if status.image  %}
+
+															 {% if ".jpg" not in status.image.url and ".jpeg" not in status.image.url and ".tif" not in status.image.url and    ".png" not in status.image.url and ".gif" not  in status.image.url and ".ogg" not in status.image.url and ".mp4"  not in status.image.url and ".MKV" not in status.image.url and   ".mkv" not in status.image.url%}
+															 <h1 style="padding-left:20px"><a href={{status.image.url}}>File</a></h1>
+														 {% endif %}
+														{% endif %}
+														<div class="post_button">
+
+
+															{% if status.is_like %}
+																<a href="#" style="text-decoration: none;" data-placement="left" data-toggle="tooltip" title="Loading.." class="like unlike" type="post_like">
+																	<span class="glyphicon glyphicon-thumbs-up"></span>
+																	<span class="text" >Unlike</span>
+																	(<span class="like-count"  >{%if status.likes %}{{status.likes}}{%endif%} </span>)
+																</a>
+															{% else %}
+																<a href="#" style="text-decoration: none;"  data-placement="left" data-toggle="tooltip" title="Loading.." class="like" type="post_like">
+																	<span class="glyphicon glyphicon-thumbs-up"></span>
+																	<span class="text" >Like</span>
+																	(<span class="like-count"  >{{status.likes}} </span>)
+																</a>
+															{% endif %}
+															&nbsp;&nbsp;
+															<a href="javascript:void(0)" style="text-decoration: none;" class="comment">
+																<span class="glyphicon glyphicon-comment"></span> Comment
+																(<span class="comment-count">{{status.comments}}</span>)
+															</a>
+
+														</div>
+												 </div>
+
+												 <div class="comments" style="display:none">
+													 <form role="form" class="newcomment" method="post" action="" onsubmit="return false">
+														 {% csrf_token %}
+														 <input type="hidden" name="Status" value="{{status.id }}">
+														 <input type="text" autocomplete="off" class="form-control input-sm" placeholder="Write a comment..." name="post" maxlength="255">
+													 </form>
+
+													 <div  class="Allcomments">
+
+													 </div>
+												 </div>
+											 </div>
+
+									 </li>
+									 {%endif%}
+
+											{%empty%}
+
+
+											<h2>No Files to show</h2>
+
+										{%endfor%}
+
+										
+
+									</div>
+
+
+
 
 
 			</div>
-		</div>
+
 
 		<div class="col-sm-2">
 

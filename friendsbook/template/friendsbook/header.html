@@ -1,5 +1,5 @@
 <header>
-<nav class="navbar navbar-default navbar-fixed-top" style="background-color:#00897b" role="navigation">
+<nav class="navbar-expand-lg navbar-fixed-top"  style="background-color: #00897b;"role="navigation">
   <div class="container">
     <div class="navbar-header navbar-hover">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -7,7 +7,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand " href="/"><font size="3">Friendsbook</font></a>
+      <a class="navbar-brand " style="color:white;" href="/"><font size="3">Friendsbook</font></a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <form class="navbar-form navbar-left" id="searchform" action="{% url 'profiles' %}" method="GET" >
@@ -26,30 +26,46 @@
             </div>
             -->
         </div>
+        <div id="seearchingResult">
+        </div>
       </form>
 
 
 	      <ul class="mynav_content nav navbar-nav navbar-right ">
-	        {% if user.is_authenticated %}
-							<li><a href="{%url 'profile_info' request.user.profile.slug %}"><div   class="glyphicon glyphicon-user">{{request.user.profile.fname}}</div></a></li>
-					{%endif%}
+
 						<li>
-              <a href="#" id="notifications" data-container="body" data-toggle="popover" data-placement="bottom" title="Notifications">
+              <a style="color: #fff ;font-size: 18px;"href="#" id="notifications" data-container="body" data-toggle="popover" data-placement="bottom" title="Notifications">
                     <span class="glyphicon glyphicon-globe">  <span class="badge badge-notify"></span></span>
               </a>
             </li>
-						<li><a href={% url 'user_list'%}>Chat Room</a></li>
-						<li><a href={% url 'new_post'%}>Create Post</a></li>
-						<li><a href={% url 'logout' %}><div class="glyphicon glyphicon-log-in"></div> Logout</a></li>
+						<li><a style="color: #fff ;font-size: 18px;"href={% url 'user_list'%}>Chat Room</a></li>
+						<li><a style="color: #fff ;font-size: 18px;"href={% url 'new_post'%}>Create Post</a></li>
+
+            <li class="dropdown">
+              <a href="#" style="color: #fff;font-size: 18px;"class="dropdown-toggle" data-toggle="dropdown">{{ request.user.profile.fname }} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="{%url 'profile_info' request.user.profile.slug %}">My Profile</a></li>
+                <li><a href="{% url 'UserProfileEdit' request.user.profile.slug %}">Account Settings</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url 'logout' %}">Log out</a></li>
+              </ul>
+            </li>
+
 	      </ul>
     </div>
   </div>
 </nav>
 
-<div style="position: absolute; z-index: 99; visibility: visible; display: block; margin-left: 220px;
-margin-top: 50px; border: 0px; width: 270px; background-color: white;" id="liveSearchResult" class="liveSearchResult">
+<div style="position: absolute; z-index: 99; visibility: visible; display: block; margin-left: 245px;margin-top: -5px; border: 0px; width: 270px; background-color: white;" id="liveSearchResult" class="liveSearchResult">
 </div>
 <script>
+jQuery(function() {
+  $("#open-mikes-modal").click(function(e) {
+      $("#mikesModal").mikesModal();
+  });
+});
+
+
 (function( $ ){
 
   $('#searchform').on('keyup', '#livesearch', function(){
@@ -93,16 +109,18 @@ margin-top: 50px; border: 0px; width: 270px; background-color: white;" id="liveS
           $('#notifications').popover({html: true, content: 'Loading...', trigger: 'manual'});
 
           $("#notifications").click(function () {
+
             if ($(".popover").is(":visible")) {
               $("#notifications").popover('hide');
             }
             else {
 
               $("#notifications").popover('show');
+
               $.ajax({
                 url: '/notifications/',
                 beforeSend: function () {
-                  $(".popover-content").html("<div style='text-align:center'><img src='/static/img/loading.gif'></div>");
+                  $(".popover-content").html("<div style='text-align:center'><img src='/static/img/loading1.gif'></div>");
                   $("#notifications").removeClass("new-notifications");
                 },
                 success: function (data) {

@@ -6,7 +6,9 @@ color: white;
 .add_friendbutton button{
 float: right;
 }
-
+.Status{
+	padding:2px;
+}
 a{
 	text-decoration: none !important;
 }
@@ -261,7 +263,7 @@ font-family:verdana;
 color:black;
 top:230px;
 height:50px;
-width: 500px;
+width: 551px;
 position:absolute;
 }
 

@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="/static/admin/css/login.css" />
 <link rel="stylesheet" href="{% static 'css/home.css' %}" type = "text/css"/>
  <link rel="stylesheet" type="text/css" href="/static/admin/css/responsive.css" />
+ 
 
  	<link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
 
@@ -35,11 +36,11 @@
 </head>
 
 
-<body class=" login" background="/static/img/background.jpg" style=" background-repeat: no-repeat;"
+<body class=" login" style='background-image: url("/static/img/socialNetwork.jpg");' style=" background-repeat: no-repeat;"
   data-admin-utc-offset="0" >
 
 <!-- Container -->
-<div id="container" style="width: 35em;">
+<div id="container" {%block margin%} style="width: 35em;    margin-left: 100px; margin-top: 164px;" {%endblock margin%}>
 
 
     <!-- Header -->

@@ -1,6 +1,7 @@
 {% extends "friendsbook/structure.html" %}
 {% block content %}
 {% load static %}
+{% load bootstrap3 %}
 {%block head%}
 	<link href="{% static 'css/post_page.css' %}" rel="stylesheet">
 	<link href="{% static 'css/chatting.css' %}" rel="stylesheet">
@@ -39,17 +40,16 @@
 		</div>
 
 
-	<div class="row">
-		<div class="col-sm-10">
-			<div class="row ">
-
-
+		<div class="col-sm-2">
 				{%include "groups/group_navigation.html"  with active='discussion'%}
+			</div>
 
-			  <div class="col-sm-10">
-					<div class="row">
-					{%include "groups/partial/group_cover.html"%}
-						<!-- Example single danger button -->
+			  <div class="col-sm-8">
+
+
+
+
+						{%include "groups/partial/group_cover.html"%}
 
 
 
@@ -57,31 +57,31 @@
 						<div class="row" style="margin-top:10px;">
 
 							<div class="col-sm-8 maincontainer">
-								<div class="page-header">
-									<h1>Posts</h1>
-								</div>
+								<h2>Posts</h2>
+								{%if group.new is 0 %}
+								<br>
 								<button type="button" class="btn btn-default btn-sm  pull-right btn-compose" >
 										<span class="glyphicon glyphicon-share-alt"></span> Create Post
 								</button>
+								<br><br>
 								&nbsp;
+
+
 								<div class="well grouppostform" style="background-color:#fff ;display:none;">
 
-									<form action="" id='compose_form' method="post" enctype='multipart/form-data'>{%csrf_token %}
-												<div class="form-group">
-												  <label for="id_text">Text:</label>
-												  <textarea class="form-control" rows="5" name="text"  id="id_text" style="margin: 0px 161.578px 0px 0px; width: 382px; height: 123px;"></textarea>
-												</div>
+									<form action="" method="post" enctype='multipart/form-data'>{%csrf_token %}
+										{%bootstrap_form form%}
 
-											<div class="post">
-												<div class="status_image">
-													<input type="file" name="image" id="id_image">
-												</div>
-												<div class="post_status">
-													<input  type="submit" value="Post"/>
-												</div>
-											</div>
+
+										<div class="post_status">
+											<input class="btn btn-primary" type="submit" value="Post"/>
+										</div>
+
 									</form>
 								</div>
+								{%endif%}
+								<br><br>
+
 								{%include "uposts/only_post.html" %}
 							</div>
 							<div class="col-sm-1">
@@ -93,10 +93,6 @@
 
 			  </div>
 
-		</div>
-
-
-		</div>
 		<div class="col-sm-2">
 
 			{%include "chat/online_user_list.html"%}
@@ -104,10 +100,27 @@
 	</div>
 
 
-</div>
-
-</div>
 <script>
+$(document).on("click", ".membersearch input[type='submit']", function (event){
+	form=$(this).closest('form')
+	addMembersToGroup=$(this).closest('#addMembersToGroup')
+	close=$('.close',addMembersToGroup)
+	$($(this).closest('.close')).click();
+	$.ajax({
+		url: "{%url 'addgroupmember' %}",
+		data:$(form).serialize(),
+		type:'POST',
+		dataType: 'json',
+		success: function (data) {
+			console.log('back');
+			console.log(data)
+			if(data=="0")	alert('Unable to add member');
+
+			$(close).click();
+		}
+	});
+
+});
 
 
 </script>
@@ -118,6 +131,8 @@
 
 <script src="{% static 'js/posts/posts.js' %}"></script>
 <script>
+
+
 
 $(function () {
 	console.log("Nope")
@@ -138,30 +153,13 @@ $(function () {
 
 		console.log('done')
 	});
-	$(document).on("click", ".grouppostform input[value='Post']", function (){
-	console.log("done2")
-	ul=$(this).closest('ul');
-	form=$(this).closest('form');
-	console.log($(form).serialize());
-	$.ajax({
-      url: '{{request.path}}',
-      data:$(form).serialize(),
-      type: 'POST',
-      cache: false,
 
-	  beforeSend: function () {
-	  $(form).trigger("reset");
-	  $(".grouppostform").slideUp();
-	  $('ul.mainposts').prepend("<li class='loadcomment'><img src='/static/img/loading.gif'></li>");
-        },
-      success: function (data) {
-	  $('ul.mainposts li.loadcomment').remove();
-	  $('ul.mainposts').prepend(data);
-      }
-    });
-	console.log(form);
-	return false;
-	});
+	function getmembers(id){
+	console.log("members");
+
+	}
+
+
 
 
 

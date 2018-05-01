@@ -1,17 +1,23 @@
 {% load humanize %}
+
+
+
+
  <li class='container-fluid post_style_box' style="list-style-type: none;"  post-id={{status.id}} csrf="{{ csrf_token }}">
    <div class="Status">
     	<div class="upper_post">
         {% ifequal status.username.username user.username  %}
         <div class="edit_delete" id="status">
+
+
     			<div class="dropdown">
-    			  <button type="submit" class="edit_button_icon" >
+    			  <button type="button" class="edit_button_icon" data-toggle="dropdown">
     				<span class="glyphicon glyphicon-chevron-down"></span>
     			  </button>
-        			  <div class="dropdown-content" style="min-width: 60px;">
-        				<a href="javascript:void(0)" >Edit</a>
-        				<a href="javascript:void(0)" class="delete_status" >Delete</a>
-        			  </div>
+        			  <ul class="dropdown-menu" style="min-width: 60px;">
+            			<li>	<a href="javascript:void(0)" >Edit</a></li>
+            				<li><a href="javascript:void(0)" class="delete_status" >Delete</a></li>
+        			  </ul>
     			</div>
     		</div>
         {% endifequal %}
@@ -35,15 +41,25 @@
 
     			<br>{{status.text}}<br>
     		 {% endif %}
-    		 {% if status.image  %}<br>
-    			{% if ".jpg" in status.image.url or ".jpeg" in status.image.url or ".tif" in status.image.url or   ".png" in status.image.url or ".gif" in status.image.url %}
+    		 {% if status.image  %}
+    			{% if ".jpg" in status.image.url or  ".JPG" in status.image.url or ".jpeg" in status.image.url or ".tif" in status.image.url or   ".png" in status.image.url or ".gif" in status.image.url %}
           <a href="#"  data-toggle="modal" data-target="#status-{{status.id}}" >
             <img class="img-rounded displayPopUp" getFrom={{status.id}} src="{{ status.image.url}}" alt="My image" width="100%"/></a>
 
-    			{% else %}
-    				<video  controls class="video-js vjs-default-skin vjs-big-play-centered displayPopUp" width="100%" getFrom={{status.id}}
-    				height="360" >
-    				<source src="{{ status.image.url}}" type="video/mp4"></video>
+    			{% elif ".ogg" in status.image.url or ".mp4" in status.image.url  or ".MP4" in status.image.url or ".MKV" in status.image.url or   ".mkv" in status.image.url or ".gif" in status.image.url %}
+          <br>
+
+
+              <video id="my-video" class="video-js" controls preload="auto" width="450"               data-setup="{}">
+                <source src="{{ status.image.url}}" type='video/mp4'>
+                <source src="{{ status.image.url}}" type='video/webm'>
+                <p class="vjs-no-js">
+                  To view this video please enable JavaScript, and consider upgrading to a web browser that
+                  <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                </p>
+              </video>
+            {%else%}
+            <h1 style="padding-left:20px"><a href={{status.image.url}}>File</a></h1>
     			{% endif %}
     		 {% endif %}
     		 <div class="post_button">

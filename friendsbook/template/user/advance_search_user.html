@@ -4,10 +4,12 @@
 {% block content %}
 {% load humanize %}
 		<div class="row">
+		</br>
 			<div class="col-sm-2">
 
 			 {% block sidebar %}
-			 <br>
+			 {% bootstrap_messages %}
+			 <h3> Advance Search </h3>
 			 <form action="{%url 'advanceSearch'%}" method="GET"><input type='hidden'  />{%csrf_token %}
 
 			 {%bootstrap_form form%}
@@ -28,9 +30,11 @@
 			</div>
 			<div class="col-sm-1"></div>
 			<div class="col-sm-5">
+
 				<div class="row">
 							<h1>  <strong>People </strong></h1>
 				</div>
+			</br>
 
 
 				{% for profile,y in data%}
@@ -69,12 +73,12 @@
 				</div>
 					<br>
 				{%empty%}
-					<h1>No user Found</h1>
+					<h3>No user Found</h3>
 					{%endfor%}
 				<div class="row">
 							<h1>  <strong>Groups</strong></h1>
 				</div>
-
+			</br>
 				{% for group in sgroups %}
 				<div class="well particularuser"  csrf={{csrf_token}}>
 					<div class="add_friendbutton" >
@@ -96,6 +100,9 @@
 						{{group.about}}
 					{%endif%}
 				</div>
+				{%empty%}
+
+				<h3> No Groups Found</h3>
 					{% endfor %}
 
 			<div class="col-sm-2">

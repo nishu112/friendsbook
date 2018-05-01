@@ -1,6 +1,28 @@
 $(function () {
+
+			$(document).on("mouseenter",'p #mutualFriends',function(){
+				console.log('fine');
+				console.log($(this).attr('values'));
+					title=$(this)
+				$.ajax({
+					type:'GET',
+					url:"/users/mutualFriend",
+					data:{'username':$(this).attr('values')},
+					success:function(data){
+
+
+						if(data=="")	{$(title).attr('data-original-title',"No MutualFriends");}
+						else{
+						$('[data-toggle="tooltip"]').tooltip();
+						}
+						$(title).attr('data-original-title',data);
+					  $('[data-toggle="tooltip"]').tooltip();
+					}
+				});
+			});
+
 $(document).on("mouseenter", "div.Allcomments .like", function () {
-	console.log('likes')
+
 	id=$(this).closest('.particularcomment').attr('id')
 	title=$(this)
 	console.log(title)
@@ -9,9 +31,9 @@ $(document).on("mouseenter", "div.Allcomments .like", function () {
 		data:{'id':id},
 		cache: false,
 		success: function (data) {
- 		console.log(data)
-		if(data=="")	{$(title).attr('data-original-title','No Likes');return ;}
-		$('[data-toggle="tooltip"]').tooltip();
+
+		if(data=="")	{$(title).attr('data-original-title',"No Likes");}
+		else
 		$(title).attr('data-original-title',data);
 
 		    $('[data-toggle="tooltip"]').tooltip();
@@ -20,7 +42,7 @@ $(document).on("mouseenter", "div.Allcomments .like", function () {
 
 });
 $(document).on("mouseenter", "div.upper_post .like", function () {
-	console.log('posts likes')
+
 	var li = $(this).closest("li");
 	var id = $(li).attr("post-id");
 	console.log(id)
@@ -32,12 +54,13 @@ $(document).on("mouseenter", "div.upper_post .like", function () {
 		data:{'id':id},
 		cache: false,
 		success: function (data) {
- 		console.log(data)
-		if(data=="")	return;
-		$('[data-toggle="tooltip"]').tooltip();
-		if(data=="")	{$(title).attr('data-original-title','No Likes');return ;}
-		$(title).attr('data-original-title',data);
-		    $('[data-toggle="tooltip"]').tooltip();
+			if(data=="")	{$(title).attr('data-original-title',"No Likes");}
+			else
+			$(title).attr('data-original-title',data);
+
+			    $('[data-toggle="tooltip"]').tooltip();   
+
+
 		}
 	});
 });
@@ -77,7 +100,7 @@ $(document).on("mouseenter", "div.upper_post .like", function () {
 
 $(document).on("click", "div.upper_post .delete_status", function () {
 
-	var li = $(this).closest("li");
+	var li = $(this).closest(".post_style_box");
 	var id = $(li).attr("post-id");
 	var upper_post=$(this).closest(".upper_post")
 	var csrf = $(li).attr("csrf");
@@ -141,7 +164,7 @@ $(document).on("click", "div.Allcomments .delete_comment", function () {
 	id=$(this).closest('.particularcomment').attr('id')
 	type=$(this).attr('class')
 	particularcomment=$(this).closest('.particularcomment')
-	var li = $(this).closest("li");
+	var li = $(this).closest(".post_style_box");
 	var csrf = $(li).attr("csrf");
 
 
@@ -197,7 +220,7 @@ $(document).on("click", "div.post_button .comment", function () {
 });
 
 $(document).on("click", "div.Allcomments .edit_comment", function () {
-
+console.log('running')
 
 particularcomment=$(this).closest('.particularcomment')
 
