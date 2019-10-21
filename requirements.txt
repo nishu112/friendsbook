@@ -85,7 +85,7 @@ Markdown==2.6.11
 MarkupSafe==1.0
 mccabe==0.4.0
 msgpack-python==0.4.7
-nltk==3.2.5
+nltk==3.4.5
 oauthlib==2.0.6
 olefile==0.44
 parso==0.1.1
