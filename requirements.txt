@@ -140,7 +140,7 @@ Twisted==17.9.0
 txaio==2.8.2
 Unidecode==0.4.21
 Unipath==1.1
-urllib3==1.22
+urllib3==1.26.5
 virtualenv==15.1.0
 virtualenv-clone==0.2.6
 virtualenvwrapper-win==1.2.4
